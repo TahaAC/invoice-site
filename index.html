@@ -71,6 +71,9 @@
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            /* Font variables for consistent styling */
+            --action-font-size: 0.75rem;
+            --action-font-weight: 600;
         }
 
         * {
@@ -447,7 +450,7 @@
             background: white;
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-md);
-            z-index: 1000;
+            z-index: 9999 !important;
             display: none;
             box-shadow: var(--shadow-lg);
             margin-top: 5px;
@@ -461,6 +464,9 @@
             font-size: 16px; /* Larger font for mobile */
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .autocomplete-item:last-child {
@@ -473,6 +479,29 @@
 
         .autocomplete-item.selected {
             background: var(--primary-color);
+            color: white;
+        }
+
+        .autocomplete-item .highlight {
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .autocomplete-item.selected .highlight {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .autocomplete-item .type-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        .autocomplete-item.selected .type-badge {
+            background: rgba(255, 255, 255, 0.2);
             color: white;
         }
 
@@ -502,6 +531,8 @@
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            /* Added border styling matching GUI color */
+            border-bottom: 3px solid var(--accent-color);
         }
 
         .items-table td {
@@ -556,6 +587,8 @@
             align-items: center;
             cursor: pointer;
             user-select: none;
+            /* Added border styling matching GUI color */
+            border-bottom: 3px solid var(--accent-color);
         }
 
         .mobile-item-title {
@@ -1034,6 +1067,8 @@
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             font-weight: 600;
+            /* Added border styling matching GUI color */
+            border-bottom: 3px solid var(--accent-color);
         }
 
         .detail-items tr:nth-child(even) {
@@ -1191,60 +1226,60 @@
                 font-weight: 600;
             }
             
-            .print-items-section {
-                margin-bottom: 25px;
-            }
-            
-            .print-items-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 15px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-            
-            .print-items-table th {
-                background: #1a3a5f;
-                color: white;
-                padding: 10px;
-                text-align: left;
-                font-weight: 700;
-                font-size: 10px;
-                text-transform: uppercase;
-                letter-spacing: 0.4px;
-            }
-            
-            .print-items-table td {
-                padding: 8px;
-                border-bottom: 1px solid #e5e7eb;
-                font-size: 9px;
-                vertical-align: top;
-                color: #000000;
-            }
-            
-            .print-items-table tr:nth-child(even) {
-                background: #f9fafb;
-            }
-            
-            .print-items-table .description {
-                font-weight: 600;
-                color: #000000;
-                font-size: 10px;
-            }
-            
-            .print-items-table .quantity,
-            .print-items-table .hours {
-                text-align: center;
-                color: #000000;
-                font-weight: 500;
-            }
-            
-            .print-items-table .rate,
-            .print-items-table .amount {
-                text-align: right;
-                font-weight: 600;
-                color: #000000;
-            }
-            
+            /* Replace this entire section in your print styles */
+.print-items-section {
+    margin-bottom: 25px;
+}
+
+.print-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.print-items-table th {
+    background: #1a3a5f;
+    color: white;
+    padding: 10px;
+    text-align: left;
+    font-weight: 400; /* Regular weight */
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.print-items-table td {
+    padding: 8px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 9px;
+    vertical-align: top;
+    color: #000000;
+}
+
+.print-items-table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.print-items-table .description {
+    font-weight: 400; /* Regular weight - this is the key fix */
+    color: #000000;
+    font-size: 10px;
+}
+
+.print-items-table .quantity,
+.print-items-table .hours {
+    text-align: center;
+    color: #000000;
+    font-weight: 400; /* Regular weight */
+}
+
+.print-items-table .rate,
+.print-items-table .amount {
+    text-align: right;
+    font-weight: 400; /* Regular weight */
+    color: #000000;
+}
             .print-summary {
                 display: flex;
                 gap: 30px;
@@ -1488,6 +1523,8 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            /* Added border styling matching GUI color */
+            border-bottom: 3px solid var(--accent-color);
         }
 
         .document-table td {
@@ -1558,8 +1595,9 @@
 
         .table-action-btn.view {
             color: var(--primary-color);
-            font-size: 0.75rem;
-            font-weight: 600;
+            /* Using similar font as view details action button */
+            font-size: var(--action-font-size);
+            font-weight: var(--action-font-weight);
             padding: 4px 8px;
             border: 1px solid var(--primary-color);
             border-radius: var(--border-radius-sm);
@@ -1567,6 +1605,25 @@
         }
 
         .table-action-btn.view:hover {
+            color: white;
+            background: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        /* Apply consistent styling to all table action buttons */
+        .table-action-btn.edit,
+        .table-action-btn.print {
+            color: var(--primary-color);
+            font-size: var(--action-font-size);
+            font-weight: var(--action-font-weight);
+            padding: 4px 8px;
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .table-action-btn.edit:hover,
+        .table-action-btn.print:hover {
             color: white;
             background: var(--primary-color);
             transform: scale(1.05);
@@ -1866,7 +1923,7 @@
                 max-height: 50vh;
                 border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
                 box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15);
-                z-index: 1001;
+                z-index: 10001 !important;
                 margin-top: 0;
             }
             
@@ -1874,7 +1931,7 @@
                 padding: 16px;
                 font-size: 16px;
                 border-bottom: 1px solid var(--border-color);
-                min-height: 44px; /* Minimum touch target size */
+                min-height: 56px; /* Minimum touch target size */
                 display: flex;
                 align-items: center;
             }
@@ -2026,11 +2083,11 @@
         }
         
         .pdf-preview-actions {
-            padding: 12px;
-            background: var(--bg-light);
+            padding: 12px var(--bg-light);
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap:;
+            background: 10px;
             border-top: 1px solid var(--border-color);
             flex-wrap: wrap;
         }
@@ -2407,6 +2464,26 @@
             color: var(--text-dark);
         }
 
+        /* Autocomplete keyboard shortcut hint */
+        .autocomplete-hint {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: var(--text-lighter);
+            background: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity var(--transition-normal);
+            pointer-events: none;
+        }
+
+        .glass-input:focus + .autocomplete-hint {
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -2552,6 +2629,7 @@
                             <td>
                                 <div class="autocomplete-container">
                                     <input type="text" class="glass-input large item-description" required autocomplete="off">
+                                    <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                     <div class="autocomplete-list"></div>
                                 </div>
                             </td>
@@ -2624,11 +2702,11 @@
                     <button class="action-button glass-button" id="saveButton">
                         <i class="fas fa-save"></i> <span id="saveButtonText">Save</span>
                     </button>
-                    <button class="action-button glass-button" id="clearForm">
-                        <i class="fas fa-eraser"></i> Clear Form
+                    <button class="action-button glass-button" id="cancelForm">
+                        <i class="fas fa-times"></i> Cancel
                     </button>
-                    <button class="action-button glass-button" id="pdfButton">
-                        <i class="fas fa-file-pdf"></i> PDF
+                    <button class="action-button glass-button" id="printPdfButton">
+                        <i class="fas fa-print"></i> Print PDF
                     </button>
                 </div>
 
@@ -2735,9 +2813,6 @@
             <div class="modal-footer">
                 <button class="action-button glass-button" id="printDetailBtn">
                     <i class="fas fa-print"></i> Print
-                </button>
-                <button class="action-button glass-button" id="pdfDetailBtn">
-                    <i class="fas fa-file-pdf"></i> PDF
                 </button>
                 <button class="action-button glass-button" id="closeDetailModalFooter">
                     Close
@@ -2900,43 +2975,6 @@
         </div>
     </div>
 
-    <!-- PDF Preview Modal -->
-    <div class="pdf-preview-container" id="pdfPreviewContainer">
-        <div class="pdf-preview-content">
-            <div class="pdf-preview-header">
-                <h3>PDF Preview</h3>
-                <button class="modal-close" id="closePdfPreview">&times;</button>
-            </div>
-            <div class="pdf-preview-body">
-                <div class="pdf-navigation">
-                    <button class="pdf-nav-btn" id="prevPageBtn">
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <div class="pdf-page-info">
-                        Page <input type="number" class="pdf-page-input" id="currentPageInput" value="1" min="1"> of <span id="totalPages">1</span>
-                    </div>
-                    <button class="pdf-nav-btn" id="nextPageBtn">
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                <div class="pdf-canvas-container">
-                    <canvas id="pdfCanvas" class="pdf-canvas"></canvas>
-                </div>
-            </div>
-            <div class="pdf-preview-actions">
-                <button class="action-button glass-button" id="downloadPdfBtn">
-                    <i class="fas fa-download"></i> Download PDF
-                </button>
-                <button class="action-button glass-button" id="printPdfBtn">
-                    <i class="fas fa-print"></i> Print
-                </button>
-                <button class="action-button glass-button" id="closePdfPreviewBtn">
-                    <i class="fas fa-times"></i> Close
-                </button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -2991,6 +3029,9 @@
         let pageRendering = false;
         let pageNumPending = null;
         let scale = 1.5;
+        
+        // Store original form values for cancel functionality
+        let originalFormValues = {};
 
         // Detect if device is mobile
         function isMobileDevice() {
@@ -2999,20 +3040,449 @@
                    (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
         }
 
-        // Simplified autocomplete data
-        const autocompleteData = [
-            "Labour", "Labour per hour", "Labour per day",
-            "Drywall installation", "Drywall repair", "Drywall patching",
-            "Patching", "Taping", "Mudding", "Skim coating",
-            "Installation", "Carpentry", "Trim work",
-            "Primer application", "Finish coating", "Texture painting",
-            "Sanding", "Scraping", "Power washing",
-            "Demolition", "Excavation", "Foundation work",
-            "HVAC installation", "Plumbing", "Electrical installation",
-            "Flooring installation", "Roofing", "Insulation",
-            "Site cleanup", "Debris removal", "Maintenance",
-            "Repair", "Service call", "Consultation", "Estimate"
-        ];
+        // Enhanced autocomplete data with categories
+        const autocompleteData = {
+            
+  "labour": [
+    "Labour", "Labour charge", "Labour per person", "Labour per hour", "Labour per day",
+    "Person", "Person per hour", "Person per day", "Skilled labour", "Unskilled labour",
+    "Supervisor", "Foreman", "Project manager", "Site manager", "Team leader",
+    "1 Person Labour", "2 Persons Labour", "3 Persons Labour", "4 Persons Labour", "5 Persons Labour",
+    "6 Persons Labour", "7 Persons Labour", "8 Persons Labour", "9 Persons Labour", "10 Persons Labour"
+  ],
+  "drywall": [
+    "Drywall installation", "Drywall repair", "Drywall patching", "Drywall finishing",
+    "Patching", "Taping", "Mudding", "Skim coating", "Texture application", "Texture repair",
+    "Installation", "Stopping", "Screeding", "Plastering", "Plaster repair", "Ceiling repair",
+    "Cornice installation", "Archway construction", "Bulkhead installation", "Soundproofing",
+    "Hang drywall", "Tape and joint drywall", "Drywall mudding", "Corner bead installation",
+    "Patch gaps between walls and ceilings", "Replaster damaged sections", "Decorative plaster molding",
+    "Venetian plaster finish", "Dot and dab plasterboard fixing", "Render external walls",
+    "Level uneven walls", "Apply finishing plaster", "Sand plaster surface"
+  ],
+  "carpentry": [
+    "Carpentry", "Installation", "Trim work", "Cabinet installation", "Shelving installation",
+    "Door installation", "Window installation", "Framing", "Deck installation", "Fence installation",
+    "Crown molding", "Baseboard", "Casing", "Staircase installation", "Handrail installation",
+    "Install crown molding", "Fit door frames", "Adjust or replace hinges", "Repair rotten window sills",
+    "Replace broken glass pane", "Mount shelves and cabinets", "Assemble flat-pack furniture",
+    "Weatherstrip doors and windows", "Install soffit and fascia", "Gutter cleaning and repair",
+    "Deck staining or sealing", "Fence installation or repair", "Patch drywall holes",
+    "Install grab bars", "Secure loose handrails", "Replace door knobs/locks", "Soundproof room treatment",
+    "Install underfloor heating mats", "Acoustic panel installation", "Hang ceiling grid",
+    "Refinish wooden doors", "Re-glaze windows", "Install pull-down attic ladder",
+    "Repair warped window frames", "Replace broken roller blinds", "Install retractable awnings",
+    "Fit energy-efficient window inserts", "Repair damaged soffit vents", "Replace worn door sweeps",
+    "Fit child safety locks", "Install pet doors", "Fit magnetic screen doors", "Install stair runners",
+    "Replace broken mailbox posts", "Re-secure loose banisters", "Install security storm doors",
+    "Repair split eaves", "Replace broken roof tiles", "Install emergency exit window",
+    "Fit insulated garage doors", "Repair damaged fascia boards", "Replace broken step treads",
+    "Install retractable clotheslines", "Repair broken gate hinges", "Fit roll-up garage screens",
+    "Repair damaged lattice panels", "Replace broken patio umbrella stands", "Fit cabinet door soft-close mechanisms",
+    "Install under-stair storage drawers", "Repair damaged planter boxes", "Replace broken window balances",
+    "Fit motion-sensor night lights", "Install solar attic vents", "Repair broken deck railings",
+    "Fit smart thermostats", "Replace cracked concrete steps", "Fit digital door locks",
+    "Install EV supply equipment (EVSE)", "Repair broken landscape lighting", "Replace broken mailbox flag",
+    "Fit pull-out pantry shelves", "Install outdoor shower", "Repair damaged soffit panels",
+    "Replace broken downlight diffusers", "Fit keyless entry systems", "Install utility sink",
+    "Repair broken railing spindles", "Replace broken patio door rollers", "Fit automatic gate openers",
+    "Install compost bins", "Repair broken window stops", "Replace broken outlet covers",
+    "Fit heated driveway sensors", "Install backyard greenhouse", "Repair broken ceiling medallions",
+    "Replace broken switch actuators", "Fit smart blinds", "Install birdhouse or bat box",
+    "Repair broken door tracks", "Replace broken tile edging", "Fit wall-mounted drying racks",
+    "Install solar pathway lights", "Repair broken door jamb", "Replace broken shelf pins",
+    "Fit magnetic knife strips", "Install folding workbench", "Repair broken window screens",
+    "Replace broken curtain rods", "Fit fold-down desks", "Install outdoor power outlets",
+    "Repair broken floor registers", "Replace broken towel ring", "Fit ceiling-mounted drying rack",
+    "Install indoor herb garden", "Repair broken stair nosing", "Replace broken blind slats",
+    "Fit over-the-door organizers", "Install wall-mounted desk", "Repair broken floor transition strip",
+    "Replace broken faucet aerator", "Fit smart smoke/CO alarms", "Install vertical vegetable garden",
+    "Repair broken downspout splash block", "Replace broken door chain", "Fit magnetic spice racks",
+    "Install pet feeding station", "Repair broken step riser", "Replace broken electrical faceplate",
+    "Fit corner shelf brackets", "Install outdoor hammock stand", "Repair broken window track",
+    "Replace broken hinge pin", "Fit over-door shoe organizer", "Install wall-mounted boot rack",
+    "Install portable dishwasher hookup", "Repair broken floor drain cover", "Replace broken showerhead",
+    "Fit smart garage sensors", "Install rooftop antenna mount", "Repair broken ceiling fan motor",
+    "Replace broken cabinet shelf", "Fit wall-mounted luggage rack", "Install outdoor sauna",
+    "Repair broken door stop", "Replace broken electrical terminal", "Fit under-desk keyboard tray",
+    "Install vertical clothesline", "Repair broken window balance shoe", "Replace broken light switch plate",
+    "Fit magnetic knife holder", "Install backyard basketball hoop", "Repair broken ceiling light chain",
+    "Replace broken door bolt", "Fit wall-mounted file organizer", "Install foldable camping table",
+    "Repair broken floor register cover", "Replace broken shower diverter", "Fit magnetic tool strip",
+    "Install portable washing machine", "Repair broken ceiling vent damper", "Replace broken door hinge leaf",
+    "Fit over-door shoe organizer", "Install foldable desk chair", "Repair broken window sill",
+    "Replace broken outlet cover screw", "Fit wall-mounted magazine rack", "Install outdoor movie screen",
+    "Repair broken ceiling light socket", "Replace broken door knob spindle", "Fit magnetic memo board",
+    "Install portable dryer vent", "Repair broken floor tile edge", "Replace broken dimmer knob",
+    "Fit under-cabinet lighting kit", "Install backyard zip line", "Repair broken ceiling fan mounting bracket",
+    "Replace broken faucet cartridge", "Fit wall-mounted whiteboard", "Install solar-powered security lights",
+    "Repair broken door frame corner", "Replace broken outlet receptacle", "Fit magnetic key holder",
+    "Install foldable garden bench", "Repair broken window lock mechanism", "Replace broken ceiling fan pull cord",
+    "Fit over-toilet tank organizer", "Install portable air conditioner", "Repair broken floor tile corner",
+    "Replace broken dimmer dial", "Fit wall-mounted coat rack", "Install outdoor fireplace",
+    "Repair broken ceiling fan housing", "Replace broken door handle set", "Fit magnetic name tags",
+    "Install portable generator transfer switch", "Repair broken window screen frame",
+    "Replace broken light fixture ballast", "Fit under-stair storage bench", "Install foldable Murphy bed",
+    "Repair broken ceiling vent grille", "Replace broken outlet tab spring", "Fit wall-mounted bookshelf",
+    "Install solar battery storage", "Repair broken door jamb reinforcement", "Replace broken shower mixing valve",
+    "Fit magnetic parts tray", "Install portable power station", "Repair broken floor tile center",
+    "Replace broken switch contact", "Fit over-door mirror", "Install foldable utility cart",
+    "Repair broken ceiling fan downrod", "Replace broken faucet aerator screen", "Fit wall-mounted umbrella holder",
+    "Install outdoor gym equipment", "Repair broken door threshold ramp", "Replace broken outlet ground wire",
+    "Fit magnetic drill bit holder", "Install portable ice maker", "Repair broken window screen mesh",
+    "Replace broken light fixture lens", "Fit under-cabinet spice rack", "Install foldable picnic table",
+    "Repair broken ceiling fan speed switch", "Replace broken door deadbolt", "Fit wall-mounted shoe organizer",
+    "Install solar water pump", "Repair broken floor tile grout line", "Replace broken dimmer slider",
+    "Fit magnetic tool organizer", "Install portable dishwasher", "Repair broken ceiling vent duct",
+    "Replace broken outlet neutral screw", "Fit over-door bathrobe hook", "Install foldable laundry hamper",
+    "Repair broken window screen corner", "Replace broken light fixture reflector", "Fit wall-mounted tie rack",
+    "Install solar-powered water feature", "Repair broken door frame spline", "Replace broken switch terminal screw",
+    "Fit magnetic bottle opener", "Install portable refrigerator", "Repair broken floor tile edge chip",
+    "Replace broken outlet hot screw", "Fit under-cabinet trash can", "Install foldable changing table",
+    "Repair broken ceiling fan remote receiver", "Replace broken shower head hose", "Fit wall-mounted jewelry organizer",
+    "Install solar-powered attic light", "Repair broken door jamb shim", "Replace broken dimmer heat sink",
+    "Fit magnetic screw holder", "Install portable deep fryer", "Repair broken window screen retainer",
+    "Replace broken light fixture diffuser", "Fit over-door hat hook", "Install foldable desk lamp",
+    "Repair broken ceiling fan capacitor", "Replace broken faucet O-ring", "Fit wall-mounted plant hanger",
+    "Install solar-powered fountain", "Repair broken floor tile corner chip", "Replace broken outlet cover clip",
+    "Fit magnetic pen holder", "Install portable blender", "Repair broken ceiling vent filter",
+    "Replace broken switch toggle spring", "Fit under-cabinet paper towel holder", "Install foldable footstool",
+    "Repair broken window screen spline groove", "Replace broken dimmer circuit board", "Fit wall-mounted bag hook",
+    "Install solar-powered outdoor heater", "Repair broken door frame corner joint", "Replace broken outlet internal contact",
+    "Fit magnetic knife magnet", "Install portable coffee maker", "Repair broken floor tile center crack",
+    "Replace broken light fixture socket tab", "Fit over-door towel hook", "Install foldable step stool",
+    "Repair broken ceiling fan motor winding", "Replace broken shower valve cartridge", "Fit wall-mounted clock",
+    "Install solar-powered outdoor chandelier", "Repair broken door jamb alignment", "Replace broken dimmer knob shaft",
+    "Fit magnetic tool bar", "Install portable toaster oven", "Repair broken window screen frame corner",
+    "Replace broken light fixture mounting screw", "Fit under-cabinet utensil holder", "Install foldable ironing board stand",
+    "Repair broken ceiling fan blade screw", "Replace broken faucet handle screw", "Fit wall-mounted calendar",
+    "Install solar-powered gate opener", "Repair broken floor tile edge crack", "Replace broken outlet strain relief",
+    "Fit over-door robe hook", "Install portable microwave", "Repair broken ceiling vent cover screw",
+    "Replace broken switch toggle cap", "Fit magnetic spice turntable", "Install foldable garden kneeler",
+    "Repair broken window screen spline corner", "Replace broken dimmer knob insert", "Fit wall-mounted picture ledge",
+    "Install solar-powered landscape lights", "Repair broken door jamb gap", "Replace broken outlet terminal screw",
+    "Fit magnetic tool rack", "Install portable air purifier", "Repair broken floor tile corner crack",
+    "Replace broken light fixture wire connector", "Fit over-door storage pocket", "Install foldable side table",
+    "Repair broken ceiling fan pull chain switch", "Replace broken shower handle screw", "Fit wall-mounted memo board",
+    "Install solar-powered pool heater", "Repair broken door frame crack", "Replace broken dimmer knob base",
+    "Fit magnetic key rack", "Install portable vacuum cleaner", "Repair broken window screen spline joint",
+    "Replace broken light fixture mounting nut", "Fit under-cabinet cutting board", "Install foldable pet bed",
+    "Repair broken ceiling fan blade adapter", "Replace broken faucet handle set screw", "Fit wall-mounted whiteboard calendar",
+    "Install solar-powered security camera", "Repair broken floor tile grout joint", "Replace broken outlet faceplate screw",
+    "Fit over-door spice rack", "Install foldable laptop stand", "Repair broken ceiling vent damper linkage",
+    "Replace broken dimmer knob collar", "Fit magnetic tool holder strip", "Install portable humidifier",
+    "Repair broken window screen spline splice", "Replace broken light fixture chain", "Fit under-cabinet mug rack",
+    "Install foldable dining table", "Repair broken ceiling fan mounting screw", "Replace broken shower handle set screw",
+    "Fit wall-mounted document holder", "Install solar-powered phone charger", "Repair broken door jamb warp",
+    "Replace broken dimmer knob insert screw", "Fit magnetic tool organizer panel", "Install portable dehumidifier",
+    "Repair broken floor tile edge flake", "Replace broken outlet terminal washer", "Fit over-door jewelry organizer",
+    "Install foldable office chair", "Repair broken ceiling vent damper actuator", "Replace broken dimmer knob set screw",
+    "Fit wall-mounted tablet holder", "Install solar-powered water pump", "Repair broken window screen spline gap",
+    "Replace broken light fixture canopy screw", "Fit under-cabinet knife block", "Install foldable standing desk",
+    "Repair broken ceiling fan downrod coupling", "Replace broken faucet handle base screw", "Fit wall-mounted iPad stand",
+    "Install solar-powered electric fence", "Repair broken door jamb twist", "Replace broken dimmer knob retaining ring",
+    "Fit magnetic tool storage panel", "Install portable steam cleaner", "Repair broken floor tile center flake",
+    "Replace broken outlet terminal ring", "Fit over-door belt hanger", "Install foldable sofa bed",
+    "Repair broken ceiling vent damper spring", "Replace broken dimmer knob insert washer", "Fit wall-mounted yoga mat holder",
+    "Install solar-powered gate light", "Repair broken window screen spline wear", "Replace broken light fixture arm screw",
+    "Fit under-cabinet basket organizer", "Install foldable treadmill", "Repair broken ceiling fan blade hub",
+    "Replace broken shower handle base screw", "Fit wall-mounted bike storage", "Install solar-powered motion light",
+    "Repair broken door jamb compression", "Replace broken dimmer knob insert clip", "Fit magnetic tool rack panel",
+    "Install portable espresso machine", "Repair broken floor tile corner flake", "Replace broken outlet terminal lug",
+    "Fit over-door scarf hanger", "Install foldable recliner", "Repair broken ceiling vent damper gear",
+    "Replace broken dimmer knob insert rivet", "Fit wall-mounted golf club holder", "Install solar-powered outdoor radio",
+    "Repair broken window screen spline fraying", "Replace broken light fixture swivel screw", "Fit under-cabinet spice drawer",
+    "Install foldable gaming chair", "Repair broken ceiling fan motor housing", "Replace broken faucet handle set screw washer",
+    "Fit wall-mounted fishing rod holder", "Install solar-powered bug zapper", "Repair broken door jamb splitting",
+    "Replace broken dimmer knob insert pin", "Fit magnetic tool organizer rack", "Install portable popcorn maker",
+    "Repair broken floor tile edge wear", "Replace broken outlet terminal clip", "Fit over-door purse hanger",
+    "Install foldable massage table", "Repair broken ceiling vent damper motor", "Replace broken dimmer knob insert bushing",
+    "Fit wall-mounted ski rack", "Install solar-powered Christmas lights", "Repair broken window screen spline separation",
+    "Replace broken light fixture pivot screw", "Fit under-cabinet soap dispenser", "Install foldable workbench",
+    "Repair broken ceiling fan downrod locknut", "Replace broken shower handle set screw washer", "Fit wall-mounted surfboard rack",
+    "Install solar-powered fountain pump", "Repair broken door jamb warping", "Replace broken dimmer knob insert sleeve",
+    "Fit magnetic tool storage rack", "Install portable smoothie maker", "Repair broken floor tile center wear",
+    "Replace broken outlet terminal post", "Fit over-door coat hanger", "Install foldable camping cot",
+    "Repair broken ceiling vent damper linkage pin", "Replace broken dimmer knob insert collar", "Fit wall-mounted snowboard rack",
+    "Install solar-powered security siren", "Repair broken window screen spline delamination",
+    "Replace broken light fixture tilt screw", "Fit under-cabinet toothbrush holder", "Install foldable baby changing table",
+    "Repair broken ceiling fan blade bracket screw", "Replace broken faucet handle set screw collar",
+    "Fit wall-mounted paddleboard rack", "Install solar-powered outdoor speaker", "Repair broken door jamb cracking",
+    "Replace broken dimmer knob insert ring", "Fit magnetic tool holder panel", "Install portable waffle maker",
+    "Repair broken floor tile corner wear", "Replace broken outlet terminal screw washer", "Fit over-door hat and scarf hanger",
+    "Install foldable beach chair", "Repair broken ceiling vent damper spring clip", "Replace broken dimmer knob insert sleeve washer",
+    "Fit wall-mounted wakeboard rack", "Install solar-powered outdoor fan", "Repair broken window screen spline lifting",
+    "Replace broken light fixture rotation screw", "Fit under-cabinet floss dispenser", "Install foldable lawn chair",
+    "Repair broken ceiling fan downrod coupling screw", "Replace broken shower handle set screw collar",
+    "Fit wall-mounted skateboard rack", "Install solar-powered patio heater", "Repair broken door jamb splintering",
+    "Replace broken dimmer knob insert sleeve ring", "Fit magnetic tool organizer wall panel", "Install portable pancake maker",
+    "Repair broken floor tile edge chipping", "Replace broken outlet terminal screw ring", "Fit over-door umbrella and cane holder",
+    "Install foldable director’s chair", "Repair broken ceiling vent damper actuator arm", "Replace broken dimmer knob insert sleeve bushing",
+    "Fit wall-mounted kite rack", "Install solar-powered string lights", "Repair broken window screen spline peeling",
+    "Replace broken light fixture mounting plate screw", "Fit under-cabinet mouthwash dispenser", "Install foldable lounge chair",
+    "Repair broken ceiling fan blade hub screw", "Replace broken faucet handle set screw washer ring",
+    "Fit wall-mounted drone rack", "Install solar-powered landscape spotlight", "Repair broken door jamb checking",
+    "Replace broken dimmer knob insert sleeve collar", "Fit magnetic tool storage wall panel", "Install portable crepe maker",
+    "Repair broken floor tile center chipping", "Replace broken outlet terminal screw clip", "Fit over-door backpack hanger",
+    "Install foldable rocking chair", "Repair broken ceiling vent damper gear tooth", "Replace broken dimmer knob insert sleeve ring washer",
+    "Fit wall-mounted helmet rack", "Install solar-powered outdoor lantern", "Repair broken window screen spline fraying at corner",
+    "Replace broken light fixture canopy bolt", "Fit under-cabinet hand sanitizer dispenser", "Install foldable Adirondack chair",
+    "Repair broken ceiling fan downrod locknut washer", "Replace broken shower handle set screw washer collar",
+    "Fit wall-mounted bicycle bell rack", "Install solar-powered garden light", "Repair broken door jamb splitting at joint",
+    "Replace broken dimmer knob insert sleeve ring bushing", "Fit magnetic tool holder wall panel", "Install portable donut maker",
+    "Repair broken floor tile corner chipping", "Replace broken outlet terminal screw washer ring", "Fit over-door pet leash hanger",
+    "Install foldable glider swing", "Repair broken ceiling vent damper spring clip washer", "Replace broken dimmer knob insert sleeve collar washer",
+    "Fit wall-mounted scooter rack", "Install solar-powered outdoor chandelier", "Repair broken window screen spline separation at corner",
+    "Replace broken light fixture arm bolt", "Fit under-cabinet lotion dispenser", "Install foldable porch swing",
+    "Repair broken ceiling fan blade bracket screw washer", "Replace broken faucet handle set screw washer collar ring",
+    "Fit wall-mounted unicycle rack", "Install solar-powered gazebo light", "Repair broken door jamb warping at joint",
+    "Replace broken dimmer knob insert sleeve collar ring", "Fit magnetic tool organizer wall rack", "Install portable funnel cake maker",
+    "Repair broken floor tile edge flaking", "Replace broken outlet terminal screw washer ring clip", "Fit over-door sports equipment hanger",
+    "Install foldable hammock chair", "Repair broken ceiling vent damper actuator arm washer", "Replace broken dimmer knob insert sleeve collar ring washer",
+    "Fit wall-mounted tricycle rack", "Install solar-powered pergola light", "Repair broken window screen spline lifting at corner",
+    "Replace broken light fixture pivot bolt", "Fit under-cabinet sunscreen dispenser", "Install foldable rocking glider",
+    "Repair broken ceiling fan downrod coupling screw washer", "Replace broken shower handle set screw washer collar ring washer",
+    "Fit wall-mounted tandem bike rack", "Install solar-powered terrace light", "Repair broken door jamb cracking at joint",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring", "Fit magnetic tool storage wall rack", "Install portable cotton candy maker",
+    "Repair broken floor tile center flaking", "Replace broken outlet terminal screw washer ring clip washer", "Fit over-door gardening tool hanger",
+    "Install foldable sun lounger", "Repair broken ceiling vent damper gear tooth wear", "Replace broken dimmer knob insert sleeve collar ring washer ring washer",
+    "Fit wall-mounted recumbent bike rack", "Install solar-powered deck light", "Repair broken window screen spline peeling at corner",
+    "Replace broken light fixture rotation bolt", "Fit under-cabinet insect repellent dispenser", "Install foldable zero gravity chair",
+    "Repair broken ceiling fan blade hub screw washer", "Replace broken faucet handle set screw washer collar ring washer ring",
+    "Fit wall-mounted elliptical rack", "Install solar-powered patio umbrella light", "Repair broken door jamb splintering at joint",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring", "Fit magnetic tool holder wall rack", "Install portable kettle corn maker",
+    "Repair broken floor tile corner flaking", "Replace broken outlet terminal screw washer ring clip washer ring", "Fit over-door yoga mat hanger",
+    "Install foldable therapy chair", "Repair broken ceiling vent damper spring clip washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer",
+    "Fit wall-mounted rowing machine rack", "Install solar-powered cabana light", "Repair broken window screen spline delamination at corner",
+    "Replace broken light fixture mounting plate bolt", "Fit under-cabinet disinfectant dispenser", "Install foldable massage chair",
+    "Repair broken ceiling fan downrod locknut washer ring", "Replace broken shower handle set screw washer collar ring washer ring washer",
+    "Fit wall-mounted stair climber rack", "Install solar-powered lanai light", "Repair broken door jamb warping at joint seam",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring", "Fit magnetic tool organizer wall storage", "Install portable popcorn popper",
+    "Repair broken floor tile edge chipping flake", "Replace broken outlet terminal screw washer ring clip washer ring washer", "Fit over-door fitness band hanger",
+    "Install foldable meditation chair", "Repair broken ceiling vent damper actuator arm washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted exercise bike rack", "Install solar-powered veranda light", "Repair broken window screen spline lifting at corner seam",
+    "Replace broken light fixture canopy nut", "Fit under-cabinet hand wipe dispenser", "Install foldable relaxation chair",
+    "Repair broken ceiling fan blade bracket screw washer ring", "Replace broken faucet handle set screw washer collar ring washer ring washer ring",
+    "Fit wall-mounted weight rack", "Install solar-powered lanai fan light", "Repair broken door jamb splitting at joint seam",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring", "Fit magnetic tool storage wall organizer", "Install portable nacho cheese maker",
+    "Repair broken floor tile center chipping flake", "Replace broken outlet terminal screw washer ring clip washer ring washer ring", "Fit over-door resistance band hanger",
+    "Install foldable reading chair", "Repair broken ceiling vent damper gear tooth wear flat", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted dumbbell rack", "Install solar-powered poolside light", "Repair broken window screen spline peeling at corner seam",
+    "Replace broken light fixture arm nut", "Fit under-cabinet sanitizing wipe dispenser", "Install foldable reclining chair",
+    "Repair broken ceiling fan downrod coupling screw washer ring", "Replace broken shower handle set screw washer collar ring washer ring washer ring washer",
+    "Fit wall-mounted kettlebell rack", "Install solar-powered garden path light", "Repair broken door jamb cracking at joint seam",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool holder wall organizer", "Install portable pretzel maker",
+    "Repair broken floor tile corner chipping flake", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer", "Fit over-door foam roller hanger",
+    "Install foldable lounge recliner", "Repair broken ceiling vent damper spring clip washer ring washer", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted medicine ball rack", "Install solar-powered backyard light", "Repair broken window screen spline separation at corner seam",
+    "Replace broken light fixture pivot nut", "Fit under-cabinet first aid dispenser", "Install foldable therapy recliner",
+    "Repair broken ceiling fan blade hub screw washer ring", "Replace broken faucet handle set screw washer collar ring washer ring washer ring washer ring",
+    "Fit wall-mounted sandbag rack", "Install solar-powered outdoor string lights", "Repair broken door jamb splintering at joint seam",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool organizer wall storage panel", "Install portable waffle cone maker",
+    "Repair broken floor tile edge flaking chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring", "Fit over-door stretching strap hanger",
+    "Install foldable massage recliner", "Repair broken ceiling vent damper actuator arm washer ring washer", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted stability ball rack", "Install solar-powered terrace string lights", "Repair broken window screen spline lifting at corner seam gap",
+    "Replace broken light fixture rotation nut", "Fit under-cabinet allergy spray dispenser", "Install foldable zero gravity recliner",
+    "Repair broken ceiling fan downrod locknut washer ring washer", "Replace broken shower handle set screw washer collar ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted jump rope hanger", "Install solar-powered patio string lights", "Repair broken door jamb warping at joint seam crack",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool storage wall organizer panel", "Install portable churro maker",
+    "Repair broken floor tile center flaking chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring washer", "Fit over-door yoga block hanger",
+    "Install foldable therapy zero gravity chair", "Repair broken ceiling vent damper gear tooth wear flat spot", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted foam roller rack", "Install solar-powered gazebo string lights", "Repair broken window screen spline peeling at corner seam gap",
+    "Replace broken light fixture mounting plate nut", "Fit under-cabinet pain reliever dispenser", "Install foldable relaxation recliner",
+    "Repair broken ceiling fan blade bracket screw washer ring washer", "Replace broken faucet handle set screw washer collar ring washer ring washer ring washer ring washer ring",
+    "Fit wall-mounted resistance band rack", "Install solar-powered pergola string lights", "Repair broken door jamb splitting at joint seam crack",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool holder wall storage panel", "Install portable funnel cake fryer",
+    "Repair broken floor tile corner flaking chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring washer ring", "Fit over-door meditation cushion hanger",
+    "Install foldable massage therapy recliner", "Repair broken ceiling vent damper spring clip washer ring washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted exercise mat rack", "Install solar-powered deck string lights", "Repair broken window screen spline separation at corner seam gap",
+    "Replace broken light fixture canopy washer", "Fit under-cabinet muscle rub dispenser", "Install foldable zero gravity massage recliner",
+    "Repair broken ceiling fan downrod coupling screw washer ring washer", "Replace broken shower handle set screw washer collar ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted therapy ball rack", "Install solar-powered lanai string lights", "Repair broken door jamb cracking at joint seam crack",
+    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool organizer wall storage rack", "Install portable cotton candy machine",
+    "Repair broken floor tile edge chipping flake chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring washer ring washer", "Fit over-door fitness equipment hanger",
+    "Install foldable therapy zero gravity massage recliner", "Repair broken ceiling vent damper actuator arm washer ring washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
+    "Fit wall-mounted wellness product rack", "Install solar-powered veranda string lights"
+  ],
+  "painting": [
+    "Primer application", "Finish coating", "Texture painting", "Faux finishing", "Wallpaper",
+    "Sanding", "Scraping", "Power washing", "Epoxy flooring", "Concrete staining",
+    "Prime and paint walls", "Repair peeling paint on trim", "Re-stain wooden decking",
+    "Refinish wooden doors", "Paint exterior siding", "Spray painting", "Roller application",
+    "Brush detailing", "Ceiling painting", "Accent wall painting", "Color matching",
+    "Wall preparation", "Masking", "Paint removal", "Stain sealing", "Clear coat application"
+  ],
+  "services": [
+    "Deck service", "Service call", "Blind installation", "Gutter installation", "TV mounting",
+    "Demolition", "Excavation", "Foundation work", "Concrete work", "Masonry",
+    "Roofing", "Siding", "Insulation", "HVAC", "Plumbing", "Landscaping",
+    "Emergency repair", "After hours service", "Response", "Water damage restoration",
+    "Fire damage restoration", "Storm damage repair", "Seasonal maintenance", "Winterization",
+    "Summer preparation", "Spring cleanup", "Fall maintenance", "Holiday lighting",
+    "Snow removal", "Leaf removal", "Consultation", "Estimate", "Quotation", "Advice",
+    "Planning", "Design", "Project management", "Site supervision", "Permit application",
+    "Inspection report", "As-built drawings", "Project documentation", "Reporting",
+    "Record keeping", "Billing", "Compliance", "Inspection", "Testing", "Certification",
+    "Approval", "Code compliance", "Safety inspection", "Accessibility compliance",
+    "Soil testing", "Concrete testing", "Asbestos testing", "Lead testing",
+    "Environmental remediation", "Abatement", "Cleanup", "Disposal", "Hazardous material",
+    "Contamination removal", "Soil remediation", "Water treatment", "Temporary structure",
+    "Shoring", "Bracing", "Scaffolding", "Barriers", "Temporary power", "Temporary water",
+    "Site facilities", "Equipment installation", "Equipment maintenance", "Equipment operation",
+    "Equipment repair", "Machinery setup", "Tool rental"
+  ],
+  "plumbing": [
+    "Plumbing repair", "Toilet installation", "Shower installation", "Bathroom renovation",
+    "Skylight installation", "Ventilation system", "Gutter cleaning", "Roof coating",
+    "Install bathroom sink", "Replace toilet", "Fix leaking faucet", "Unclog drain",
+    "Install water heater", "Pipe freezing repair", "Sewer line inspection", "PVC pipe cutting and gluing",
+    "Copper pipe soldering", "PEX tubing installation", "Install shower valve", "Bathtub fitting",
+    "Water pressure regulator setup", "Sump pump installation", "Grease trap installation",
+    "Backflow prevention device", "Drain-waste-vent (DWV) system work", "Toilet flange repair",
+    "Water shut-off valve replacement", "Gas line connection for appliances", "Re-pipe entire house",
+    "Drain camera inspection", "Hydro jetting", "Water filtration system installation",
+    "Tankless water heater installation", "Under-sink plumbing repair", "Garbage disposal repair",
+    "Leak detection", "Water meter replacement", "Fixture replacement", "Valve adjustment"
+  ],
+  "concrete": [
+    "Concrete pouring", "Concrete finishing", "Concrete repair", "Foundation", "Slab",
+    "Patio", "Driveway", "Sidewalk", "Stamped concrete", "Stained concrete",
+    "Concrete cutting", "Concrete leveling", "Concrete sealing", "Pour footings",
+    "Formwork", "Rebar installation", "Control joint cutting", "Curing", "Polished concrete",
+    "Exposed aggregate", "Concrete overlay", "Self-leveling compound", "Concrete resurfacing",
+    "Crack injection", "Epoxy crack sealing", "Concrete demolition", "Edge repair",
+    "Spalling repair", "Efflorescence treatment"
+  ],
+  "excavation": [
+    "Excavation", "Digging", "Trenching", "Grading", "Landscaping", "Site preparation",
+    "Earthmoving", "Backfilling", "Compaction", "Drainage excavation", "Basement excavation",
+    "Utility trenching", "Topsoil removal", "Rock excavation", "Dewatering", "Site clearing",
+    "Cut and fill", "Slope stabilization", "French drain installation", "Septic tank excavation"
+  ],
+  "structural": [
+    "Framing", "Steel erection", "Structural repair", "Beam installation", "Column installation",
+    "Joist installation", "Load bearing wall", "Structural inspection", "Foundation repair",
+    "Install load-bearing wall", "Frame interior walls", "Build stud partition walls",
+    "Reinforce floor joists", "Install roof trusses", "Concrete slab pouring", "Steel beam installation",
+    "Demolish non-load-bearing wall", "Structural brickwork", "Underpinning", "Cantilever construction",
+    "Framing for extensions", "Timber frame construction", "Column installation",
+    "Scaffolding erection", "Temporary shoring", "Structural steel welding", "Floor leveling",
+    "Repair sagging floors", "Rebuild chimney crown", "Repair retaining walls", "Replace rotted wood trim"
+  ],
+  "hvac": [
+    "HVAC installation", "Heating system", "Cooling system", "Ventilation", "Ductwork",
+    "Air conditioning", "Furnace installation", "Heat pump", "Thermostat", "Air purification",
+    "Duct cleaning", "HVAC repair", "HVAC maintenance", "Install exhaust fans",
+    "Ventilation system", "Attic ventilation fan", "HRV/ERV system", "Zoning system",
+    "Air quality testing", "Filter replacement", "Refrigerant recharge", "Duct sealing"
+  ],
+  "flooring": [
+    "Flooring installation", "Carpet", "Laminate", "Hardwood", "Vinyl", "Tile installation",
+    "Floor repair", "Subfloor", "Underlayment", "Floor refinishing", "Floor leveling",
+    "Fit laminate or vinyl flooring", "Replace broken floor tiles", "Re-lay damaged driveway pavers",
+    "Install backsplash", "Grout tile surfaces", "Re-grout bathroom tiles", "Clean and seal grout lines",
+    "Re-caulk bathtub surround", "Install heated towel rail", "Replace cracked skylight glazing",
+    "Install radiant barriers", "Soundproof flooring", "Floating floor installation",
+    "Engineered wood installation", "Carpet stretching", "Tile leveling system",
+    "Moisture barrier under flooring", "Adhesive flooring application"
+  ],
+  "electrical": [
+    "Electrical installation", "Wiring", "Outlet installation", "Switch installation",
+    "Lighting installation", "Ceiling fan", "Electrical panel", "GFCI installation", "Doorbell installation",
+    "Appliance installation", "Wiring", "Circuit installation", "Data cabling", "Security system",
+    "Home automation", "LED lighting", "Emergency lighting", "Outdoor lighting",
+    "Install light fixtures", "Wire new outlets", "Circuit breaker panel upgrade", "Run electrical conduit",
+    "Install recessed lighting", "Wire ceiling fans", "Add dedicated circuits", "Conduit bending and fitting",
+    "Junction box installation", "Troubleshoot short circuits", "Test continuity and voltage",
+    "Install dimmer switches", "Underground cable trenching", "Smoke detector wiring",
+    "Thermostat wiring", "Rewire outdated circuits", "Install surge protectors",
+    "Low-voltage wiring", "Solar panel wiring", "EV charger installation", "Generator hookup"
+  ],
+  "cleanup": [
+    "Site cleanup", "Post construction cleanup", "Final cleanup", "Debris removal",
+    "Junk removal", "Rubbish removal", "Pressure washing", "Window cleaning", "Carpet cleaning",
+    "Waste disposal", "Recycling", "Hazardous material removal", "Clean gutters",
+    "Power wash exterior surfaces", "Remove construction debris", "Dispose of old fixtures",
+    "Clean up after renovation", "Interior dust removal", "Job site organization"
+  ],
+  "maintenance": [
+    "Seasonal maintenance", "Winterization", "Summer preparation", "Spring cleanup",
+    "Fall maintenance", "Holiday lighting", "Snow removal", "Leaf removal",
+    "Preventive maintenance", "Building maintenance", "Equipment maintenance", "System maintenance",
+    "Servicing", "Upkeep", "Restoration", "Routine inspection", "Filter changes", "Lubrication",
+    "Component replacement", "System calibration", "Performance testing"
+  ],
+  "compliance": [
+    "Compliance", "Inspection", "Testing", "Certification", "Approval",
+    "Code compliance", "Safety inspection", "Accessibility compliance"
+  ],
+  "rooms": [
+    "Bathroom", "Kitchen", "Bedroom", "Living room", "Dining room", "Hallway",
+    "Corridor", "Staircase", "Balcony", "Terrace", "Veranda", "Porch", "Entry",
+    "Foyer", "Lobby", "Office", "Storage", "Closet", "Wardrobe", "Laundry"
+  ],
+  "testing": [
+    "Soil testing", "Concrete testing", "Asbestos testing", "Lead testing"
+  ],
+  "repair": [
+    "Maintenance", "Repair", "Servicing", "Upkeep", "Restoration", "Preventive maintenance",
+    "Building maintenance", "Equipment maintenance", "System maintenance"
+  ],
+  "heavy": [
+    "Welding", "Cutting", "Boring", "Drilling", "Piling", "Blasting", "Dredging",
+    "Tunneling", "Underground utilities", "Pipeline installation", "Heavy machinery operation",
+    "Crane operation", "Demolition with explosives", "Core drilling", "Anchor bolting",
+    "Structural steel fabrication", "Rebar tying", "Shotcrete application", "Micropiling"
+  ],
+  "finishing": [
+    "Finishing", "Trim", "Molding", "Crown molding", "Baseboard", "Casing",
+    "Final touches", "Detail work", "Custom finishes", "Apply final coats", "Touch-up painting",
+    "Seal edges", "Install trim", "Finish carpentry", "Polish surfaces", "Buff flooring",
+    "Caulk gaps and joints", "Re-caulk perimeter of house", "Sealant application around windows"
+  ],
+  "utility": [
+    "Utility", "Gas line", "Electrical", "Water line", "Sewer line", "Telecommunications",
+    "Utility installation", "Utility repair", "Utility locating", "Meter installation",
+    "Service line connection", "Utility shutoff", "Pipe bursting", "Cable pulling",
+    "Line tapping", "Service drop installation", "Conduit installation"
+  ],
+  "environmental": [
+    "Environmental remediation", "Abatement", "Cleanup", "Disposal", "Hazardous material",
+    "Contamination removal", "Soil remediation", "Water treatment", "Asbestos removal",
+    "Mold remediation", "Lead paint abatement", "Chemical spill cleanup", "Biohazard cleanup"
+  ],
+  "temporary": [
+    "Temporary structure", "Shoring", "Bracing", "Scaffolding", "Barriers",
+    "Temporary power", "Temporary water", "Site facilities", "Portable toilets",
+    "Temporary fencing", "Construction trailers", "Mobile offices", "Dust containment",
+    "Noise barriers", "Weather protection tents"
+  ],
+  "equipment": [
+    "Equipment installation", "Equipment maintenance", "Equipment operation",
+    "Equipment repair", "Machinery setup", "Tool rental", "Calibration", "Commissioning",
+    "Decommissioning", "Operator training", "Preventive servicing", "Diagnostic testing"
+  ],
+  "documentation": [
+    "Documentation", "Reporting", "Record keeping", "Billing", "Permit application",
+    "Inspection report", "As-built drawings", "Project documentation", "Change orders",
+    "Work logs", "Time tracking", "Material invoices", "Contract management"
+  ],
+  "consulting": [
+    "Consultation", "Estimate", "Quotation", "Advice", "Planning", "Design",
+    "Project management", "Site supervision", "Feasibility study", "Value engineering",
+    "Cost analysis", "Schedule optimization", "Risk assessment", "Regulatory guidance"
+  ],
+  "emergency": [
+    "Emergency repair", "Service call", "Response", "After hours service",
+    "Water damage restoration", "Fire damage restoration", "Storm damage repair",
+    "Immediate leak repair", "Power outage response", "Gas leak emergency",
+    "Broken pipe burst", "Downed tree removal", "Structural instability check"
+  ]
+
+        };
+
+        // Flatten all categories into a single array for searching
+        const flattenedAutocompleteData = Object.values(autocompleteData).flat();
 
         // Initialize Firebase
         async function initializeFirebase() {
@@ -3100,18 +3570,157 @@
             updateHeaderLogo(logoData);
             loadDocuments();
             setupEventListeners();
-            enableAutocomplete(document.querySelector('.item-description'), document.querySelector('.autocomplete-list'));
+            
+            // Initialize autocomplete for existing description fields
+            initializeAllAutocompletes();
+            
             updateDocumentNumberDisplay();
             setupDropdownMenu();
             setupTabs();
             setupSimpleSearch();
             setupSettingsModal();
-            setupPdfPreview();
             
             // Initialize mobile items if on mobile
             if (isMobileDevice()) {
                 initializeMobileItems();
             }
+            
+            // Store original form values for cancel functionality
+            storeOriginalFormValues();
+        }
+
+        // Store original form values for cancel functionality
+        function storeOriginalFormValues() {
+            originalFormValues = {
+                documentType: document.getElementById('documentType').value,
+                documentDate: document.getElementById('documentDate').value,
+                clientName: document.getElementById('clientName').value,
+                companyName: document.getElementById('companyName').value,
+                clientEmail: document.getElementById('clientEmail').value,
+                clientMobile: document.getElementById('clientMobile').value,
+                jobAddress: document.getElementById('jobAddress').value,
+                jobNumber: document.getElementById('jobNumber').value,
+                workOrder: document.getElementById('workOrder').value,
+                bsb: document.getElementById('bsb').value,
+                account: document.getElementById('account').value
+            };
+            
+            // Store items
+            originalFormValues.items = [];
+            
+            if (isMobileDevice()) {
+                // Mobile version
+                const itemCards = document.querySelectorAll('.mobile-item-card');
+                itemCards.forEach(card => {
+                    originalFormValues.items.push({
+                        description: card.querySelector('.item-description').value,
+                        quantity: card.querySelector('.item-quantity').value,
+                        hours: card.querySelector('.item-hours').value,
+                        rate: card.querySelector('.item-rate').value,
+                        amount: card.querySelector('.item-amount').value
+                    });
+                });
+            } else {
+                // Desktop version
+                const itemRows = document.querySelectorAll('.item-row');
+                itemRows.forEach(row => {
+                    originalFormValues.items.push({
+                        description: row.querySelector('.item-description').value,
+                        quantity: row.querySelector('.item-quantity').value,
+                        hours: row.querySelector('.item-hours').value,
+                        rate: row.querySelector('.item-rate').value,
+                        amount: row.querySelector('.item-amount').value
+                    });
+                });
+            }
+        }
+
+        // Restore original form values (for cancel functionality)
+        function restoreOriginalFormValues() {
+            document.getElementById('documentType').value = originalFormValues.documentType;
+            document.getElementById('documentDate').value = originalFormValues.documentDate;
+            document.getElementById('clientName').value = originalFormValues.clientName;
+            document.getElementById('companyName').value = originalFormValues.companyName;
+            document.getElementById('clientEmail').value = originalFormValues.clientEmail;
+            document.getElementById('clientMobile').value = originalFormValues.clientMobile;
+            document.getElementById('jobAddress').value = originalFormValues.jobAddress;
+            document.getElementById('jobNumber').value = originalFormValues.jobNumber;
+            document.getElementById('workOrder').value = originalFormValues.workOrder;
+            document.getElementById('bsb').value = originalFormValues.bsb;
+            document.getElementById('account').value = originalFormValues.account;
+            
+            // Clear and restore items
+            if (isMobileDevice()) {
+                // Mobile version
+                const container = document.getElementById('mobileItemsContainer');
+                container.innerHTML = '';
+                
+                originalFormValues.items.forEach(item => {
+                    addMobileItemCard(
+                        item.description,
+                        parseFloat(item.quantity) || 1,
+                        parseFloat(item.hours) || 0,
+                        parseFloat(item.rate) || 0,
+                        parseFloat(item.amount) || 0
+                    );
+                });
+            } else {
+                // Desktop version
+                const itemsTableBody = document.getElementById('itemsTableBody');
+                itemsTableBody.innerHTML = '';
+                
+                originalFormValues.items.forEach(item => {
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'item-row';
+                    newRow.innerHTML = `
+                        <td>
+                            <div class="autocomplete-container">
+                                <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
+                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </td>
+                        <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input xsmall item-hours" value="${item.hours}" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input small item-rate" value="${item.rate}" min="0" step="0.01" required></td>
+                        <td><input type="text" class="glass-input small item-amount" value="${item.amount}" readonly></td>
+                        <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    itemsTableBody.appendChild(newRow);
+                    enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
+                });
+            }
+            
+            calculateTotals();
+            updatePaymentDetailsDisplay();
+            updateDocumentNumberDisplay();
+            
+            // Reinitialize autocomplete for all description fields
+            setTimeout(() => {
+                initializeAllAutocompletes();
+            }, 100);
+        }
+
+        // Add this new function to initialize all autocomplete fields
+        function initializeAllAutocompletes() {
+            // Initialize desktop autocomplete
+            document.querySelectorAll('.item-description').forEach(input => {
+                const container = input.closest('.autocomplete-container');
+                const list = container.querySelector('.autocomplete-list');
+                if (input && list) {
+                    enableAutocomplete(input, list);
+                }
+            });
+            
+            // Initialize mobile autocomplete
+            document.querySelectorAll('.mobile-item-card').forEach(card => {
+                const input = card.querySelector('.item-description');
+                const container = input?.closest('.autocomplete-container');
+                const list = container?.querySelector('.autocomplete-list');
+                if (input && list) {
+                    enableAutocomplete(input, list);
+                }
+            });
         }
 
         // Initialize mobile items view
@@ -3147,6 +3756,7 @@
                         <div class="mobile-item-value">
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${description}" required autocomplete="off">
+                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </div>
@@ -3718,19 +4328,31 @@
             setupLogoutButton();
 
             document.getElementById('saveButton').addEventListener('click', saveDocument);
-            document.getElementById('clearForm').addEventListener('click', clearForm);
-            document.getElementById('pdfButton').addEventListener('click', () => {
+            
+            // Update the clear form button to cancel form
+            document.getElementById('cancelForm').addEventListener('click', cancelForm);
+            
+            // Add print PDF button event listener
+            document.getElementById('printPdfButton').addEventListener('click', () => {
                 const documentData = getDocumentDataFromForm();
                 if (documentData) {
-                    generateEnhancedPDF(documentData);
+                    printDocument(documentData);
                 }
             });
 
-            // Add item button - works for both desktop and mobile
+            // Update the add item button event listener
             document.getElementById('addItem').addEventListener('click', () => {
                 if (isMobileDevice()) {
                     // Mobile version
-                    addMobileItemCard();
+                    const card = addMobileItemCard();
+                    // Initialize autocomplete for the new card
+                    setTimeout(() => {
+                        const input = card.querySelector('.item-description');
+                        const list = card.querySelector('.autocomplete-list');
+                        if (input && list) {
+                            enableAutocomplete(input, list);
+                        }
+                    }, 100);
                 } else {
                     // Desktop version
                     const newRow = document.createElement('tr');
@@ -3739,6 +4361,7 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" required autocomplete="off">
+                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </td>
@@ -3749,9 +4372,20 @@
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
                     `;
                     document.getElementById('itemsTableBody').appendChild(newRow);
-                    enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
-                    newRow.querySelector('.item-description').focus();
+                    
+                    // Initialize autocomplete for the new row
+                    setTimeout(() => {
+                        const input = newRow.querySelector('.item-description');
+                        const list = newRow.querySelector('.autocomplete-list');
+                        if (input && list) {
+                            enableAutocomplete(input, list);
+                        }
+                        newRow.querySelector('.item-description').focus();
+                    }, 100);
                 }
+                
+                // Update original form values after adding a new item
+                storeOriginalFormValues();
             });
 
             // Desktop items table event listeners
@@ -3761,6 +4395,8 @@
                     if (document.querySelectorAll('.item-row').length > 1) {
                         row.remove();
                         calculateTotals();
+                        // Update original form values after removing an item
+                        storeOriginalFormValues();
                     } else {
                         showNotification('Cannot remove the last item row.', 'warning');
                     }
@@ -3785,6 +4421,8 @@
                 if (!editingDocId) {
                     updateDocumentNumberDisplay();
                 }
+                // Update original form values when document type changes
+                storeOriginalFormValues();
             });
 
             document.getElementById('closeDetailModal').addEventListener('click', function() {
@@ -3797,12 +4435,6 @@
             document.getElementById('printDetailBtn').addEventListener('click', function() {
                 if (currentDocumentForShare) {
                     printDocument(currentDocumentForShare.data);
-                }
-            });
-            
-            document.getElementById('pdfDetailBtn').addEventListener('click', function() {
-                if (currentDocumentForShare) {
-                    generateEnhancedPDF(currentDocumentForShare.data);
                 }
             });
 
@@ -4154,6 +4786,15 @@
             }
         }
 
+        // Cancel form changes
+        function cancelForm() {
+            // Restore original form values
+            restoreOriginalFormValues();
+            
+            // Show notification
+            showNotification("Changes cancelled. No data was saved.", "warning");
+        }
+
         // Clear the form
         function clearForm() {
             document.getElementById('documentType').value = 'Invoice';
@@ -4191,6 +4832,9 @@
 
             updateDocumentNumberDisplay();
             updatePaymentDetailsDisplay();
+            
+            // Store the cleared form as the new original
+            storeOriginalFormValues();
         }
 
         // Calculate totals
@@ -4233,331 +4877,6 @@
             document.getElementById('accountNameDisplay').textContent = bankInfo.accountName || '-';
         }
 
-        // Setup PDF Preview
-        function setupPdfPreview() {
-            const closePdfPreview = document.getElementById('closePdfPreview');
-            const closePdfPreviewBtn = document.getElementById('closePdfPreviewBtn');
-            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-            const printPdfBtn = document.getElementById('printPdfBtn');
-            const prevPageBtn = document.getElementById('prevPageBtn');
-            const nextPageBtn = document.getElementById('nextPageBtn');
-            const currentPageInput = document.getElementById('currentPageInput');
-            
-            if (closePdfPreview) {
-                closePdfPreview.addEventListener('click', () => {
-                    document.getElementById('pdfPreviewContainer').classList.remove('active');
-                });
-            }
-            
-            if (closePdfPreviewBtn) {
-                closePdfPreviewBtn.addEventListener('click', () => {
-                    document.getElementById('pdfPreviewContainer').classList.remove('active');
-                });
-            }
-            
-            if (downloadPdfBtn) {
-                downloadPdfBtn.addEventListener('click', () => {
-                    if (pdfDoc) {
-                        pdfDoc.save(`${currentDocumentForShare.data.type}-${currentDocumentForShare.data.number}.pdf`);
-                        showNotification('PDF downloaded successfully', 'success');
-                    }
-                });
-            }
-            
-            if (printPdfBtn) {
-                printPdfBtn.addEventListener('click', () => {
-                    if (currentDocumentForShare) {
-                        printDocument(currentDocumentForShare.data);
-                        document.getElementById('pdfPreviewContainer').classList.remove('active');
-                    }
-                });
-            }
-            
-            if (prevPageBtn) {
-                prevPageBtn.addEventListener('click', () => {
-                    if (currentPage <= 1) return;
-                    currentPage--;
-                    queueRenderPage(currentPage);
-                });
-            }
-            
-            if (nextPageBtn) {
-                nextPageBtn.addEventListener('click', () => {
-                    if (currentPage >= pdfDoc.numPages) return;
-                    currentPage++;
-                    queueRenderPage(currentPage);
-                });
-            }
-            
-            if (currentPageInput) {
-                currentPageInput.addEventListener('change', (e) => {
-                    const pageNumber = parseInt(e.target.value);
-                    if (pageNumber < 1 || pageNumber > pdfDoc.numPages) {
-                        e.target.value = currentPage;
-                        return;
-                    }
-                    currentPage = pageNumber;
-                    queueRenderPage(currentPage);
-                });
-            }
-        }
-
-        // Enhanced PDF Generation with Preview
-        async function generateEnhancedPDF(data) {
-            currentDocumentForShare = { data };
-            
-            // Create a temporary container for the print template
-            const tempContainer = document.createElement('div');
-            tempContainer.style.position = 'absolute';
-            tempContainer.style.left = '-9999px';
-            tempContainer.style.top = '0';
-            tempContainer.style.width = '210mm';
-            tempContainer.style.backgroundColor = 'white';
-            document.body.appendChild(tempContainer);
-            
-            // Generate the print template HTML
-            tempContainer.innerHTML = generatePrintTemplateHTML(data);
-            
-            try {
-                // Use html2canvas to capture the template as an image
-                const canvas = await html2canvas(tempContainer.querySelector('.print-template'), {
-                    scale: 3,
-                    useCORS: false,
-                    allowTaint: false,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    width: 794, // A4 width in pixels at 96 DPI
-                    height: 1123 // A4 height in pixels at 96 DPI
-                });
-                
-                // Create PDF from the captured image
-                const imgData = canvas.toDataURL('image/png', 1.0);
-                const pdf = new jspdf.jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 297; // A4 height in mm
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-                
-                // Add the image to the PDF
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                
-                // Add new pages if needed
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-                
-                // Convert to blob for preview
-                const pdfBlob = pdf.output('blob');
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-                
-                // Load PDF for preview
-                const loadingTask = pdfjsLib.getDocument(pdfUrl);
-                loadingTask.promise.then(function(pdf) {
-                    pdfDoc = pdf;
-                    document.getElementById('totalPages').textContent = pdf.numPages;
-                    currentPage = 1;
-                    document.getElementById('currentPageInput').value = currentPage;
-                    
-                    // Render first page
-                    renderPage(currentPage);
-                    
-                    // Show preview modal
-                    document.getElementById('pdfPreviewContainer').classList.add('active');
-                    
-                    // Store PDF for download
-                    currentPdfBlob = pdfBlob;
-                }).catch(function(error) {
-                    console.error('Error loading PDF for preview:', error);
-                    showNotification('Error generating PDF preview', 'error');
-                    
-                    // Fallback to direct download
-                    pdf.save(`${data.type}-${data.number}.pdf`);
-                    showNotification('PDF downloaded successfully', 'success');
-                });
-                
-            } catch (error) {
-                console.error('Error generating PDF:', error);
-                showNotification('Error generating PDF: ' + error.message, 'error');
-                
-                // Fallback to original PDF generation method
-                generatePDF(data);
-            } finally {
-                // Clean up temporary container
-                document.body.removeChild(tempContainer);
-            }
-        }
-
-        // Render PDF page for preview
-        function renderPage(num) {
-            pageRendering = true;
-            
-            pdfDoc.getPage(num).then(function(page) {
-                const viewport = page.getViewport({ scale: scale });
-                const canvas = document.getElementById('pdfCanvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                
-                const renderTask = page.render(renderContext);
-                
-                renderTask.promise.then(function() {
-                    pageRendering = false;
-                    
-                    if (pageNumPending !== null) {
-                        renderPage(pageNumPending);
-                        pageNumPending = null;
-                    }
-                });
-            });
-            
-            // Update page info
-            document.getElementById('currentPageInput').value = num;
-            
-            // Update navigation buttons
-            document.getElementById('prevPageBtn').disabled = num <= 1;
-            document.getElementById('nextPageBtn').disabled = num >= pdfDoc.numPages;
-        }
-
-        // Queue render page
-        function queueRenderPage(num) {
-            if (pageRendering) {
-                pageNumPending = num;
-            } else {
-                renderPage(num);
-            }
-        }
-
-        // Generate Print Template HTML
-        function generatePrintTemplateHTML(data) {
-            let itemsHTML = '';
-            data.items.forEach(item => {
-                itemsHTML += `
-                    <tr>
-                        <td class="description">${item.description}</td>
-                        <td class="quantity">${item.quantity || ''}</td>
-                        <td class="hours">${item.hours || ''}</td>
-                        <td class="rate">$${item.rate.toFixed(2)}</td>
-                        <td class="amount">$${item.amount.toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-
-            return `
-                <div class="print-template">
-                    <div class="print-template-watermark">${data.type}</div>
-                    
-                    <div class="print-template-header">
-                        <div class="print-template-logo-section">
-                            ${logoData ? `<img src="${logoData}" alt="Company Logo" class="print-template-logo">` : ''}
-                            <div class="print-template-company-name">${data.companyInfo.name}</div>
-                            <div class="print-template-company-details">
-                                <span class="print-template-company-detail">ABN: ${data.companyInfo.abn}</span>
-                                <span class="print-template-company-detail">Phone: ${data.companyInfo.phone}</span>
-                                <span class="print-template-company-detail">Email: ${data.companyInfo.email}</span>
-                                ${data.companyInfo.address ? `<span class="print-template-company-detail">${data.companyInfo.address}</span>` : ''}
-                            </div>
-                        </div>
-                        <div class="print-template-document-info">
-                            <div class="print-template-document-type">${data.type}</div>
-                            <div class="print-template-document-number">${data.number}</div>
-                            <div class="print-template-document-date">Date: ${data.date}</div>
-                        </div>
-                    </div>
-
-                    <div class="print-template-addresses">
-                        <div class="print-template-address-block">
-                            <div class="print-template-address-title">Bill To</div>
-                            <div class="print-template-address-line"><strong>${data.billTo.name}</strong></div>
-                            ${data.billTo.company ? `<div class="print-template-address-line">${data.billTo.company}</div>` : ''}
-                            ${data.billTo.email ? `<div class="print-template-address-line">${data.billTo.email}</div>` : ''}
-                            ${data.billTo.mobile ? `<div class="print-template-address-line">${data.billTo.mobile}</div>` : ''}
-                        </div>
-                        <div class="print-template-address-block">
-                            <div class="print-template-address-title">Job Details</div>
-                            ${data.jobDetails.address ? `<div class="print-template-address-line"><strong>Address:</strong> ${data.jobDetails.address}</div>` : ''}
-                            ${data.jobDetails.number ? `<div class="print-template-address-line"><strong>Job Number:</strong> ${data.jobDetails.number}</div>` : ''}
-                            ${data.jobDetails.workOrder ? `<div class="print-template-address-line"><strong>Work Order:</strong> ${data.jobDetails.workOrder}</div>` : ''}
-                        </div>
-                    </div>
-
-                    <div class="print-template-items-section">
-                        <table class="print-template-items-table">
-                            <thead>
-                                <tr>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                    <th>Hours</th>
-                                    <th>Rate</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${itemsHTML}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="print-template-summary">
-                        <div class="print-template-payment-block">
-                            <div class="print-template-payment-title">Payment Details</div>
-                            <div class="print-template-payment-row">
-                                <span class="print-template-payment-label">Bank:</span>
-                                <span class="print-template-payment-value">${data.bankDetails?.name || 'N/A'}</span>
-                            </div>
-                            <div class="print-template-payment-row">
-                                <span class="print-template-payment-label">BSB:</span>
-                                <span class="print-template-payment-value">${data.bankDetails?.bsb || 'N/A'}</span>
-                            </div>
-                            <div class="print-template-payment-row">
-                                <span class="print-template-payment-label">Account:</span>
-                                <span class="print-template-payment-value">${data.bankDetails?.account || 'N/A'}</span>
-                            </div>
-                            <div class="print-template-payment-row">
-                                <span class="print-template-payment-label">Account Name:</span>
-                                <span class="print-template-payment-value">${data.bankDetails?.accountName || 'N/A'}</span>
-                            </div>
-                        </div>
-                        <div class="print-template-totals-block">
-                            <table class="print-template-totals-table">
-                                <tr>
-                                    <td class="label">Subtotal</td>
-                                    <td class="value">$${data.subtotal.toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">GST (10%)</td>
-                                    <td class="value">$${data.gst.toFixed(2)}</td>
-                                </tr>
-                                <tr class="grand-total">
-                                    <td class="label">Total</td>
-                                    <td class="value">$${data.total.toFixed(2)}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div class="print-template-footer">
-                        ${appearanceSettings.pdfFooter || 'Thank you for your business!'}
-                        ${appearanceSettings.pdfTerms ? `<br><br>${appearanceSettings.pdfTerms}` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
         // Print Document Function
         function printDocument(data) {
             const printWindow = window.open('', '_blank', 'width=800,height=600');
@@ -4577,8 +4896,8 @@
                 itemsHTML += `
                     <tr>
                         <td class="description">${item.description}</td>
-                        <td class="quantity">${item.quantity || ''}</td>
-                        <td class="hours">${item.hours || ''}</td>
+                        <td class="quantity">${item.quantity}</td>
+                        <td class="hours">${item.hours}</td>
                         <td class="rate">$${item.rate.toFixed(2)}</td>
                         <td class="amount">$${item.amount.toFixed(2)}</td>
                     </tr>
@@ -4627,7 +4946,7 @@
                         .print-company-name {
                             font-family: 'Inter', sans-serif;
                             font-size: 18px;
-                            font-weight: 700;
+                            font-weight: 400;
                             color: #1a3a5f;
                             margin-bottom: 4px;
                         }
@@ -4710,7 +5029,7 @@
                         }
                         .print-items-table th {
                             background: #1a3a5f;
-                            color: white;
+                            color: blac;
                             padding: 10px;
                             text-align: left;
                             font-weight: 700;
@@ -4759,7 +5078,7 @@
                             border-left: 3px solid #3b82f6;
                         }
                         .print-payment-title {
-                            font-weight: 700;
+                            font-weight: 400;
                             color: #1a3a5f;
                             margin-bottom: 8px;
                             font-size: 11px;
@@ -4778,7 +5097,7 @@
                         }
                         .print-payment-value {
                             color: #000000;
-                            font-weight: 600;
+                            font-weight: 400;
                         }
                         .print-totals-block {
                             width: 280px;
@@ -4794,7 +5113,7 @@
                         }
                         .print-totals-table .label {
                             color: #000000;
-                            font-weight: 600;
+                            font-weight: 400;
                         }
                         .print-totals-table .value {
                             text-align: right;
@@ -4803,7 +5122,7 @@
                         }
                         .print-totals-table .grand-total td {
                             background: #f3f4f6;
-                            font-weight: 800;
+                            font-weight: 400;
                             color: #1a3a5f;
                             font-size: 11px;
                             border-top: 2px solid #1a3a5f;
@@ -4933,281 +5252,6 @@
                 </body>
                 </html>
             `;
-        }
-
-        // Generate Professional PDF (Fallback)
-        async function generatePDF(data) {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 15;
-            let y = margin;
-
-            // Helper function to add text with proper formatting
-            const addText = (text, x, y, options = {}) => {
-                const defaults = {
-                    fontSize: 10,
-                    font: 'helvetica',
-                    style: 'normal',
-                    color: [0, 0, 0]
-                };
-                const opts = { ...defaults, ...options };
-                
-                doc.setFont(opts.font);
-                doc.setFontSize(opts.fontSize);
-                doc.setTextColor(...opts.color);
-                doc.text(text, x, y, opts.align);
-            };
-
-            // Add company logo if available
-            if (logoData && logoData !== 'logo.png') {
-                try {
-                    doc.addImage(logoData, 'PNG', margin, y, 40, 30);
-                    y += 35;
-                } catch (e) {
-                    console.log('Could not add logo to PDF');
-                }
-            }
-
-            // Company information
-            addText(data.companyInfo.name, margin, y, { fontSize: 18, font: 'helvetica', style: 'bold', color: [26, 58, 95] });
-            y += 8;
-            
-            addText(`ABN: ${data.companyInfo.abn}`, margin, y, { fontSize: 9, color: [100, 116, 139] });
-            y += 5;
-            addText(`Phone: ${data.companyInfo.phone}`, margin, y, { fontSize: 9, color: [100, 116, 139] });
-            y += 5;
-            addText(`Email: ${data.companyInfo.email}`, margin, y, { fontSize: 9, color: [100, 116, 139] });
-            y += 5;
-            if (data.companyInfo.address) {
-                addText(data.companyInfo.address, margin, y, { fontSize: 9, color: [100, 116, 139] });
-                y += 5;
-            }
-
-            // Document information on the right
-            const rightX = pageWidth - margin - 60;
-            addText(data.type.toUpperCase(), rightX, margin, { 
-                fontSize: 28, 
-                font: 'helvetica', 
-                style: 'bold', 
-                color: [26, 58, 95],
-                align: 'right'
-            });
-            addText(data.number, rightX, margin + 10, { 
-                fontSize: 16, 
-                font: 'helvetica', 
-                style: 'bold', 
-                color: [26, 58, 95],
-                align: 'right'
-            });
-            addText(`Date: ${data.date}`, rightX, margin + 18, { 
-                fontSize: 10, 
-                color: [100, 116, 139],
-                align: 'right'
-            });
-
-            y += 15;
-
-            // Add line separator
-            doc.setDrawColor(26, 58, 95);
-            doc.setLineWidth(0.5);
-            doc.line(margin, y, pageWidth - margin, y);
-            y += 15;
-
-            // Bill To section
-            addText('Bill To:', margin, y, { fontSize: 12, font: 'helvetica', style: 'bold', color: [26, 58, 95] });
-            y += 8;
-            addText(data.billTo.name, margin, y, { fontSize: 11, font: 'helvetica', style: 'bold' });
-            y += 6;
-            if (data.billTo.company) {
-                addText(data.billTo.company, margin, y, { fontSize: 10 });
-                y += 6;
-            }
-            if (data.billTo.email) {
-                addText(data.billTo.email, margin, y, { fontSize: 10 });
-                y += 6;
-            }
-            if (data.billTo.mobile) {
-                addText(data.billTo.mobile, margin, y, { fontSize: 10 });
-                y += 6;
-            }
-
-            // Job Details on the right
-            const jobDetailsX = pageWidth / 2 + 20;
-            addText('Job Details:', jobDetailsX, y - 30, { fontSize: 12, font: 'helvetica', style: 'bold', color: [26, 58, 95] });
-            let jobY = y - 22;
-            if (data.jobDetails.address) {
-                addText(`Address: ${data.jobDetails.address}`, jobDetailsX, jobY, { fontSize: 10 });
-                jobY += 6;
-            }
-            if (data.jobDetails.number) {
-                addText(`Job Number: ${data.jobDetails.number}`, jobDetailsX, jobY, { fontSize: 10 });
-                jobY += 6;
-            }
-            if (data.jobDetails.workOrder) {
-                addText(`Work Order: ${data.jobDetails.workOrder}`, jobDetailsX, jobY, { fontSize: 10 });
-            }
-
-            y = Math.max(y, jobY) + 15;
-
-            // Items table
-            addText('Items:', margin, y, { fontSize: 12, font: 'helvetica', style: 'bold', color: [26, 58, 95] });
-            y += 10;
-
-            // Table headers
-            const tableStartY = y;
-            const colWidths = {
-                description: 80,
-                quantity: 25,
-                hours: 25,
-                rate: 30,
-                amount: 35
-            };
-            let currentX = margin;
-
-            // Header background
-            doc.setFillColor(26, 58, 95);
-            doc.rect(margin, y - 5, pageWidth - 2 * margin, 10, 'F');
-
-            // Header text
-            addText('Description', currentX, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-            currentX += colWidths.description;
-            addText('Qty', currentX + 10, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-            currentX += colWidths.quantity;
-            addText('Hours', currentX + 8, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-            currentX += colWidths.hours;
-            addText('Rate', currentX + 10, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-            currentX += colWidths.rate;
-            addText('Amount', currentX + 15, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-
-            y += 12;
-
-            // Table rows
-            doc.setFillColor(248, 250, 252);
-            let isEven = false;
-            
-            data.items.forEach(item => {
-                if (y > pageHeight - 60) {
-                    doc.addPage();
-                    y = margin;
-                    
-                    // Repeat header on new page
-                    doc.setFillColor(26, 58, 95);
-                    doc.rect(margin, y - 5, pageWidth - 2 * margin, 10, 'F');
-                    currentX = margin;
-                    addText('Description', currentX, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-                    currentX += colWidths.description;
-                    addText('Qty', currentX + 10, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-                    currentX += colWidths.quantity;
-                    addText('Hours', currentX + 8, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-                    currentX += colWidths.hours;
-                    addText('Rate', currentX + 10, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-                    currentX += colWidths.rate;
-                    addText('Amount', currentX + 15, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-                    y += 12;
-                }
-
-                // Row background
-                if (isEven) {
-                    doc.rect(margin, y - 4, pageWidth - 2 * margin, 8, 'F');
-                }
-                isEven = !isEven;
-
-                // Row content
-                currentX = margin;
-                const description = item.description.length > 40 ? item.description.substring(0, 37) + '...' : item.description;
-                addText(description, currentX, y, { fontSize: 9 });
-                currentX += colWidths.description;
-                addText(item.quantity ? item.quantity.toString() : '', currentX + 10, y, { fontSize: 9, align: 'center' });
-                currentX += colWidths.quantity;
-                addText(item.hours ? item.hours.toString() : '', currentX + 8, y, { fontSize: 9, align: 'center' });
-                currentX += colWidths.hours;
-                addText(`$${item.rate.toFixed(2)}`, currentX + 10, y, { fontSize: 9, align: 'right' });
-                currentX += colWidths.rate;
-                addText(`$${item.amount.toFixed(2)}`, currentX + 15, y, { fontSize: 9, align: 'right' });
-                
-                y += 8;
-            });
-
-            y += 15;
-
-            // Totals and Payment side by side
-            const totalsWidth = 80;
-            const paymentWidth = pageWidth - 2 * margin - totalsWidth - 20;
-            const paymentX = margin;
-            const totalsX = pageWidth - margin - totalsWidth;
-
-            // Payment details
-            doc.setFillColor(240, 249, 255);
-            doc.rect(paymentX, y - 5, paymentWidth, 45, 'F');
-            doc.setDrawColor(14, 165, 233);
-            doc.rect(paymentX, y - 5, paymentWidth, 45);
-            doc.setLineWidth(0.5);
-            doc.line(paymentX, y - 5, paymentX + 4, y - 5);
-            doc.line(paymentX, y - 5, paymentX, y + 40);
-
-            addText('Payment Details:', paymentX + 5, y + 2, { fontSize: 10, font: 'helvetica', style: 'bold', color: [3, 105, 161] });
-            y += 8;
-            addText(`Bank: ${data.bankDetails?.name || 'N/A'}`, paymentX + 5, y, { fontSize: 9 });
-            y += 6;
-            addText(`BSB: ${data.bankDetails?.bsb || 'N/A'}`, paymentX + 5, y, { fontSize: 9 });
-            y += 6;
-            addText(`Account: ${data.bankDetails?.account || 'N/A'}`, paymentX + 5, y, { fontSize: 9 });
-            y += 6;
-            addText(`Account Name: ${data.bankDetails?.accountName || 'N/A'}`, paymentX + 5, y, { fontSize: 9 });
-
-            // Totals
-            const totalsStartY = y - 30;
-            addText('Subtotal:', totalsX, totalsStartY, { fontSize: 10, align: 'right' });
-            addText(`$${data.subtotal.toFixed(2)}`, totalsX + totalsWidth - 5, totalsStartY, { fontSize: 10, align: 'right' });
-            
-            addText('GST (10%):', totalsX, totalsStartY + 8, { fontSize: 10, align: 'right' });
-            addText(`$${data.gst.toFixed(2)}`, totalsX + totalsWidth - 5, totalsStartY + 8, { fontSize: 10, align: 'right' });
-            
-            // Total line
-            doc.setDrawColor(26, 58, 95);
-            doc.setLineWidth(1);
-            doc.line(totalsX, totalsStartY + 16, totalsX + totalsWidth, totalsStartY + 16);
-            
-            addText('TOTAL:', totalsX, totalsStartY + 20, { fontSize: 12, font: 'helvetica', style: 'bold', color: [26, 58, 95], align: 'right' });
-            addText(`$${data.total.toFixed(2)}`, totalsX + totalsWidth - 5, totalsStartY + 20, { fontSize: 12, font: 'helvetica', style: 'bold', color: [26, 58, 95], align: 'right' });
-
-            y += 50;
-
-            // Footer
-            if (y < pageHeight - 30) {
-                doc.setDrawColor(226, 232, 240);
-                doc.setLineWidth(0.5);
-                doc.line(margin, y, pageWidth - margin, y);
-                
-                addText(appearanceSettings.pdfFooter || 'Thank you for your business! Payment terms: 14 days from invoice date.', pageWidth / 2, y + 10, { 
-                    fontSize: 9, 
-                    font: 'helvetica', 
-                    style: 'italic',
-                    color: [148, 163, 184],
-                    align: 'center'
-                });
-                
-                if (appearanceSettings.pdfTerms) {
-                    addText(appearanceSettings.pdfTerms, pageWidth / 2, y + 15, { 
-                        fontSize: 9, 
-                        font: 'helvetica', 
-                        style: 'italic',
-                        color: [148, 163, 184],
-                        align: 'center'
-                    });
-                }
-            }
-
-            // Save the PDF
-            doc.save(`${data.type}-${data.number}.pdf`);
-            showNotification('PDF generated successfully', 'success');
         }
 
         // Get document data from form
@@ -5451,6 +5495,7 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
+                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </td>
@@ -5467,6 +5512,14 @@
 
             calculateTotals();
             updatePaymentDetailsDisplay();
+            
+            // After populating the form, reinitialize autocomplete
+            setTimeout(() => {
+                initializeAllAutocompletes();
+            }, 100);
+            
+            // Store the populated form as the new original
+            storeOriginalFormValues();
         }
 
         // Show document details
@@ -5595,70 +5648,109 @@
 
         // Enhanced Autocomplete setup function with mobile improvements
         function enableAutocomplete(inputElement, listElement) {
-            let selectedIndex = -1; // Track selected item for keyboard navigation
-            let isMobile = isMobileDevice();
+            if (!inputElement || !listElement) {
+                console.error("Autocomplete elements not found");
+                return;
+            }
             
-            inputElement.addEventListener('input', () => {
-                const value = inputElement.value.toLowerCase();
+            let selectedIndex = -1;
+            let isMobile = isMobileDevice();
+            let triggerTimeout = null;
+            let lastTriggerTime = 0;
+            let isCtrlSpacePressed = false;
+            
+            // Clear any existing event listeners
+            inputElement.removeEventListener('input', handleInput);
+            inputElement.removeEventListener('keydown', handleKeydown);
+            inputElement.removeEventListener('keyup', handleKeyup);
+            
+            function handleInput(e) {
+                const value = inputElement.value.toLowerCase().trim();
                 listElement.innerHTML = '';
                 listElement.style.display = 'none';
-                selectedIndex = -1; // Reset selection when input changes
+                selectedIndex = -1;
+
+                // Don't trigger on single character unless it's Ctrl+Space
+                if (value.length < 2 && !isCtrlSpacePressed) {
+                    return;
+                }
 
                 if (value.length > 0) {
-                    const matches = autocompleteData.filter(item => 
-                        item.toLowerCase().includes(value)
-                    );
+                    // Get matches with intelligent ranking
+                    const matches = getRankedMatches(value);
 
                     if (matches.length > 0) {
-                        matches.forEach((item, index) => {
+                        // Limit to 10 results for better performance
+                        const limitedMatches = matches.slice(0, 10);
+                        
+                        limitedMatches.forEach((item, index) => {
                             const div = document.createElement('div');
                             div.className = 'autocomplete-item';
-                            div.textContent = item;
-                            div.tabIndex = 0; // Make it focusable by keyboard
+                            
+                            // Create highlighted text
+                            const highlightedText = highlightMatch(item.text, value);
+                            div.innerHTML = `
+                                <span>${highlightedText}</span>
+                                <span class="type-badge">${item.category}</span>
+                            `;
+                            
+                            div.tabIndex = 0;
                             
                             // Mouse event
                             div.addEventListener('mousedown', (e) => {
-                                inputElement.value = item;
-                                listElement.style.display = 'none';
                                 e.preventDefault();
+                                selectSuggestion(item.text);
                             });
                             
                             // Touch event for mobile
                             div.addEventListener('touchstart', (e) => {
                                 e.preventDefault();
-                                inputElement.value = item;
-                                listElement.style.display = 'none';
-                                // Blur input to close keyboard on mobile
+                                selectSuggestion(item.text);
                                 inputElement.blur();
                             });
                             
                             // Keyboard accessibility
                             div.addEventListener('keydown', (e) => {
                                 if (e.key === 'Enter') {
-                                    inputElement.value = item;
-                                    listElement.style.display = 'none';
                                     e.preventDefault();
+                                    selectSuggestion(item.text);
                                 }
                             });
                             
                             listElement.appendChild(div);
                         });
+                        
                         listElement.style.display = 'block';
-                    } else {
-                        // No matches, but keep the list visible to show "No results" for feedback
-                        const div = document.createElement('div');
-                        div.className = 'autocomplete-item';
-                        div.textContent = 'No results';
-                        div.style.color = '#aaa';
-                        listElement.appendChild(div);
-                        listElement.style.display = 'block';
+                        
+                        // Auto-select first suggestion
+                        if (limitedMatches.length > 0) {
+                            selectedIndex = 0;
+                            updateSelection(listElement.querySelectorAll('.autocomplete-item'), selectedIndex);
+                        }
                     }
                 }
-            });
-
-            // Keyboard navigation for the input field
-            inputElement.addEventListener('keydown', (e) => {
+            }
+            
+            function handleKeydown(e) {
                 const items = listElement.querySelectorAll('.autocomplete-item');
+                
+                // Check for Ctrl+Space to force suggestions
+                if (e.ctrlKey && e.code === 'Space') {
+                    e.preventDefault();
+                    isCtrlSpacePressed = true;
+                    handleInput(e);
+                    return;
+                }
+                
+                // Check for space or comma to trigger suggestions
+                if ((e.code === 'Space' || e.code === 'Comma') && inputElement.value.trim().length >= 2) {
+                    const now = Date.now();
+                    if (now - lastTriggerTime > 500) { // Debounce to avoid multiple triggers
+                        lastTriggerTime = now;
+                        handleInput(e);
+                    }
+                    return;
+                }
                 
                 if (listElement.style.display === 'block') {
                     if (e.key === 'ArrowDown') {
@@ -5672,28 +5764,138 @@
                     } else if (e.key === 'Enter' && selectedIndex >= 0) {
                         e.preventDefault();
                         const selectedItem = items[selectedIndex];
-                        if (selectedItem && !selectedItem.textContent.includes('No results')) {
-                            inputElement.value = selectedItem.textContent;
-                            listElement.style.display = 'none';
+                        if (selectedItem) {
+                            const text = selectedItem.querySelector('span').textContent;
+                            selectSuggestion(text);
+                        }
+                    } else if (e.key === 'Tab' && selectedIndex >= 0) {
+                        e.preventDefault();
+                        const selectedItem = items[selectedIndex];
+                        if (selectedItem) {
+                            const text = selectedItem.querySelector('span').textContent;
+                            selectSuggestion(text);
                         }
                     } else if (e.key === 'Escape') {
                         listElement.style.display = 'none';
+                        selectedIndex = -1;
                     }
                 }
-            });
-
-            // Hide autocomplete when clicking outside (with touch support)
-            document.addEventListener('mousedown', (e) => {
+            }
+            
+            function handleKeyup(e) {
+                // Reset Ctrl+Space flag when keys are released
+                if (e.key === 'Control') {
+                    isCtrlSpacePressed = false;
+                }
+            }
+            
+            function selectSuggestion(text) {
+                // Get current cursor position
+                const cursorPos = inputElement.selectionStart;
+                const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+                const textAfterCursor = inputElement.value.substring(cursorPos);
+                
+                // Find the last word boundary before cursor
+                const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+                const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+                const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+                
+                // Replace the last word with the suggestion
+                const newValue = textBeforeCursor.substring(0, lastBoundaryIndex + 1) + text + textAfterCursor;
+                
+                // Set the new value and position cursor after the suggestion
+                inputElement.value = newValue;
+                const newCursorPos = lastBoundaryIndex + 1 + text.length;
+                inputElement.setSelectionRange(newCursorPos, newCursorPos);
+                
+                listElement.style.display = 'none';
+                selectedIndex = -1;
+                inputElement.focus();
+                
+                // Trigger input event to update any listeners
+                inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            
+            // Add event listeners
+            inputElement.addEventListener('input', handleInput);
+            inputElement.addEventListener('keydown', handleKeydown);
+            inputElement.addEventListener('keyup', handleKeyup);
+            
+            // Hide autocomplete when clicking outside
+            document.addEventListener('click', function hideAutocomplete(e) {
                 if (!e.target.closest('.autocomplete-container')) {
                     listElement.style.display = 'none';
+                    selectedIndex = -1;
                 }
             });
-
-            document.addEventListener('touchstart', (e) => {
+            
+            document.addEventListener('touchstart', function hideAutocompleteTouch(e) {
                 if (!e.target.closest('.autocomplete-container')) {
                     listElement.style.display = 'none';
+                    selectedIndex = -1;
                 }
             });
+        }
+
+        // Get ranked matches for autocomplete
+        function getRankedMatches(query) {
+            const matches = [];
+            const queryLower = query.toLowerCase();
+            
+            // Search through all categories
+            Object.entries(autocompleteData).forEach(([category, items]) => {
+                items.forEach(item => {
+                    const itemLower = item.toLowerCase();
+                    
+                    // Exact match gets highest priority
+                    if (itemLower === queryLower) {
+                        matches.push({ text: item, category, score: 100 });
+                    }
+                    // Starts with query gets high priority
+                    else if (itemLower.startsWith(queryLower)) {
+                        matches.push({ text: item, category, score: 80 });
+                    }
+                    // Contains query gets medium priority
+                    else if (itemLower.includes(queryLower)) {
+                        matches.push({ text: item, category, score: 60 });
+                    }
+                    // Partial word match gets lower priority
+                    else if (queryLower.length >= 2) {
+                        const words = itemLower.split(' ');
+                        for (const word of words) {
+                            if (word.startsWith(queryLower)) {
+                                matches.push({ text: item, category, score: 40 });
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Sort by score (descending) and then by text (ascending)
+            return matches.sort((a, b) => {
+                if (a.score !== b.score) {
+                    return b.score - a.score;
+                }
+                return a.text.localeCompare(b.text);
+            });
+        }
+
+        // Highlight matching parts of the text
+        function highlightMatch(text, query) {
+            const textLower = text.toLowerCase();
+            const queryLower = query.toLowerCase();
+            const index = textLower.indexOf(queryLower);
+            
+            if (index === -1) {
+                return text;
+            }
+            
+            const before = text.substring(0, index);
+            const match = text.substring(index, index + query.length);
+            const after = text.substring(index + query.length);
+            
+            return `${before}<span class="highlight">${match}</span>${after}`;
         }
 
         // Helper function to update selection styling
@@ -5768,7 +5970,7 @@
             if (!currentDocumentForShare) return;
             
             const { data } = currentDocumentForShare;
-            generateEnhancedPDF(data);
+            printDocument(data);
         }
 
         // Initialize the application
@@ -5891,15 +6093,6 @@
         document.getElementById('bsb')?.addEventListener('input', updatePaymentDetailsDisplay);
         document.getElementById('account')?.addEventListener('input', updatePaymentDetailsDisplay);
 
-        // Load PDF.js for PDF preview
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js';
-        script.onload = function() {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-        };
-        document.head.appendChild(script);
-
     </script>
 </body>
-</html>
 </html>
