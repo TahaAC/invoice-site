@@ -113,7 +113,7 @@
         }
 
         .app-logo img {
-            height: 60px;
+            height: 80px; /* Increased from 60px */
             width: auto;
             object-fit: contain;
             border-radius: var(--border-radius-md);
@@ -371,9 +371,11 @@
         .small { width: 100px; }
         .xsmall { width: 80px; }
 
+        /* Enhanced Autocomplete Styles - Fixed positioning */
         .autocomplete-container {
             position: relative;
             width: 100%;
+            z-index: 100; /* Added z-index to ensure it stays above other elements */
         }
 
         .autocomplete-list {
@@ -381,15 +383,28 @@
             top: 100%;
             left: 0;
             right: 0;
-            max-height: 200px;
+            max-height: 240px;
             overflow-y: auto;
             background: white;
-            border: 2px solid var(--border-color);
+            border: 2px solid var(--primary-color);
             border-radius: var(--border-radius-md);
             z-index: 1000;
             display: none;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transform: translateY(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 5px;
+            backdrop-filter: blur(10px);
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Mobile-specific autocomplete styling */
@@ -398,25 +413,45 @@
             bottom: 100%;
             transform: translateY(-5px);
             max-height: 180px;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
         }
 
         .autocomplete-item {
-            padding: 12px 16px;
+            padding: 14px 18px;
             cursor: pointer;
             border-bottom: 1px solid var(--border-color);
             transition: all var(--transition-fast);
             font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
         }
 
         .autocomplete-item:hover {
-            background: var(--bg-light);
+            background: linear-gradient(90deg, rgba(30, 64, 175, 0.05), rgba(30, 58, 138, 0.05));
+            padding-left: 22px;
         }
 
         .autocomplete-item.selected {
-            background: rgba(30, 64, 175, 0.1);
-            color: var(--primary-color);
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            font-weight: 600;
         }
 
+        .autocomplete-item i {
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        .autocomplete-item.selected i {
+            color: white;
+        }
+
+        /* Items Section - Desktop Version */
         .items-table {
             width: 100%;
             border-collapse: collapse;
@@ -465,6 +500,89 @@
         .remove-item-btn:hover {
             background: #dc2626;
             transform: scale(1.05);
+        }
+
+        /* Mobile Items Section - Card View */
+        .mobile-items-container {
+            display: none;
+            margin-top: var(--spacing-lg);
+        }
+
+        .mobile-item-card {
+            background: white;
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-md);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+
+        .mobile-item-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-item-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: var(--spacing-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .mobile-item-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mobile-item-expand {
+            transition: transform var(--transition-normal);
+        }
+
+        .mobile-item-card.expanded .mobile-item-expand {
+            transform: rotate(180deg);
+        }
+
+        .mobile-item-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-normal);
+        }
+
+        .mobile-item-card.expanded .mobile-item-content {
+            max-height: 500px;
+            padding: var(--spacing-md);
+        }
+
+        .mobile-item-row {
+            display: flex;
+            margin-bottom: var(--spacing-md);
+            align-items: center;
+        }
+
+        .mobile-item-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .mobile-item-label {
+            flex: 0 0 100px;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .mobile-item-value {
+            flex: 1;
+        }
+
+        .mobile-item-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: var(--spacing-md);
         }
 
         .totals-section {
@@ -674,6 +792,205 @@
             font-weight: 700;
             color: var(--primary-color);
             font-size: 1.1rem;
+        }
+
+        /* Enhanced Search Bar with Modern CSS5 Features */
+        .search-container {
+            display: flex;
+            margin-bottom: 24px;
+            position: relative;
+            gap: 12px;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all var(--transition-normal);
+        }
+
+        .search-container:focus-within {
+            box-shadow: 0 8px 30px rgba(30, 64, 175, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: none;
+            border-radius: var(--border-radius-md);
+            background: transparent;
+            color: var(--text-dark);
+            font-size: 16px;
+            font-family: inherit;
+            transition: all var(--transition-fast);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-lighter);
+            transition: all var(--transition-fast);
+        }
+
+        .search-input:focus::placeholder {
+            opacity: 0.7;
+            transform: translateX(5px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 18px;
+            transition: all var(--transition-normal);
+            pointer-events: none;
+        }
+
+        .search-container:focus-within .search-icon {
+            color: var(--primary-color);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .search-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 14px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left var(--transition-slow);
+        }
+
+        .search-button:hover::before {
+            left: 100%;
+        }
+
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
+        }
+
+        .search-button:active {
+            transform: translateY(0);
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 4px;
+            right: 4px;
+            background: white;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-suggestions.active {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+
+        .search-suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-suggestion-item:hover {
+            background: linear-gradient(90deg, rgba(30, 64, 175, 0.05), rgba(30, 58, 138, 0.05));
+            padding-left: 24px;
+        }
+
+        .search-suggestion-item.active {
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .search-suggestion-icon {
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        .search-suggestion-item.active .search-suggestion-icon {
+            color: white;
+        }
+
+        .search-highlight {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .search-suggestion-item.active .search-highlight {
+            color: white;
+        }
+
+        .search-no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .search-loading {
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .notification-container {
@@ -1227,49 +1544,6 @@
             box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
         }
 
-        .search-button {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            border-radius: var(--border-radius-md);
-            padding: 14px 24px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-        }
-
-        .search-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.4);
-        }
-
-        .search-container {
-            display: flex;
-            margin-bottom: 24px;
-            position: relative;
-            gap: 12px;
-        }
-
-        .search-container .glass-input {
-            flex: 1;
-            padding-right: 50px;
-            font-size: 16px;
-        }
-
-        .search-container .search-icon {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            pointer-events: none;
-        }
-
         .table-container {
             overflow-x: auto;
         }
@@ -1609,6 +1883,7 @@
             margin-top: 24px;
         }
 
+        /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             .app-header {
                 flex-direction: column;
@@ -1638,10 +1913,6 @@
                 align-items: stretch;
             }
             
-            .search-container {
-                flex-direction: column;
-            }
-            
             .table-container {
                 overflow-x: scroll;
             }
@@ -1658,36 +1929,75 @@
                 width: 95vw;
             }
             
-            /* Enhanced mobile autocomplete styles */
+            /* Enhanced mobile autocomplete */
             .autocomplete-list {
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                max-height: 50vh !important;
-                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
-                box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15) !important;
-                z-index: 9999 !important;
-                transform: none !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                max-height: 50vh;
+                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+                box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15);
+                z-index: 1001;
             }
             
             .autocomplete-item {
-                padding: 16px !important;
-                font-size: 16px !important;
-                min-height: 52px !important;
-                display: flex !important;
-                align-items: center !important;
+                padding: 16px;
+                font-size: 16px;
+                border-bottom: 1px solid var(--border-color);
             }
             
-            /* Ensure autocomplete container is properly positioned */
-            .autocomplete-container {
-                position: relative !important;
-                z-index: 9998 !important;
+            /* Mobile items section - card view */
+            .items-table {
+                display: none;
             }
             
-            /* Ensure input field stays visible when autocomplete is open */
-            .autocomplete-container input:focus ~ .autocomplete-list {
-                margin-bottom: env(safe-area-inset-bottom) !important;
+            .mobile-items-container {
+                display: block;
+            }
+            
+            .totals-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .totals-container, .payment-details-container {
+                width: 100%;
+            }
+            
+            .totals-container {
+                text-align: left;
+            }
+            
+            .totals-row {
+                justify-content: space-between;
+            }
+
+            /* Mobile search enhancements */
+            .search-container {
+                flex-direction: column;
+                padding: 8px;
+            }
+
+            .search-input {
+                padding: 12px 16px 12px 45px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .search-icon {
+                left: 15px;
+                font-size: 16px;
+            }
+
+            .search-button {
+                width: 100%;
+                justify-content: center;
+                padding: 12px 20px;
+            }
+
+            .search-suggestions {
+                left: 8px;
+                right: 8px;
             }
         }
 
@@ -2134,11 +2444,11 @@
                         </button>
                     </div>
                 </div>
+                <button class="mobile-logout-btn" id="mobileLogoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+                <!-- Removed print button from header -->
             </div>
-            <button class="mobile-logout-btn" id="mobileLogoutBtn" title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-            <!-- Removed print button from header -->
         </div>
 
         <!-- Create New Document Section -->
@@ -2206,7 +2516,9 @@
                 </div>
 
                 <h4 style="margin-top: var(--spacing-lg);">Items</h4>
-                <table class="items-table">
+                
+                <!-- Desktop Items Table -->
+                <table class="items-table" id="itemsTable">
                     <thead>
                         <tr>
                             <th>Description</th>
@@ -2233,6 +2545,12 @@
                         </tr>
                     </tbody>
                 </table>
+                
+                <!-- Mobile Items Container -->
+                <div class="mobile-items-container" id="mobileItemsContainer">
+                    <!-- Mobile item cards will be added here dynamically -->
+                </div>
+                
                 <button type="button" class="action-button glass-button" id="addItem" style="margin-top: var(--spacing-md);">
                     <i class="fas fa-plus"></i> Add Item
                 </button>
@@ -2321,9 +2639,15 @@
             </div>
 
             <div class="tab-content active" id="invoicesContent">
-                <div class="search-container">
-                    <input type="text" id="searchInvoices" class="glass-input" placeholder="Search Invoices...">
-                    <button class="search-button" id="searchInvoicesBtn"><i class="fas fa-search"></i></button>
+                <div class="search-container" id="invoiceSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInvoices" placeholder="Search invoices by number, client, date, or amount...">
+                    </div>
+                    <button class="search-button" id="searchInvoicesBtn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <div class="search-suggestions" id="invoiceSearchSuggestions"></div>
                 </div>
                 <div class="table-container">
                     <table class="document-table">
@@ -2345,9 +2669,15 @@
             </div>
 
             <div class="tab-content" id="quotationsContent">
-                <div class="search-container">
-                    <input type="text" id="searchQuotations" class="glass-input" placeholder="Search Quotations...">
-                    <button class="search-button" id="searchQuotationsBtn"><i class="fas fa-search"></i></button>
+                <div class="search-container" id="quotationSearchContainer">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchQuotations" placeholder="Search quotations by number, client, date, or amount...">
+                    </div>
+                    <button class="search-button" id="searchQuotationsBtn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <div class="search-suggestions" id="quotationSearchSuggestions"></div>
                 </div>
                 <div class="table-container">
                     <table class="document-table">
@@ -2828,9 +3158,150 @@
             updateDocumentNumberDisplay();
             setupDropdownMenu();
             setupTabs();
-            setupSearchFunctionality();
+            setupAdvancedSearch();
             setupSettingsModal();
             setupPdfPreview();
+            
+            // Initialize mobile items if on mobile
+            if (isMobileDevice()) {
+                initializeMobileItems();
+            }
+        }
+
+        // Initialize mobile items view
+        function initializeMobileItems() {
+            // Hide desktop table and show mobile container
+            document.getElementById('itemsTable').style.display = 'none';
+            document.getElementById('mobileItemsContainer').style.display = 'block';
+            
+            // Create initial mobile item card
+            addMobileItemCard();
+        }
+
+        // Add a new mobile item card
+        function addMobileItemCard(description = '', quantity = 1, hours = 0, rate = 0, amount = 0) {
+            const container = document.getElementById('mobileItemsContainer');
+            const itemId = 'mobile-item-' + Date.now();
+            
+            const card = document.createElement('div');
+            card.className = 'mobile-item-card';
+            card.id = itemId;
+            
+            card.innerHTML = `
+                <div class="mobile-item-header">
+                    <div class="mobile-item-title">
+                        <i class="fas fa-box"></i>
+                        <span>Item ${container.children.length + 1}</span>
+                    </div>
+                    <i class="fas fa-chevron-down mobile-item-expand"></i>
+                </div>
+                <div class="mobile-item-content">
+                    <div class="mobile-item-row">
+                        <div class="mobile-item-label">Description:</div>
+                        <div class="mobile-item-value">
+                            <div class="autocomplete-container">
+                                <input type="text" class="glass-input large item-description" value="${description}" required autocomplete="off">
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mobile-item-row">
+                        <div class="mobile-item-label">Quantity:</div>
+                        <div class="mobile-item-value">
+                            <input type="number" class="glass-input xsmall item-quantity" value="${quantity}" min="0" step="1">
+                        </div>
+                    </div>
+                    <div class="mobile-item-row">
+                        <div class="mobile-item-label">Hours:</div>
+                        <div class="mobile-item-value">
+                            <input type="number" class="glass-input xsmall item-hours" value="${hours}" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="mobile-item-row">
+                        <div class="mobile-item-label">Rate ($):</div>
+                        <div class="mobile-item-value">
+                            <input type="number" class="glass-input small item-rate" value="${rate}" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="mobile-item-row">
+                        <div class="mobile-item-label">Amount ($):</div>
+                        <div class="mobile-item-value">
+                            <input type="text" class="glass-input small item-amount" value="${amount.toFixed(2)}" readonly>
+                        </div>
+                    </div>
+                    <div class="mobile-item-actions">
+                        <button type="button" class="glass-button remove-item">
+                            <i class="fas fa-trash"></i> Remove Item
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+            
+            // Setup event listeners for this card
+            const header = card.querySelector('.mobile-item-header');
+            const expandIcon = card.querySelector('.mobile-item-expand');
+            const content = card.querySelector('.mobile-item-content');
+            const removeBtn = card.querySelector('.remove-item');
+            const descriptionInput = card.querySelector('.item-description');
+            const quantityInput = card.querySelector('.item-quantity');
+            const hoursInput = card.querySelector('.item-hours');
+            const rateInput = card.querySelector('.item-rate');
+            const amountInput = card.querySelector('.item-amount');
+            const autocompleteList = card.querySelector('.autocomplete-list');
+            
+            // Toggle expand/collapse
+            header.addEventListener('click', () => {
+                card.classList.toggle('expanded');
+            });
+            
+            // Remove item
+            removeBtn.addEventListener('click', () => {
+                if (container.children.length > 1) {
+                    card.remove();
+                    updateMobileItemTitles();
+                    calculateTotals();
+                } else {
+                    showNotification('Cannot remove the last item row.', 'warning');
+                }
+            });
+            
+            // Calculate amount when quantity, hours, or rate changes
+            const calculateAmount = () => {
+                const qty = parseFloat(quantityInput.value) || 0;
+                const hrs = parseFloat(hoursInput.value) || 0;
+                const rt = parseFloat(rateInput.value) || 0;
+                const baseUnit = qty > 0 ? qty : hrs;
+                const amt = baseUnit * rt;
+                amountInput.value = amt.toFixed(2);
+                calculateTotals();
+            };
+            
+            quantityInput.addEventListener('input', calculateAmount);
+            hoursInput.addEventListener('input', calculateAmount);
+            rateInput.addEventListener('input', calculateAmount);
+            
+            // Setup autocomplete for description
+            setupAutocomplete(descriptionInput, autocompleteList);
+            
+            // Expand the first item by default
+            if (container.children.length === 1) {
+                card.classList.add('expanded');
+            }
+            
+            return card;
+        }
+
+        // Update mobile item titles
+        function updateMobileItemTitles() {
+            const container = document.getElementById('mobileItemsContainer');
+            const cards = container.querySelectorAll('.mobile-item-card');
+            
+            cards.forEach((card, index) => {
+                const titleSpan = card.querySelector('.mobile-item-title span');
+                titleSpan.textContent = `Item ${index + 1}`;
+            });
         }
 
         // Load user settings
@@ -3088,181 +3559,278 @@
             });
         }
 
-        // Setup search functionality
-        function setupSearchFunctionality() {
-            const searchInvoicesInput = document.getElementById('searchInvoices');
-            const searchInvoicesBtn = document.getElementById('searchInvoicesBtn');
-            const searchQuotationsInput = document.getElementById('searchQuotations');
-            const searchQuotationsBtn = document.getElementById('searchQuotationsBtn');
-            
+        // Setup Advanced Search Functionality
+        function setupAdvancedSearch() {
             // Invoice search
-            if (searchInvoicesInput && searchInvoicesBtn) {
-                searchInvoicesBtn.addEventListener('click', () => {
-                    filterDocuments('Invoice', searchInvoicesInput.value);
-                });
-                
-                searchInvoicesInput.addEventListener('keyup', (e) => {
-                    if (e.key === 'Enter') {
-                        filterDocuments('Invoice', searchInvoicesInput.value);
-                    }
-                });
-            }
+            const invoiceSearchInput = document.getElementById('searchInvoices');
+            const invoiceSearchBtn = document.getElementById('searchInvoicesBtn');
+            const invoiceSuggestions = document.getElementById('invoiceSearchSuggestions');
             
             // Quotation search
-            if (searchQuotationsInput && searchQuotationsBtn) {
-                searchQuotationsBtn.addEventListener('click', () => {
-                    filterDocuments('Quote', searchQuotationsInput.value);
-                });
-                
-                searchQuotationsInput.addEventListener('keyup', (e) => {
-                    if (e.key === 'Enter') {
-                        filterDocuments('Quote', searchQuotationsInput.value);
-                    }
-                });
-            }
+            const quotationSearchInput = document.getElementById('searchQuotations');
+            const quotationSearchBtn = document.getElementById('searchQuotationsBtn');
+            const quotationSuggestions = document.getElementById('quotationSearchSuggestions');
+            
+            // Setup search functionality for both tabs
+            setupSearchFunctionality('Invoice', invoiceSearchInput, invoiceSearchBtn, invoiceSuggestions);
+            setupSearchFunctionality('Quote', quotationSearchInput, quotationSearchBtn, quotationSuggestions);
         }
 
-        // Filter documents based on search query
-        function filterDocuments(type, query) {
-            if (!query || query.trim() === '') {
-                renderDocuments(allDocuments.filter(doc => doc.data.type === type));
-                return;
-            }
+        function setupSearchFunctionality(docType, searchInput, searchBtn, suggestionsContainer) {
+            let searchTimeout;
+            let currentSearchTerm = '';
+            let selectedIndex = -1;
             
-            const lowerQuery = query.toLowerCase();
-            const filtered = allDocuments.filter(doc => {
-                if (doc.data.type !== type) return false;
-                
-                return (
-                    doc.data.number.toLowerCase().includes(lowerQuery) ||
-                    doc.data.date.toLowerCase().includes(lowerQuery) ||
-                    doc.data.billTo.name.toLowerCase().includes(lowerQuery) ||
-                    (doc.data.billTo.company && doc.data.billTo.company.toLowerCase().includes(lowerQuery)) ||
-                    (doc.data.jobDetails.address && doc.data.jobDetails.address.toLowerCase().includes(lowerQuery)) ||
-                    (doc.data.jobDetails.number && doc.data.jobDetails.number.toLowerCase().includes(lowerQuery)) ||
-                    (doc.data.jobDetails.workOrder && doc.data.jobDetails.workOrder.toLowerCase().includes(lowerQuery)) ||
-                    doc.data.total.toString().includes(lowerQuery)
-                );
-            });
-            
-            renderDocuments(filtered);
-        }
-
-        // Render documents in the appropriate table
-        function renderDocuments(documents) {
-            const invoicesTableBody = document.getElementById('invoicesTableBody');
-            const quotationsTableBody = document.getElementById('quotationsTableBody');
-            
-            invoicesTableBody.innerHTML = '';
-            quotationsTableBody.innerHTML = '';
-            
-            if (documents.length === 0) {
-                invoicesTableBody.innerHTML = '<tr><td colspan="6">No invoices found</td></tr>';
-                quotationsTableBody.innerHTML = '<tr><td colspan="6">No quotations found</td></tr>';
-                return;
-            }
-            
-            documents.forEach((doc) => {
-                const data = doc.data;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.type}</td>
-                    <td>${data.number}</td>
-                    <td>${data.date}</td>
-                    <td>${data.billTo.name}</td>
-                    <td>$${data.total.toFixed(2)}</td>
-                    <td class="actions">
-                        <button class="table-action-btn view" data-id="${doc.id}"><i class="fas fa-eye"></i> View</button>
-                        <button class="table-action-btn edit" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
-                        <button class="table-action-btn share" data-id="${doc.id}"><i class="fas fa-share-alt"></i></button>
-                        <button class="table-action-btn print" data-id="${doc.id}"><i class="fas fa-print"></i></button>
-                        <button class="table-action-btn delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-
-                if (data.type === 'Invoice') {
-                    invoicesTableBody.appendChild(row);
-                } else if (data.type === 'Quote') {
-                    quotationsTableBody.appendChild(row);
+            // Search function
+            const performSearch = (searchTerm) => {
+                if (!searchTerm || searchTerm.trim() === '') {
+                    renderDocuments(allDocuments.filter(doc => doc.data.type === docType));
+                    hideSuggestions();
+                    return;
                 }
-
-                // Add event listeners
-                row.querySelector('.view').addEventListener('click', () => {
-                    showDocumentDetails(data, doc.id);
-                });
-
-                row.querySelector('.edit').addEventListener('click', () => {
-                    editingDocId = doc.id;
-                    populateFormWithDocument(data);
-                });
-
-                row.querySelector('.share').addEventListener('click', () => {
-                    currentDocumentForShare = { data, docId: doc.id };
-                    document.getElementById('shareModal').style.display = 'flex';
-                });
                 
-                // Add print button event listener
-                row.querySelector('.print').addEventListener('click', () => {
-                    printDocument(data);
-                });
-
-                row.querySelector('.delete').addEventListener('click', async () => {
-                    if (confirm(`Are you sure you want to delete ${data.type} ${data.number}?`)) {
-                        try {
-                            await db.collection('quotes').doc(doc.id).delete();
-                            showNotification(`${data.type} ${data.number} deleted successfully!`, "success");
-                            await loadUserSequences();
-                            loadDocuments();
-                        } catch (error) {
-                            console.error("Error deleting document: ", error);
-                            showNotification("Error deleting document. Please try again.", "error");
+                const lowerQuery = searchTerm.toLowerCase();
+                const results = [];
+                
+                // Advanced search algorithm
+                allDocuments.forEach(doc => {
+                    if (doc.data.type !== docType) return;
+                    
+                    const data = doc.data;
+                    let score = 0;
+                    let matchedFields = [];
+                    
+                    // Search in document number (highest priority)
+                    if (data.number.toLowerCase().includes(lowerQuery)) {
+                        score += 100;
+                        matchedFields.push('Number');
+                    }
+                    
+                    // Search in client name (high priority)
+                    if (data.billTo.name.toLowerCase().includes(lowerQuery)) {
+                        score += 80;
+                        matchedFields.push('Client');
+                    }
+                    
+                    // Search in company name
+                    if (data.billTo.company && data.billTo.company.toLowerCase().includes(lowerQuery)) {
+                        score += 60;
+                        matchedFields.push('Company');
+                    }
+                    
+                    // Search in date
+                    if (data.date.toLowerCase().includes(lowerQuery)) {
+                        score += 40;
+                        matchedFields.push('Date');
+                    }
+                    
+                    // Search in job address
+                    if (data.jobDetails.address && data.jobDetails.address.toLowerCase().includes(lowerQuery)) {
+                        score += 30;
+                        matchedFields.push('Address');
+                    }
+                    
+                    // Search in job number
+                    if (data.jobDetails.number && data.jobDetails.number.toLowerCase().includes(lowerQuery)) {
+                        score += 30;
+                        matchedFields.push('Job #');
+                    }
+                    
+                    // Search in work order
+                    if (data.jobDetails.workOrder && data.jobDetails.workOrder.toLowerCase().includes(lowerQuery)) {
+                        score += 30;
+                        matchedFields.push('Work Order');
+                    }
+                    
+                    // Search in total amount
+                    if (data.total.toString().includes(lowerQuery)) {
+                        score += 50;
+                        matchedFields.push('Amount');
+                    }
+                    
+                    // Search in items descriptions
+                    data.items.forEach(item => {
+                        if (item.description.toLowerCase().includes(lowerQuery)) {
+                            score += 20;
+                            if (!matchedFields.includes('Items')) {
+                                matchedFields.push('Items');
+                            }
                         }
+                    });
+                    
+                    // Fuzzy matching for partial matches
+                    if (score === 0) {
+                        // Check for partial matches in important fields
+                        const fields = [
+                            data.number,
+                            data.billTo.name,
+                            data.billTo.company || '',
+                            data.date,
+                            data.jobDetails.address || '',
+                            data.jobDetails.number || '',
+                            data.jobDetails.workOrder || ''
+                        ];
+                        
+                        fields.forEach(field => {
+                            if (field && field.toLowerCase().indexOf(lowerQuery) !== -1) {
+                                score += 10;
+                                if (!matchedFields.includes('Partial')) {
+                                    matchedFields.push('Partial');
+                                }
+                            }
+                        });
+                    }
+                    
+                    if (score > 0) {
+                        results.push({
+                            doc: doc,
+                            score: score,
+                            matchedFields: matchedFields
+                        });
                     }
                 });
-            });
-        }
-
-        // Populate form with document data
-        function populateFormWithDocument(data) {
-            document.getElementById('documentType').value = data.type;
-            document.getElementById('documentNumber').textContent = data.number;
-            document.getElementById('documentDate').value = data.date;
-            document.getElementById('clientName').value = data.billTo.name;
-            document.getElementById('companyName').value = data.billTo.company || '';
-            document.getElementById('clientEmail').value = data.billTo.email || '';
-            document.getElementById('clientMobile').value = data.billTo.mobile || '';
-            document.getElementById('jobAddress').value = data.jobDetails.address || '';
-            document.getElementById('jobNumber').value = data.jobDetails.number || '';
-            document.getElementById('workOrder').value = data.jobDetails.workOrder || '';
-            document.getElementById('bsb').value = data.bankDetails.bsb || '';
-            document.getElementById('account').value = data.bankDetails.account || '';
-
-            // Clear and repopulate items
-            const itemsTableBody = document.getElementById('itemsTableBody');
-            itemsTableBody.innerHTML = '';
-
-            data.items.forEach(item => {
-                const newRow = document.createElement('tr');
-                newRow.className = 'item-row';
-                newRow.innerHTML = `
-                    <td>
-                        <div class="autocomplete-container">
-                            <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
-                            <div class="autocomplete-list"></div>
+                
+                // Sort by score (highest first)
+                results.sort((a, b) => b.score - a.score);
+                
+                // Render results
+                renderDocuments(results.map(r => r.doc));
+                
+                // Show suggestions
+                if (results.length > 0) {
+                    showSuggestions(results.slice(0, 5), searchTerm);
+                } else {
+                    showNoResults();
+                }
+            };
+            
+            // Show suggestions
+            const showSuggestions = (results, searchTerm) => {
+                suggestionsContainer.innerHTML = '';
+                
+                results.forEach((result, index) => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'search-suggestion-item';
+                    if (index === 0) suggestionItem.classList.add('active');
+                    
+                    const data = result.doc.data;
+                    const highlightedText = highlightSearchTerm(
+                        `${data.number} - ${data.billTo.name}`,
+                        searchTerm
+                    );
+                    
+                    suggestionItem.innerHTML = `
+                        <i class="fas fa-file-invoice search-suggestion-icon"></i>
+                        <div>
+                            <div>${highlightedText}</div>
+                            <small style="color: var(--text-lighter);">
+                                Matched: ${result.matchedFields.join(', ')} | 
+                                Total: $${data.total.toFixed(2)} | 
+                                Date: ${data.date}
+                            </small>
                         </div>
-                    </td>
-                    <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
-                    <td><input type="number" class="glass-input xsmall item-hours" value="${item.hours}" min="0" step="0.5"></td>
-                    <td><input type="number" class="glass-input small item-rate" value="${item.rate}" min="0" step="0.01" required></td>
-                    <td><input type="text" class="glass-input small item-amount" value="${item.amount.toFixed(2)}" readonly></td>
-                    <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    
+                    suggestionItem.addEventListener('click', () => {
+                        searchInput.value = data.number;
+                        performSearch(data.number);
+                        hideSuggestions();
+                        searchInput.focus();
+                    });
+                    
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+                
+                suggestionsContainer.classList.add('active');
+            };
+            
+            // Show no results
+            const showNoResults = () => {
+                suggestionsContainer.innerHTML = `
+                    <div class="search-no-results">
+                        <i class="fas fa-search"></i>
+                        No documents found matching "${currentSearchTerm}"
+                    </div>
                 `;
-                itemsTableBody.appendChild(newRow);
-                setupAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
+                suggestionsContainer.classList.add('active');
+            };
+            
+            // Hide suggestions
+            const hideSuggestions = () => {
+                setTimeout(() => {
+                    suggestionsContainer.classList.remove('active');
+                }, 200);
+            };
+            
+            // Highlight search term in text
+            const highlightSearchTerm = (text, searchTerm) => {
+                if (!searchTerm) return text;
+                
+                const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                return text.replace(regex, '<span class="search-highlight">$1</span>');
+            };
+            
+            // Input event listener with debouncing
+            searchInput.addEventListener('input', (e) => {
+                currentSearchTerm = e.target.value;
+                selectedIndex = -1;
+                
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    performSearch(currentSearchTerm);
+                }, 300);
             });
-
-            calculateTotals();
-            updatePaymentDetailsDisplay();
+            
+            // Key navigation for suggestions
+            searchInput.addEventListener('keydown', (e) => {
+                const items = suggestionsContainer.querySelectorAll('.search-suggestion-item');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (selectedIndex < items.length - 1) {
+                        if (selectedIndex >= 0) items[selectedIndex].classList.remove('active');
+                        selectedIndex++;
+                        items[selectedIndex].classList.add('active');
+                        items[selectedIndex].scrollIntoView({ block: 'nearest' });
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (selectedIndex > 0) {
+                        items[selectedIndex].classList.remove('active');
+                        selectedIndex--;
+                        items[selectedIndex].classList.add('active');
+                        items[selectedIndex].scrollIntoView({ block: 'nearest' });
+                    }
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (selectedIndex >= 0 && items[selectedIndex]) {
+                        items[selectedIndex].click();
+                    } else {
+                        performSearch(currentSearchTerm);
+                        hideSuggestions();
+                    }
+                } else if (e.key === 'Escape') {
+                    hideSuggestions();
+                }
+            });
+            
+            // Search button click
+            searchBtn.addEventListener('click', () => {
+                performSearch(currentSearchTerm);
+                hideSuggestions();
+            });
+            
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    hideSuggestions();
+                }
+            });
+            
+            // Prevent suggestions from closing when clicking inside
+            suggestionsContainer.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
         }
 
         // Setup tabs functionality
@@ -3394,27 +3962,35 @@
                 }
             });
 
+            // Add item button - works for both desktop and mobile
             document.getElementById('addItem').addEventListener('click', () => {
-                const newRow = document.createElement('tr');
-                newRow.className = 'item-row';
-                newRow.innerHTML = `
-                    <td>
-                        <div class="autocomplete-container">
-                            <input type="text" class="glass-input large item-description" required autocomplete="off">
-                            <div class="autocomplete-list"></div>
-                        </div>
-                    </td>
-                    <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
-                    <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
-                    <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
-                    <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
-                    <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
-                `;
-                document.getElementById('itemsTableBody').appendChild(newRow);
-                setupAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
-                newRow.querySelector('.item-description').focus();
+                if (isMobileDevice()) {
+                    // Mobile version
+                    addMobileItemCard();
+                } else {
+                    // Desktop version
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'item-row';
+                    newRow.innerHTML = `
+                        <td>
+                            <div class="autocomplete-container">
+                                <input type="text" class="glass-input large item-description" required autocomplete="off">
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </td>
+                        <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
+                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
+                        <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    document.getElementById('itemsTableBody').appendChild(newRow);
+                    setupAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
+                    newRow.querySelector('.item-description').focus();
+                }
             });
 
+            // Desktop items table event listeners
             document.getElementById('itemsTableBody').addEventListener('click', function(e) {
                 if (e.target.classList.contains('remove-item') || e.target.closest('.remove-item')) {
                     const row = e.target.closest('.item-row');
@@ -3512,7 +4088,7 @@
             try {
                 const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
                 if (userDoc.exists) {
-                    const userData = userDoc.data;
+                    const userData = userDoc.data();
                     if (userData.bankDetails) {
                         const bsb = userData.bankDetails.bsb || '';
                         const account = userData.bankDetails.account || '';
@@ -3558,7 +4134,7 @@
                 const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
 
                 if (userDoc.exists) {
-                    const userData = userDoc.data;
+                    const userData = userDoc.data();
                     userSequences.nextInvNumber = userData.nextInvNumber || 1;
                     userSequences.nextQotNumber = userData.nextQotNumber || 1;
                     console.log("Loaded sequences:", userSequences);
@@ -3608,7 +4184,14 @@
             const documentType = document.getElementById('documentType');
             const documentDate = document.getElementById('documentDate');
             const clientName = document.getElementById('clientName');
-            const itemsTableBody = document.getElementById('itemsTableBody');
+            
+            // Get items based on device type
+            let items;
+            if (isMobileDevice()) {
+                items = document.querySelectorAll('.mobile-item-card');
+            } else {
+                items = document.querySelectorAll('.item-row');
+            }
 
             if (!documentType.value) {
                 showNotification('Document type is required', 'error');
@@ -3624,15 +4207,26 @@
             }
 
             let hasValidItem = false;
-            document.querySelectorAll('.item-row').forEach(row => {
-                const description = row.querySelector('.item-description').value.trim();
-                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
-                const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+            items.forEach(item => {
+                let description, quantity, hours, rate;
+                
+                if (isMobileDevice()) {
+                    description = item.querySelector('.item-description').value.trim();
+                    quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+                    hours = parseFloat(item.querySelector('.item-hours').value) || 0;
+                    rate = parseFloat(item.querySelector('.item-rate').value) || 0;
+                } else {
+                    description = item.querySelector('.item-description').value.trim();
+                    quantity = parseFloat(item.querySelector('.item-quantity').value) || 0;
+                    hours = parseFloat(item.querySelector('.item-hours').value) || 0;
+                    rate = parseFloat(item.querySelector('.item-rate').value) || 0;
+                }
+                
                 if (description && rate > 0 && (quantity > 0 || hours > 0)) {
                     hasValidItem = true;
                 }
             });
+            
             if (!hasValidItem) {
                 showNotification('At least one valid item is required (with description, rate, and either quantity or hours)', 'error');
                 return false;
@@ -3673,24 +4267,45 @@
 
                 await saveBankDetails();
 
-                const itemRows = document.querySelectorAll('.item-row');
-                const items = [];
-                itemRows.forEach(row => {
-                    const description = row.querySelector('.item-description').value.trim();
-                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                    const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
-                    const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                    const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
-                    if (description && rate > 0 && (quantity > 0 || hours > 0)) {
-                        items.push({
-                            description: description,
-                            quantity: quantity,
-                            hours: hours,
-                            rate: rate,
-                            amount: amount
-                        });
-                    }
-                });
+                // Get items based on device type
+                let itemsArray = [];
+                if (isMobileDevice()) {
+                    const itemCards = document.querySelectorAll('.mobile-item-card');
+                    itemCards.forEach(card => {
+                        const description = card.querySelector('.item-description').value.trim();
+                        const quantity = parseFloat(card.querySelector('.item-quantity').value) || 0;
+                        const hours = parseFloat(card.querySelector('.item-hours').value) || 0;
+                        const rate = parseFloat(card.querySelector('.item-rate').value) || 0;
+                        const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                        if (description && rate > 0 && (quantity > 0 || hours > 0)) {
+                            itemsArray.push({
+                                description: description,
+                                quantity: quantity,
+                                hours: hours,
+                                rate: rate,
+                                amount: amount
+                            });
+                        }
+                    });
+                } else {
+                    const itemRows = document.querySelectorAll('.item-row');
+                    itemRows.forEach(row => {
+                        const description = row.querySelector('.item-description').value.trim();
+                        const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                        const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
+                        const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+                        const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                        if (description && rate > 0 && (quantity > 0 || hours > 0)) {
+                            itemsArray.push({
+                                description: description,
+                                quantity: quantity,
+                                hours: hours,
+                                rate: rate,
+                                amount: amount
+                            });
+                        }
+                    });
+                }
 
                 const subtotalElement = document.getElementById('subtotal');
                 const gstElement = document.getElementById('gst');
@@ -3724,7 +4339,7 @@
                         number: jobNumber,
                         workOrder: workOrder
                     },
-                    items: items,
+                    items: itemsArray,
                     subtotal: parseFloat(subtotalElement.textContent.replace('$', '')),
                     gst: parseFloat(gstElement.textContent.replace('$', '')),
                     total: parseFloat(totalElement.textContent.replace('$', '')),
@@ -3790,16 +4405,24 @@
             document.getElementById('jobNumber').value = '';
             document.getElementById('workOrder').value = '';
 
-            const itemsTableBody = document.getElementById('itemsTableBody');
-            while (itemsTableBody.children.length > 1) {
-                itemsTableBody.removeChild(itemsTableBody.lastChild);
+            if (isMobileDevice()) {
+                // Mobile version - reset to one empty item
+                const container = document.getElementById('mobileItemsContainer');
+                container.innerHTML = '';
+                addMobileItemCard();
+            } else {
+                // Desktop version
+                const itemsTableBody = document.getElementById('itemsTableBody');
+                while (itemsTableBody.children.length > 1) {
+                    itemsTableBody.removeChild(itemsTableBody.lastChild);
+                }
+                const firstRow = itemsTableBody.firstElementChild;
+                firstRow.querySelector('.item-description').value = '';
+                firstRow.querySelector('.item-quantity').value = '1';
+                firstRow.querySelector('.item-hours').value = '0';
+                firstRow.querySelector('.item-rate').value = '0.00';
+                firstRow.querySelector('.item-amount').value = '0.00';
             }
-            const firstRow = itemsTableBody.firstElementChild;
-            firstRow.querySelector('.item-description').value = '';
-            firstRow.querySelector('.item-quantity').value = '1';
-            firstRow.querySelector('.item-hours').value = '0';
-            firstRow.querySelector('.item-rate').value = '0.00';
-            firstRow.querySelector('.item-amount').value = '0.00';
 
             document.getElementById('subtotal').textContent = '$0.00';
             document.getElementById('gst').textContent = '$0.00';
@@ -3812,10 +4435,22 @@
         // Calculate totals
         function calculateTotals() {
             let subtotal = 0;
-            document.querySelectorAll('.item-row').forEach(row => {
-                const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
-                subtotal += amount;
-            });
+            
+            if (isMobileDevice()) {
+                // Mobile version
+                const itemCards = document.querySelectorAll('.mobile-item-card');
+                itemCards.forEach(card => {
+                    const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                    subtotal += amount;
+                });
+            } else {
+                // Desktop version
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                    subtotal += amount;
+                });
+            }
+            
             const gst = subtotal * 0.1;
             const total = subtotal + gst;
 
@@ -4435,7 +5070,7 @@
                             pointer-events: none;
                             z-index: -1;
                         }
-                </style>
+                    </style>
                 </head>
                 <body>
                     <div class="print-document">
@@ -4496,24 +5131,24 @@
                             <div class="print-payment-block">
                                 <div class="print-payment-title">Payment Details</div>
                                 <div class="print-payment-row">
-                                    <span class="print-template-payment-label">Bank:</span>
-                                    <span class="print-template-payment-value">${data.bankDetails?.name || 'N/A'}</span>
+                                    <span class="print-payment-label">Bank:</span>
+                                    <span class="print-payment-value">${data.bankDetails?.name || 'N/A'}</span>
                                 </div>
                                 <div class="print-payment-row">
-                                    <span class="print-template-payment-label">BSB:</span>
-                                    <span class="print-template-payment-value">${data.bankDetails?.bsb || 'N/A'}</span>
+                                    <span class="print-payment-label">BSB:</span>
+                                    <span class="print-payment-value">${data.bankDetails?.bsb || 'N/A'}</span>
                                 </div>
                                 <div class="print-payment-row">
-                                    <span class="print-template-payment-label">Account:</span>
-                                    <span class="print-template-payment-value">${data.bankDetails?.account || 'N/A'}</span>
+                                    <span class="print-payment-label">Account:</span>
+                                    <span class="print-payment-value">${data.bankDetails?.account || 'N/A'}</span>
                                 </div>
                                 <div class="print-payment-row">
-                                    <span class="print-template-payment-label">Account Name:</span>
-                                    <span class="print-template-payment-value">${data.bankDetails?.accountName || 'N/A'}</span>
+                                    <span class="print-payment-label">Account Name:</span>
+                                    <span class="print-payment-value">${data.bankDetails?.accountName || 'N/A'}</span>
                                 </div>
                             </div>
                             <div class="print-totals-block">
-                                <table class="print-template-totals-table">
+                                <table class="print-totals-table">
                                     <tr>
                                         <td class="label">Subtotal</td>
                                         <td class="value">$${data.subtotal.toFixed(2)}</td>
@@ -4715,8 +5350,7 @@
                     addText('Rate', currentX + 10, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
                     currentX += colWidths.rate;
                     addText('Amount', currentX + 15, y, { fontSize: 9, font: 'helvetica', style: 'bold', color: [255, 255, 255] });
-                    
-                    y += 8;
+                    y += 12;
                 }
 
                 // Row background
@@ -4755,7 +5389,7 @@
             doc.setDrawColor(14, 165, 233);
             doc.rect(paymentX, y - 5, paymentWidth, 45);
             doc.setLineWidth(0.5);
-            doc.line(paymentX, y - 5, paymentX, y + 40);
+            doc.line(paymentX, y - 5, paymentX + 4, y - 5);
             doc.line(paymentX, y - 5, paymentX, y + 40);
 
             addText('Payment Details:', paymentX + 5, y + 2, { fontSize: 10, font: 'helvetica', style: 'bold', color: [3, 105, 161] });
@@ -4767,7 +5401,6 @@
             addText(`Account: ${data.bankDetails?.account || 'N/A'}`, paymentX + 5, y, { fontSize: 9 });
             y += 6;
             addText(`Account Name: ${data.bankDetails?.accountName || 'N/A'}`, paymentX + 5, y, { fontSize: 9 });
-            y += 6;
 
             // Totals
             const totalsStartY = y - 30;
@@ -4821,17 +5454,34 @@
         function getDocumentDataFromForm() {
             if (!validateDocument()) return null;
 
-            const items = [];
-            document.querySelectorAll('.item-row').forEach(row => {
-                const description = row.querySelector('.item-description').value.trim();
-                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
-                const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
-                if (description) {
-                    items.push({ description, quantity, hours, rate, amount });
-                }
-            });
+            let items = [];
+            
+            if (isMobileDevice()) {
+                // Mobile version
+                const itemCards = document.querySelectorAll('.mobile-item-card');
+                itemCards.forEach(card => {
+                    const description = card.querySelector('.item-description').value.trim();
+                    const quantity = parseFloat(card.querySelector('.item-quantity').value) || 0;
+                    const hours = parseFloat(card.querySelector('.item-hours').value) || 0;
+                    const rate = parseFloat(card.querySelector('.item-rate').value) || 0;
+                    const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                    if (description) {
+                        items.push({ description, quantity, hours, rate, amount });
+                    }
+                });
+            } else {
+                // Desktop version
+                document.querySelectorAll('.item-row').forEach(row => {
+                    const description = row.querySelector('.item-description').value.trim();
+                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                    const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
+                    const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+                    const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                    if (description) {
+                        items.push({ description, quantity, hours, rate, amount });
+                    }
+                });
+            }
 
             return {
                 type: document.getElementById('documentType').value,
@@ -4925,12 +5575,146 @@
             }
         }
 
+        // Render documents in the appropriate table
+        function renderDocuments(documents) {
+            const invoicesTableBody = document.getElementById('invoicesTableBody');
+            const quotationsTableBody = document.getElementById('quotationsTableBody');
+            
+            invoicesTableBody.innerHTML = '';
+            quotationsTableBody.innerHTML = '';
+            
+            if (documents.length === 0) {
+                invoicesTableBody.innerHTML = '<tr><td colspan="6">No invoices found</td></tr>';
+                quotationsTableBody.innerHTML = '<tr><td colspan="6">No quotations found</td></tr>';
+                return;
+            }
+            
+            documents.forEach((doc) => {
+                const data = doc.data;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.type}</td>
+                    <td>${data.number}</td>
+                    <td>${data.date}</td>
+                    <td>${data.billTo.name}</td>
+                    <td>$${data.total.toFixed(2)}</td>
+                    <td class="actions">
+                        <button class="table-action-btn view" data-id="${doc.id}"><i class="fas fa-eye"></i> View</button>
+                        <button class="table-action-btn edit" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
+                        <button class="table-action-btn share" data-id="${doc.id}"><i class="fas fa-share-alt"></i></button>
+                        <button class="table-action-btn print" data-id="${doc.id}"><i class="fas fa-print"></i></button>
+                        <button class="table-action-btn delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+
+                if (data.type === 'Invoice') {
+                    invoicesTableBody.appendChild(row);
+                } else if (data.type === 'Quote') {
+                    quotationsTableBody.appendChild(row);
+                }
+
+                // Add event listeners
+                row.querySelector('.view').addEventListener('click', () => {
+                    showDocumentDetails(data, doc.id);
+                });
+
+                row.querySelector('.edit').addEventListener('click', () => {
+                    editingDocId = doc.id;
+                    populateFormWithDocument(data);
+                });
+
+                row.querySelector('.share').addEventListener('click', () => {
+                    currentDocumentForShare = { data, docId: doc.id };
+                    document.getElementById('shareModal').style.display = 'flex';
+                });
+                
+                // Add print button event listener
+                row.querySelector('.print').addEventListener('click', () => {
+                    printDocument(data);
+                });
+
+                row.querySelector('.delete').addEventListener('click', async () => {
+                    if (confirm(`Are you sure you want to delete ${data.type} ${data.number}?`)) {
+                        try {
+                            await db.collection('quotes').doc(doc.id).delete();
+                            showNotification(`${data.type} ${data.number} deleted successfully!`, "success");
+                            await loadUserSequences();
+                            loadDocuments();
+                        } catch (error) {
+                            console.error("Error deleting document: ", error);
+                            showNotification("Error deleting document. Please try again.", "error");
+                        }
+                    }
+                });
+            });
+        }
+
+        // Populate form with document data
+        function populateFormWithDocument(data) {
+            document.getElementById('documentType').value = data.type;
+            document.getElementById('documentNumber').textContent = data.number;
+            document.getElementById('documentDate').value = data.date;
+            document.getElementById('clientName').value = data.billTo.name;
+            document.getElementById('companyName').value = data.billTo.company || '';
+            document.getElementById('clientEmail').value = data.billTo.email || '';
+            document.getElementById('clientMobile').value = data.billTo.mobile || '';
+            document.getElementById('jobAddress').value = data.jobDetails.address || '';
+            document.getElementById('jobNumber').value = data.jobDetails.number || '';
+            document.getElementById('workOrder').value = data.jobDetails.workOrder || '';
+            document.getElementById('bsb').value = data.bankDetails.bsb || '';
+            document.getElementById('account').value = data.bankDetails.account || '';
+
+            // Clear and repopulate items
+            if (isMobileDevice()) {
+                // Mobile version
+                const container = document.getElementById('mobileItemsContainer');
+                container.innerHTML = '';
+                
+                data.items.forEach(item => {
+                    addMobileItemCard(
+                        item.description,
+                        item.quantity,
+                        item.hours,
+                        item.rate,
+                        item.amount
+                    );
+                });
+            } else {
+                // Desktop version
+                const itemsTableBody = document.getElementById('itemsTableBody');
+                itemsTableBody.innerHTML = '';
+
+                data.items.forEach(item => {
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'item-row';
+                    newRow.innerHTML = `
+                        <td>
+                            <div class="autocomplete-container">
+                                <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </td>
+                        <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input xsmall item-hours" value="${item.hours}" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input small item-rate" value="${item.rate}" min="0" step="0.01" required></td>
+                        <td><input type="text" class="glass-input small item-amount" value="${item.amount.toFixed(2)}" readonly></td>
+                        <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                    `;
+                    itemsTableBody.appendChild(newRow);
+                    setupAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
+                });
+            }
+
+            calculateTotals();
+            updatePaymentDetailsDisplay();
+        }
+
         // Show document details
         function showDocumentDetails(data, docId) {
             const modalBody = document.getElementById('detailModalBody');
             let itemsHTML = '<table class="detail-items"><thead><tr><th>Description</th><th>Quantity</th><th>Hours</th><th>Rate ($)</th><th>Amount ($)</th></tr></thead><tbody>';
             data.items.forEach(item => {
-                itemsHTML += `<tr><td>${item.description}</td><td>${item.quantity}</td><td>${item.hours}</td><td>$${item.rate.toFixed(2)}</td><td>$${item.amount.toFixed(2)}</td></tr>`;
+                itemsHTML += `<tr><td>${item.description}</td><td>${item.quantity}</td><td>${item.hours}</td><td>${item.rate.toFixed(2)}</td><td>${item.amount.toFixed(2)}</td></tr>`;
             });
             itemsHTML += '</tbody></table>';
 
@@ -5062,7 +5846,7 @@
                 listElement.style.display = 'none';
 
                 if (value.length > 0) {
-                    // Split the input by spaces or commas and get the last word/phrase
+                    // Get the last word/phrase for matching
                     const words = value.split(/[\s,]+/).filter(word => word.length > 0);
                     const lastWord = words.length > 0 ? words[words.length - 1] : '';
                     
@@ -5077,7 +5861,7 @@
                             const div = document.createElement('div');
                             div.className = 'autocomplete-item';
                             if (index === 0) div.classList.add('selected');
-                            div.textContent = item;
+                            div.innerHTML = `<i class="fas fa-tools"></i> ${item}`;
                             div.addEventListener('click', function() {
                                 // Replace only the last word/phrase with the selected item
                                 const wordsBeforeLast = words.slice(0, -1).join(' ');
@@ -5138,7 +5922,7 @@
                         // Replace only the last word/phrase with the selected item
                         const words = inputElement.value.split(/[\s,]+/).filter(word => word.length > 0);
                         const wordsBeforeLast = words.slice(0, -1).join(' ');
-                        const newValue = wordsBeforeLast ? `${wordsBeforeLast} ${items[selectedIndex].textContent}` : items[selectedIndex].textContent;
+                        const newValue = wordsBeforeLast ? `${wordsBeforeLast} ${items[selectedIndex].textContent.trim()}` : items[selectedIndex].textContent.trim();
                         inputElement.value = newValue;
                         hideSuggestions();
                         inputElement.dispatchEvent(new Event('input'));
@@ -5170,7 +5954,7 @@
                 const container = inputElement.closest('.autocomplete-container');
                 if (container) {
                     container.style.position = 'relative';
-                    container.style.zIndex = '9998';
+                    container.style.zIndex = '1001';
                 }
                 
                 // Add touch event listeners for mobile
@@ -5326,8 +6110,6 @@
                 document.getElementById('authEmail').value = '';
                 document.getElementById('authPassword').value = '';
                 
-                document.getElementById('authEmailError').style.display = 'none';
-                document.getElementById('authButtonText').textContent = 'Login';
             } catch (error) {
                 console.error("Authentication error:", error);
                 let errorMessage = 'An unknown error occurred.';
@@ -5403,6 +6185,7 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         };
         document.head.appendChild(script);
+
     </script>
 </body>
 </html>
