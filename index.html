@@ -3,6 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a3a5f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SMART SQUAD Invoice">
+    <meta name="application-name" content="SMART SQUAD Invoice">
+    <meta name="msapplication-TileColor" content="#1a3a5f">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#1a3a5f">
+    
     <title>Invoicing System - SMART SQUAD M BUILD PTY LTD</title>
     
     <!-- Favicon -->
@@ -74,17 +91,31 @@
             /* Font variables for consistent styling */
             --action-font-size: 0.75rem;
             --action-font-weight: 600;
+            
+            /* Mobile-specific variables */
+            --mobile-safe-area-top: env(safe-area-inset-top, 0);
+            --mobile-safe-area-bottom: env(safe-area-inset-bottom, 0);
+            --mobile-safe-area-left: env(safe-area-inset-left, 0);
+            --mobile-safe-area-right: env(safe-area-inset-right, 0);
         }
 
+        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #1a3a5f 0%, #2c5282 50%, #3182ce 100%);
             color: var(--text-dark);
             min-height: 100vh;
@@ -92,6 +123,22 @@
             /* Improved mobile compatibility */
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
+            /* PWA standalone app adjustments */
+            padding-top: calc(var(--spacing-sm) + var(--mobile-safe-area-top));
+            padding-bottom: calc(var(--spacing-sm) + var(--mobile-safe-area-bottom));
+            padding-left: calc(var(--spacing-sm) + var(--mobile-safe-area-left));
+            padding-right: calc(var(--spacing-sm) + var(--mobile-safe-area-right));
+        }
+
+        /* Standalone PWA adjustments */
+        @media all and (display-mode: standalone) {
+            body {
+                padding-top: calc(var(--spacing-lg) + var(--mobile-safe-area-top));
+            }
+            
+            .app-header {
+                padding-top: var(--spacing-lg);
+            }
         }
 
         /* CSS5 Container Query Support */
@@ -410,16 +457,20 @@
 
         .glass-input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border: 2px solid var(--border-color);
             border-radius: var(--border-radius-md);
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             color: var(--text-dark);
-            font-size: 0.9rem;
+            font-size: 16px; /* Prevents zoom on iOS */
             transition: all var(--transition-fast);
             font-family: inherit;
+            /* Mobile-friendly */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
 
         .glass-input:focus {
@@ -433,7 +484,7 @@
         .small { width: 80px; }
         .xsmall { width: 60px; }
 
-        /* Enhanced Autocomplete Styles for Mobile */
+        /* Modern Non-Intrusive Autocomplete Styles - REMOVED HIGHLIGHTING */
         .autocomplete-container {
             position: relative;
             width: 100%;
@@ -453,20 +504,38 @@
             z-index: 9999 !important;
             display: none;
             box-shadow: var(--shadow-lg);
-            margin-top: 5px;
+            margin-top: 4px;
+            /* Improved scrolling for mobile */
+            -webkit-overflow-scrolling: touch;
+            /* Prevent zoom on iOS */
+            transform: translateZ(0);
+            /* Enhanced mobile positioning */
+            will-change: transform;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            /* Modern glassmorphism effect */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .autocomplete-item {
-            padding: 12px 16px;
+            padding: 10px 14px;
             cursor: pointer;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
             transition: all var(--transition-fast);
-            font-size: 16px; /* Larger font for mobile */
+            font-size: 14px;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            /* Ensure consistent touch target size */
+            min-height: 44px;
+            /* Mobile-friendly */
+            position: relative;
+            overflow: hidden;
+            background: transparent;
+            color: var(--text-dark);
         }
 
         .autocomplete-item:last-child {
@@ -474,38 +543,127 @@
         }
 
         .autocomplete-item:hover {
-            background: var(--bg-light);
+            background: rgba(26, 58, 95, 0.05);
         }
 
         .autocomplete-item.selected {
-            background: var(--primary-color);
-            color: white;
+            background: rgba(26, 58, 95, 0.1);
+            color: var(--primary-color);
         }
 
-        .autocomplete-item .highlight {
-            font-weight: 700;
+        /* REMOVED HIGHLIGHT STYLES */
+        /* .autocomplete-item .highlight {
+            font-weight: 600;
             color: var(--accent-color);
         }
 
         .autocomplete-item.selected .highlight {
-            color: white;
-            text-decoration: underline;
-        }
+            color: var(--primary-color);
+        } */
 
         .autocomplete-item .type-badge {
             font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: var(--border-radius-sm);
             background: var(--bg-light);
             color: var(--text-light);
+            flex-shrink: 0;
+            text-transform: lowercase;
         }
 
         .autocomplete-item.selected .type-badge {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+            background: rgba(26, 58, 95, 0.1);
+            color: var(--primary-color);
         }
 
-        /* Items Section - Desktop Version */
+        /* Form Layout - Two Column for Desktop */
+        .form-layout {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-main {
+            flex: 3;
+        }
+
+        .form-sidebar {
+            flex: 2;
+        }
+
+        /* Items Section - Modern Card Layout */
+        .items-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .items-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            background-size: 200% 100%;
+            animation: gradient-shift 8s ease infinite;
+        }
+
+        .items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .items-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .items-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .add-item-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 8px 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .add-item-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Items Table - Desktop Version */
         .items-table {
             width: 100%;
             border-collapse: collapse;
@@ -1138,7 +1296,7 @@
             .print-company-name {
                 font-family: 'Inter', sans-serif;
                 font-size: 18px;
-                font-weight: 700;
+                font-weight: 400; /* Regular weight */
                 color: #1a3a5f;
                 margin-bottom: 4px;
             }
@@ -1171,7 +1329,7 @@
             
             .print-document-number {
                 font-size: 16px;
-                font-weight: 700;
+                font-weight: 400; /* Regular weight */
                 color: #1a3a5f;
                 margin-bottom: 4px;
             }
@@ -1196,7 +1354,7 @@
             }
             
             .print-address-title {
-                font-weight: 700;
+                font-weight: 400; /* Regular weight */
                 color: #1a3a5f;
                 margin-bottom: 8px;
                 font-size: 11px;
@@ -1223,7 +1381,7 @@
             
             .print-address-line strong {
                 color: #000000;
-                font-weight: 600;
+                font-weight: 400; /* Regular weight */
             }
             
             /* Replace this entire section in your print styles */
@@ -1296,7 +1454,7 @@
             }
             
             .print-payment-title {
-                font-weight: 700;
+                font-weight: 400; /* Regular weight */
                 color: #1a3a5f;
                 margin-bottom: 8px;
                 font-size: 11px;
@@ -1313,12 +1471,12 @@
             
             .print-payment-label {
                 color: #000000;
-                font-weight: 500;
+                font-weight: 400; /* Regular weight */
             }
             
             .print-payment-value {
                 color: #000000;
-                font-weight: 600;
+                font-weight: 400; /* Regular weight */
             }
             
             .print-totals-block {
@@ -1338,18 +1496,18 @@
             
             .print-totals-table .label {
                 color: #000000;
-                font-weight: 600;
+                font-weight: 400; /* Regular weight */
             }
             
             .print-totals-table .value {
                 text-align: right;
                 color: #000000;
-                font-weight: 600;
+                font-weight: 400; /* Regular weight */
             }
             
             .print-totals-table .grand-total td {
                 background: #f3f4f6;
-                font-weight: 800;
+                font-weight: 400; /* Regular weight */
                 color: #1a3a5f;
                 font-size: 11px;
                 border-top: 2px solid #1a3a5f;
@@ -1892,6 +2050,10 @@
                 gap: var(--spacing-sm);
             }
             
+            .form-layout {
+                flex-direction: column;
+            }
+            
             .document-tabs-header {
                 flex-direction: column;
                 align-items: stretch;
@@ -1914,26 +2076,44 @@
                 width: 95vw;
             }
             
-            /* Mobile autocomplete - fixed positioning */
+            /* Modern Mobile Autocomplete Styles */
             .autocomplete-list {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                max-height: 50vh;
-                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-                box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.15);
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                top: auto !important;
+                max-height: 40vh !important;
+                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
                 z-index: 10001 !important;
-                margin-top: 0;
+                margin-top: 0 !important;
+                /* Improved scrolling for mobile */
+                -webkit-overflow-scrolling: touch;
+                /* Prevent zoom on iOS */
+                transform: translateZ(0);
+                /* Add backdrop for better visibility */
+                background: rgba(255, 255, 255, 0.98) !important;
+                /* Safe area support */
+                padding-bottom: calc(var(--spacing-sm) + var(--mobile-safe-area-bottom));
             }
             
             .autocomplete-item {
-                padding: 16px;
-                font-size: 16px;
-                border-bottom: 1px solid var(--border-color);
-                min-height: 56px; /* Minimum touch target size */
-                display: flex;
-                align-items: center;
+                padding: 12px 16px !important;
+                font-size: 16px !important;
+                border-bottom: 1px solid rgba(229, 231, 235, 0.5) !important;
+                min-height: 44px !important;
+                display: flex !important;
+                align-items: center !important;
+                /* Add subtle animation for better UX */
+                transition: background-color var(--transition-fast) !important;
+                /* Safe area support */
+                padding-left: calc(16px + var(--mobile-safe-area-left)) !important;
+                padding-right: calc(16px + var(--mobile-safe-area-right)) !important;
+            }
+            
+            .autocomplete-item:active {
+                background-color: rgba(26, 58, 95, 0.05) !important;
             }
             
             /* Mobile items section - card view */
@@ -2188,7 +2368,7 @@
         .print-template-company-name {
             font-family: 'Inter', sans-serif;
             font-size: 18px;
-            font-weight: 700;
+            font-weight: 400; /* Regular weight */
             color: #1a3a5f;
             margin-bottom: 4px;
         }
@@ -2221,7 +2401,7 @@
         
         .print-template-document-number {
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 400; /* Regular weight */
             color: #1a3a5f;
             margin-bottom: 4px;
         }
@@ -2246,7 +2426,7 @@
         }
         
         .print-template-address-title {
-            font-weight: 700;
+            font-weight: 400; /* Regular weight */
             color: #1a3a5f;
             margin-bottom: 8px;
             font-size: 11px;
@@ -2273,7 +2453,7 @@
         
         .print-template-address-line strong {
             color: #000000;
-            font-weight: 600;
+            font-weight: 400; /* Regular weight */
         }
         
         .print-template-items-section {
@@ -2292,7 +2472,7 @@
             color: white;
             padding: 10px;
             text-align: left;
-            font-weight: 700;
+            font-weight: 400; /* Regular weight */
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.4px;
@@ -2311,7 +2491,7 @@
         }
         
         .print-template-items-table .description {
-            font-weight: 600;
+            font-weight: 400; /* Regular weight */
             color: #000000;
             font-size: 10px;
         }
@@ -2320,13 +2500,13 @@
         .print-template-items-table .hours {
             text-align: center;
             color: #000000;
-            font-weight: 500;
+            font-weight: 400; /* Regular weight */
         }
         
         .print-template-items-table .rate,
         .print-template-items-table .amount {
             text-align: right;
-            font-weight: 600;
+            font-weight: 400; /* Regular weight */
             color: #000000;
         }
         
@@ -2346,7 +2526,7 @@
         }
         
         .print-template-payment-title {
-            font-weight: 700;
+            font-weight: 400; /* Regular weight */
             color: #1a3a5f;
             margin-bottom: 8px;
             font-size: 11px;
@@ -2363,12 +2543,12 @@
         
         .print-template-payment-label {
             color: #000000;
-            font-weight: 500;
+            font-weight: 400; /* Regular weight */
         }
         
         .print-template-payment-value {
             color: #000000;
-            font-weight: 600;
+            font-weight: 400; /* Regular weight */
         }
         
         .print-template-totals-block {
@@ -2388,18 +2568,18 @@
         
         .print-template-totals-table .label {
             color: #000000;
-            font-weight: 600;
+            font-weight: 400; /* Regular weight */
         }
         
         .print-template-totals-table .value {
             text-align: right;
             color: #000000;
-            font-weight: 600;
+            font-weight: 400; /* Regular weight */
         }
         
         .print-template-totals-table .grand-total td {
             background: #f3f4f6;
-            font-weight: 800;
+            font-weight: 400; /* Regular weight */
             color: #1a3a5f;
             font-size: 11px;
             border-top: 2px solid #1a3a5f;
@@ -2464,24 +2644,102 @@
             color: var(--text-dark);
         }
 
-        /* Autocomplete keyboard shortcut hint */
+        /* Autocomplete keyboard shortcut hint - REMOVED */
         .autocomplete-hint {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.7rem;
-            color: var(--text-lighter);
-            background: var(--bg-light);
-            padding: 2px 6px;
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-            pointer-events: none;
+            display: none; /* Hide the keyboard shortcut hint */
         }
 
-        .glass-input:focus + .autocomplete-hint {
-            opacity: 1;
+        /* Mobile Autocomplete Backdrop */
+        .autocomplete-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            display: none;
+            /* Improved touch handling */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .autocomplete-backdrop.active {
+            display: block;
+        }
+
+        /* Install PWA Banner */
+        .pwa-install-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-xl);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 10002;
+            max-width: 90vw;
+            animation: slideUp 0.5s ease;
+        }
+
+        .pwa-install-banner.show {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .pwa-install-banner .icon {
+            font-size: 1.5rem;
+        }
+
+        .pwa-install-banner .text {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .pwa-install-banner .close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background var(--transition-fast);
+        }
+
+        .pwa-install-banner .close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .pwa-install-banner .install-btn {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--border-radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .pwa-install-banner .install-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
         }
 
     </style>
@@ -2490,6 +2748,17 @@
 
     <!-- Notification Container -->
     <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Autocomplete Backdrop for Mobile -->
+    <div class="autocomplete-backdrop" id="autocompleteBackdrop"></div>
+
+    <!-- PWA Install Banner -->
+    <div class="pwa-install-banner" id="pwaInstallBanner">
+        <i class="fas fa-download icon"></i>
+        <span class="text">Install this app on your device for quick access!</span>
+        <button class="install-btn" id="pwaInstallBtn">Install</button>
+        <button class="close" id="pwaCloseBtn">&times;</button>
+    </div>
 
     <!-- Auth Modal -->
     <div class="modal active" id="authModal">
@@ -2550,119 +2819,99 @@
         <div class="glass-card" id="invoiceFormCard">
             <h3 class="mb-4">Create New Document</h3>
 
-            <div class="form-section">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="documentType" class="form-label">Document Type</label>
-                        <select id="documentType" class="glass-input">
-                            <option value="Invoice">Invoice</option>
-                            <option value="Quote">Quote</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="documentNumber" class="form-label">Document Number</label>
-                        <div class="document-number-display">
-                            <i class="fas fa-hashtag"></i>
-                            <span id="documentNumber">AUTO-GENERATED</span>
+            <div class="form-layout">
+                <div class="form-main">
+                    <div class="form-section">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="documentType" class="form-label">Document Type</label>
+                                <select id="documentType" class="glass-input">
+                                    <option value="Invoice">Invoice</option>
+                                    <option value="Quote">Quote</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentNumber" class="form-label">Document Number</label>
+                                <div class="document-number-display">
+                                    <i class="fas fa-hashtag"></i>
+                                    <span id="documentNumber">AUTO-GENERATED</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="documentDate" class="form-label">Date</label>
+                                <input type="date" id="documentDate" class="glass-input" required>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="clientName" class="form-label">Client Name</label>
+                                <input type="text" id="clientName" class="glass-input" placeholder="John Smith" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyName" class="form-label">Company Name</label>
+                                <input type="text" id="companyName" class="glass-input" placeholder="ABC Pty Ltd">
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="clientEmail" class="form-label">Email</label>
+                                <input type="email" id="clientEmail" class="glass-input" placeholder="john@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientMobile" class="form-label">Mobile</label>
+                                <input type="tel" id="clientMobile" class="glass-input" placeholder="0412 345 678">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="jobAddress" class="form-label">Job Address</label>
+                            <input type="text" id="jobAddress" class="glass-input" placeholder="123 Main St, City, Country">
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="jobNumber" class="form-label">Job Number</label>
+                                <input type="text" id="jobNumber" class="glass-input" placeholder="e.g., JOB-001">
+                            </div>
+                            <div class="form-group">
+                                <label for="workOrder" class="form-label">Work Order</label>
+                                <input type="text" id="workOrder" class="glass-input" placeholder="e.g., WO-001">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="documentDate" class="form-label">Date</label>
-                        <input type="date" id="documentDate" class="glass-input" required>
-                    </div>
                 </div>
 
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="clientName" class="form-label">Client Name</label>
-                        <input type="text" id="clientName" class="glass-input" placeholder="John Smith" required>
+                <div class="form-sidebar">
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label for="bsb" class="form-label">Bank BSB</label>
+                            <input type="text" id="bsb" class="glass-input" placeholder="e.g., 083214">
+                        </div>
+                        <div class="form-group">
+                            <label for="account" class="form-label">Account Number</label>
+                            <input type="text" id="account" class="glass-input" placeholder="e.g., 709739590">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="companyName" class="form-label">Company Name</label>
-                        <input type="text" id="companyName" class="glass-input" placeholder="ABC Pty Ltd">
-                    </div>
-                </div>
 
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="clientEmail" class="form-label">Email</label>
-                        <input type="email" id="clientEmail" class="glass-input" placeholder="john@example.com">
+                    <div class="totals-section">
+                        <div class="totals-container">
+                            <div class="totals-row">
+                                <div class="totals-label">Subtotal:</div>
+                                <div class="totals-value" id="subtotal">$0.00</div>
+                            </div>
+                            <div class="totals-row">
+                                <div class="totals-label">GST (10%):</div>
+                                <div class="totals-value" id="gst">$0.00</div>
+                            </div>
+                            <div class="totals-row">
+                                <div class="totals-label">Total:</div>
+                                <div class="totals-value" id="total">$0.00</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="clientMobile" class="form-label">Mobile</label>
-                        <input type="tel" id="clientMobile" class="glass-input" placeholder="0412 345 678">
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="jobAddress" class="form-label">Job Address</label>
-                    <input type="text" id="jobAddress" class="glass-input" placeholder="123 Main St, City, Country">
-                </div>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="jobNumber" class="form-label">Job Number</label>
-                        <input type="text" id="jobNumber" class="glass-input" placeholder="e.g., JOB-001">
-                    </div>
-                    <div class="form-group">
-                        <label for="workOrder" class="form-label">Work Order</label>
-                        <input type="text" id="workOrder" class="glass-input" placeholder="e.g., WO-001">
-                    </div>
-                </div>
-
-                <h4 style="margin-top: var(--spacing-md);">Items</h4>
-                
-                <!-- Desktop Items Table -->
-                <table class="items-table" id="itemsTable">
-                    <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Hours</th>
-                            <th>Rate ($)</th>
-                            <th>Amount ($)</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="itemsTableBody">
-                        <tr class="item-row">
-                            <td>
-                                <div class="autocomplete-container">
-                                    <input type="text" class="glass-input large item-description" required autocomplete="off">
-                                    <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
-                                    <div class="autocomplete-list"></div>
-                                </div>
-                            </td>
-                            <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
-                            <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
-                            <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
-                            <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
-                            <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <!-- Mobile Items Container -->
-                <div class="mobile-items-container" id="mobileItemsContainer">
-                    <!-- Mobile item cards will be added here dynamically -->
-                </div>
-                
-                <button type="button" class="action-button glass-button" id="addItem" style="margin-top: var(--spacing-md);">
-                    <i class="fas fa-plus"></i> Add Item
-                </button>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="bsb" class="form-label">Bank BSB</label>
-                        <input type="text" id="bsb" class="glass-input" placeholder="e.g., 083214">
-                    </div>
-                    <div class="form-group">
-                        <label for="account" class="form-label">Account Number</label>
-                        <input type="text" id="account" class="glass-input" placeholder="e.g., 709739590">
-                    </div>
-                </div>
-
-                <div class="totals-section">
                     <div class="payment-details-container">
                         <div class="payment-details-title">Payment Details</div>
                         <div class="payment-detail-row">
@@ -2682,34 +2931,63 @@
                             <span class="payment-detail-value" id="accountNameDisplay">-</span>
                         </div>
                     </div>
-                    <div class="totals-container">
-                        <div class="totals-row">
-                            <div class="totals-label">Subtotal:</div>
-                            <div class="totals-value" id="subtotal">$0.00</div>
-                        </div>
-                        <div class="totals-row">
-                            <div class="totals-label">GST (10%):</div>
-                            <div class="totals-value" id="gst">$0.00</div>
-                        </div>
-                        <div class="totals-row">
-                            <div class="totals-label">Total:</div>
-                            <div class="totals-value" id="total">$0.00</div>
-                        </div>
-                    </div>
                 </div>
+            </div>
 
-                <div style="margin-top: var(--spacing-md); display: flex; flex-wrap: wrap; gap: 8px;">
-                    <button class="action-button glass-button" id="saveButton">
-                        <i class="fas fa-save"></i> <span id="saveButtonText">Save</span>
-                    </button>
-                    <button class="action-button glass-button" id="cancelForm">
-                        <i class="fas fa-times"></i> Cancel
-                    </button>
-                    <button class="action-button glass-button" id="printPdfButton">
-                        <i class="fas fa-print"></i> Print PDF
-                    </button>
-                </div>
+            <div style="margin-top: var(--spacing-md); display: flex; flex-wrap: wrap; gap: 8px;">
+                <button class="action-button glass-button" id="saveButton">
+                    <i class="fas fa-save"></i> <span id="saveButtonText">Save</span>
+                </button>
+                <button class="action-button glass-button" id="cancelForm">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="action-button glass-button" id="printPdfButton">
+                    <i class="fas fa-print"></i> Print PDF
+                </button>
+            </div>
+        </div>
 
+        <!-- Items Section - Separated from Main Form -->
+        <div class="items-section">
+            <div class="items-header">
+                <h3 class="items-title">Items</h3>
+                <button type="button" class="add-item-btn" id="addItem">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            </div>
+            
+            <!-- Desktop Items Table -->
+            <table class="items-table" id="itemsTable">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Hours</th>
+                        <th>Rate ($)</th>
+                        <th>Amount ($)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="itemsTableBody">
+                    <tr class="item-row">
+                        <td>
+                            <div class="autocomplete-container">
+                                <input type="text" class="glass-input large item-description" required autocomplete="off">
+                                <div class="autocomplete-list"></div>
+                            </div>
+                        </td>
+                        <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
+                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
+                        <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Mobile Items Container -->
+            <div class="mobile-items-container" id="mobileItemsContainer">
+                <!-- Mobile item cards will be added here dynamically -->
             </div>
         </div>
 
@@ -3033,11 +3311,86 @@
         // Store original form values for cancel functionality
         let originalFormValues = {};
 
-        // Detect if device is mobile
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        let installBannerShown = false;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install banner after 3 seconds
+            setTimeout(() => {
+                if (!installBannerShown && !localStorage.getItem('pwa-install-dismissed')) {
+                    showPWAInstallBanner();
+                }
+            }, 3000);
+        });
+
+        function showPWAInstallBanner() {
+            const banner = document.getElementById('pwaInstallBanner');
+            banner.classList.add('show');
+            installBannerShown = true;
+        }
+
+        document.getElementById('pwaInstallBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+                hidePWAInstallBanner();
+            }
+        });
+
+        document.getElementById('pwaCloseBtn').addEventListener('click', () => {
+            hidePWAInstallBanner();
+            localStorage.setItem('pwa-install-dismissed', 'true');
+        });
+
+        function hidePWAInstallBanner() {
+            const banner = document.getElementById('pwaInstallBanner');
+            banner.classList.remove('show');
+        }
+
+        // Detect if device is mobile with enhanced detection
         function isMobileDevice() {
-            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1) || 
-                   (window.innerWidth <= 768) || 
-                   (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+            // More comprehensive mobile detection
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Check for common mobile indicators
+            const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i;
+            
+            // Check for touch capability
+            const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+            
+            // Check for small screen
+            const isSmallScreen = window.innerWidth <= 768;
+            
+            // Check for mobile orientation
+            const hasOrientation = typeof window.orientation !== 'undefined';
+            
+            // Check for reduced pointer precision (common on touch devices)
+            const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+            
+            // Check for hover capability (mobile devices typically don't have hover)
+            const noHover = window.matchMedia('(hover: none)').matches;
+            
+            // Return true if any mobile indicators are detected
+            return mobileRegex.test(userAgent) || hasTouch || isSmallScreen || hasOrientation || hasCoarsePointer || noHover;
         }
 
         // Enhanced autocomplete data with categories
@@ -3079,230 +3432,33 @@
     "Fit insulated garage doors", "Repair damaged fascia boards", "Replace broken step treads",
     "Install retractable clotheslines", "Repair broken gate hinges", "Fit roll-up garage screens",
     "Repair damaged lattice panels", "Replace broken patio umbrella stands", "Fit cabinet door soft-close mechanisms",
-    "Install under-stair storage drawers", "Repair damaged planter boxes", "Replace broken window balances",
-    "Fit motion-sensor night lights", "Install solar attic vents", "Repair broken deck railings",
-    "Fit smart thermostats", "Replace cracked concrete steps", "Fit digital door locks",
-    "Install EV supply equipment (EVSE)", "Repair broken landscape lighting", "Replace broken mailbox flag",
-    "Fit pull-out pantry shelves", "Install outdoor shower", "Repair damaged soffit panels",
-    "Replace broken downlight diffusers", "Fit keyless entry systems", "Install utility sink",
+    "Install under-stair storage drawers", "Repair broken window stops", "Replace broken outlet covers",
+    "Fit magnetic knife strips", "Install folding workbench", "Repair broken ceiling medallions",
+    "Replace broken switch actuators", "Fit smart thermostats", "Install solar attic vents",
     "Repair broken railing spindles", "Replace broken patio door rollers", "Fit automatic gate openers",
-    "Install compost bins", "Repair broken window stops", "Replace broken outlet covers",
-    "Fit heated driveway sensors", "Install backyard greenhouse", "Repair broken ceiling medallions",
-    "Replace broken switch actuators", "Fit smart blinds", "Install birdhouse or bat box",
-    "Repair broken door tracks", "Replace broken tile edging", "Fit wall-mounted drying racks",
-    "Install solar pathway lights", "Repair broken door jamb", "Replace broken shelf pins",
-    "Fit magnetic knife strips", "Install folding workbench", "Repair broken window screens",
-    "Replace broken curtain rods", "Fit fold-down desks", "Install outdoor power outlets",
-    "Repair broken floor registers", "Replace broken towel ring", "Fit ceiling-mounted drying rack",
-    "Install indoor herb garden", "Repair broken stair nosing", "Replace broken blind slats",
-    "Fit over-the-door organizers", "Install wall-mounted desk", "Repair broken floor transition strip",
-    "Replace broken faucet aerator", "Fit smart smoke/CO alarms", "Install vertical vegetable garden",
-    "Repair broken downspout splash block", "Replace broken door chain", "Fit magnetic spice racks",
-    "Install pet feeding station", "Repair broken step riser", "Replace broken electrical faceplate",
-    "Fit corner shelf brackets", "Install outdoor hammock stand", "Repair broken window track",
-    "Replace broken hinge pin", "Fit over-door shoe organizer", "Install wall-mounted boot rack",
-    "Install portable dishwasher hookup", "Repair broken floor drain cover", "Replace broken showerhead",
-    "Fit smart garage sensors", "Install rooftop antenna mount", "Repair broken ceiling fan motor",
-    "Replace broken cabinet shelf", "Fit wall-mounted luggage rack", "Install outdoor sauna",
-    "Repair broken door stop", "Replace broken electrical terminal", "Fit under-desk keyboard tray",
-    "Install vertical clothesline", "Repair broken window balance shoe", "Replace broken light switch plate",
-    "Fit magnetic knife holder", "Install backyard basketball hoop", "Repair broken ceiling light chain",
-    "Replace broken door bolt", "Fit wall-mounted file organizer", "Install foldable camping table",
-    "Repair broken floor register cover", "Replace broken shower diverter", "Fit magnetic tool strip",
-    "Install portable washing machine", "Repair broken ceiling vent damper", "Replace broken door hinge leaf",
-    "Fit over-door shoe organizer", "Install foldable desk chair", "Repair broken window sill",
-    "Replace broken outlet cover screw", "Fit wall-mounted magazine rack", "Install outdoor movie screen",
-    "Repair broken ceiling light socket", "Replace broken door knob spindle", "Fit magnetic memo board",
-    "Install portable dryer vent", "Repair broken floor tile edge", "Replace broken dimmer knob",
-    "Fit under-cabinet lighting kit", "Install backyard zip line", "Repair broken ceiling fan mounting bracket",
-    "Replace broken faucet cartridge", "Fit wall-mounted whiteboard", "Install solar-powered security lights",
-    "Repair broken door frame corner", "Replace broken outlet receptacle", "Fit magnetic key holder",
-    "Install foldable garden bench", "Repair broken window lock mechanism", "Replace broken ceiling fan pull cord",
-    "Fit over-toilet tank organizer", "Install portable air conditioner", "Repair broken floor tile corner",
-    "Replace broken dimmer dial", "Fit wall-mounted coat rack", "Install outdoor fireplace",
-    "Repair broken ceiling fan housing", "Replace broken door handle set", "Fit magnetic name tags",
-    "Install portable generator transfer switch", "Repair broken window screen frame",
-    "Replace broken light fixture ballast", "Fit under-stair storage bench", "Install foldable Murphy bed",
-    "Repair broken ceiling vent grille", "Replace broken outlet tab spring", "Fit wall-mounted bookshelf",
-    "Install solar battery storage", "Repair broken door jamb reinforcement", "Replace broken shower mixing valve",
-    "Fit magnetic parts tray", "Install portable power station", "Repair broken floor tile center",
-    "Replace broken switch contact", "Fit over-door mirror", "Install foldable utility cart",
-    "Repair broken ceiling fan downrod", "Replace broken faucet aerator screen", "Fit wall-mounted umbrella holder",
-    "Install outdoor gym equipment", "Repair broken door threshold ramp", "Replace broken outlet ground wire",
-    "Fit magnetic drill bit holder", "Install portable ice maker", "Repair broken window screen mesh",
-    "Replace broken light fixture lens", "Fit under-cabinet spice rack", "Install foldable picnic table",
-    "Repair broken ceiling fan speed switch", "Replace broken door deadbolt", "Fit wall-mounted shoe organizer",
-    "Install solar water pump", "Repair broken floor tile grout line", "Replace broken dimmer slider",
-    "Fit magnetic tool organizer", "Install portable dishwasher", "Repair broken ceiling vent duct",
-    "Replace broken outlet neutral screw", "Fit over-door bathrobe hook", "Install foldable laundry hamper",
-    "Repair broken window screen corner", "Replace broken light fixture reflector", "Fit wall-mounted tie rack",
-    "Install solar-powered water feature", "Repair broken door frame spline", "Replace broken switch terminal screw",
-    "Fit magnetic bottle opener", "Install portable refrigerator", "Repair broken floor tile edge chip",
-    "Replace broken outlet hot screw", "Fit under-cabinet trash can", "Install foldable changing table",
-    "Repair broken ceiling fan remote receiver", "Replace broken shower head hose", "Fit wall-mounted jewelry organizer",
-    "Install solar-powered attic light", "Repair broken door jamb shim", "Replace broken dimmer heat sink",
-    "Fit magnetic screw holder", "Install portable deep fryer", "Repair broken window screen retainer",
-    "Replace broken light fixture diffuser", "Fit over-door hat hook", "Install foldable desk lamp",
-    "Repair broken ceiling fan capacitor", "Replace broken faucet O-ring", "Fit wall-mounted plant hanger",
-    "Install solar-powered fountain", "Repair broken floor tile corner chip", "Replace broken outlet cover clip",
-    "Fit magnetic pen holder", "Install portable blender", "Repair broken ceiling vent filter",
-    "Replace broken switch toggle spring", "Fit under-cabinet paper towel holder", "Install foldable footstool",
-    "Repair broken window screen spline groove", "Replace broken dimmer circuit board", "Fit wall-mounted bag hook",
-    "Install solar-powered outdoor heater", "Repair broken door frame corner joint", "Replace broken outlet internal contact",
-    "Fit magnetic knife magnet", "Install portable coffee maker", "Repair broken floor tile center crack",
-    "Replace broken light fixture socket tab", "Fit over-door towel hook", "Install foldable step stool",
-    "Repair broken ceiling fan motor winding", "Replace broken shower valve cartridge", "Fit wall-mounted clock",
-    "Install solar-powered outdoor chandelier", "Repair broken door jamb alignment", "Replace broken dimmer knob shaft",
-    "Fit magnetic tool bar", "Install portable toaster oven", "Repair broken window screen frame corner",
-    "Replace broken light fixture mounting screw", "Fit under-cabinet utensil holder", "Install foldable ironing board stand",
-    "Repair broken ceiling fan blade screw", "Replace broken faucet handle screw", "Fit wall-mounted calendar",
-    "Install solar-powered gate opener", "Repair broken floor tile edge crack", "Replace broken outlet strain relief",
-    "Fit over-door robe hook", "Install portable microwave", "Repair broken ceiling vent cover screw",
-    "Replace broken switch toggle cap", "Fit magnetic spice turntable", "Install foldable garden kneeler",
-    "Repair broken window screen spline corner", "Replace broken dimmer knob insert", "Fit wall-mounted picture ledge",
-    "Install solar-powered landscape lights", "Repair broken door jamb gap", "Replace broken outlet terminal screw",
-    "Fit magnetic tool rack", "Install portable air purifier", "Repair broken floor tile corner crack",
-    "Replace broken light fixture wire connector", "Fit over-door storage pocket", "Install foldable side table",
-    "Repair broken ceiling fan pull chain switch", "Replace broken shower handle screw", "Fit wall-mounted memo board",
-    "Install solar-powered pool heater", "Repair broken door frame crack", "Replace broken dimmer knob base",
-    "Fit magnetic key rack", "Install portable vacuum cleaner", "Repair broken window screen spline joint",
-    "Replace broken light fixture mounting nut", "Fit under-cabinet cutting board", "Install foldable pet bed",
-    "Repair broken ceiling fan blade adapter", "Replace broken faucet handle set screw", "Fit wall-mounted whiteboard calendar",
-    "Install solar-powered security camera", "Repair broken floor tile grout joint", "Replace broken outlet faceplate screw",
-    "Fit over-door spice rack", "Install foldable laptop stand", "Repair broken ceiling vent damper linkage",
-    "Replace broken dimmer knob collar", "Fit magnetic tool holder strip", "Install portable humidifier",
-    "Repair broken window screen spline splice", "Replace broken light fixture chain", "Fit under-cabinet mug rack",
-    "Install foldable dining table", "Repair broken ceiling fan mounting screw", "Replace broken shower handle set screw",
-    "Fit wall-mounted document holder", "Install solar-powered phone charger", "Repair broken door jamb warp",
-    "Replace broken dimmer knob insert screw", "Fit magnetic tool organizer panel", "Install portable dehumidifier",
-    "Repair broken floor tile edge flake", "Replace broken outlet terminal washer", "Fit over-door jewelry organizer",
-    "Install foldable office chair", "Repair broken ceiling vent damper actuator", "Replace broken dimmer knob set screw",
-    "Fit wall-mounted tablet holder", "Install solar-powered water pump", "Repair broken window screen spline gap",
-    "Replace broken light fixture canopy screw", "Fit under-cabinet knife block", "Install foldable standing desk",
-    "Repair broken ceiling fan downrod coupling", "Replace broken faucet handle base screw", "Fit wall-mounted iPad stand",
-    "Install solar-powered electric fence", "Repair broken door jamb twist", "Replace broken dimmer knob retaining ring",
-    "Fit magnetic tool storage panel", "Install portable steam cleaner", "Repair broken floor tile center flake",
-    "Replace broken outlet terminal ring", "Fit over-door belt hanger", "Install foldable sofa bed",
-    "Repair broken ceiling vent damper spring", "Replace broken dimmer knob insert washer", "Fit wall-mounted yoga mat holder",
-    "Install solar-powered gate light", "Repair broken window screen spline wear", "Replace broken light fixture arm screw",
-    "Fit under-cabinet basket organizer", "Install foldable treadmill", "Repair broken ceiling fan blade hub",
-    "Replace broken shower handle base screw", "Fit wall-mounted bike storage", "Install solar-powered motion light",
-    "Repair broken door jamb compression", "Replace broken dimmer knob insert clip", "Fit magnetic tool rack panel",
-    "Install portable espresso machine", "Repair broken floor tile corner flake", "Replace broken outlet terminal lug",
-    "Fit over-door scarf hanger", "Install foldable recliner", "Repair broken ceiling vent damper gear",
-    "Replace broken dimmer knob insert rivet", "Fit wall-mounted golf club holder", "Install solar-powered outdoor radio",
-    "Repair broken window screen spline fraying", "Replace broken light fixture swivel screw", "Fit under-cabinet spice drawer",
-    "Install foldable gaming chair", "Repair broken ceiling fan motor housing", "Replace broken faucet handle set screw washer",
-    "Fit wall-mounted fishing rod holder", "Install solar-powered bug zapper", "Repair broken door jamb splitting",
-    "Replace broken dimmer knob insert pin", "Fit magnetic tool organizer rack", "Install portable popcorn maker",
-    "Repair broken floor tile edge wear", "Replace broken outlet terminal clip", "Fit over-door purse hanger",
-    "Install foldable massage table", "Repair broken ceiling vent damper motor", "Replace broken dimmer knob insert bushing",
-    "Fit wall-mounted ski rack", "Install solar-powered Christmas lights", "Repair broken window screen spline separation",
-    "Replace broken light fixture pivot screw", "Fit under-cabinet soap dispenser", "Install foldable workbench",
-    "Repair broken ceiling fan downrod locknut", "Replace broken shower handle set screw washer", "Fit wall-mounted surfboard rack",
-    "Install solar-powered fountain pump", "Repair broken door jamb warping", "Replace broken dimmer knob insert sleeve",
-    "Fit magnetic tool storage rack", "Install portable smoothie maker", "Repair broken floor tile center wear",
-    "Replace broken outlet terminal post", "Fit over-door coat hanger", "Install foldable camping cot",
-    "Repair broken ceiling vent damper linkage pin", "Replace broken dimmer knob insert collar", "Fit wall-mounted snowboard rack",
-    "Install solar-powered security siren", "Repair broken window screen spline delamination",
-    "Replace broken light fixture tilt screw", "Fit under-cabinet toothbrush holder", "Install foldable baby changing table",
-    "Repair broken ceiling fan blade bracket screw", "Replace broken faucet handle set screw collar",
-    "Fit wall-mounted paddleboard rack", "Install solar-powered outdoor speaker", "Repair broken door jamb cracking",
-    "Replace broken dimmer knob insert ring", "Fit magnetic tool holder panel", "Install portable waffle maker",
-    "Repair broken floor tile corner wear", "Replace broken outlet terminal screw washer", "Fit over-door hat and scarf hanger",
-    "Install foldable beach chair", "Repair broken ceiling vent damper spring clip", "Replace broken dimmer knob insert sleeve washer",
-    "Fit wall-mounted wakeboard rack", "Install solar-powered outdoor fan", "Repair broken window screen spline lifting",
-    "Replace broken light fixture rotation screw", "Fit under-cabinet floss dispenser", "Install foldable lawn chair",
-    "Repair broken ceiling fan downrod coupling screw", "Replace broken shower handle set screw collar",
-    "Fit wall-mounted skateboard rack", "Install solar-powered patio heater", "Repair broken door jamb splintering",
-    "Replace broken dimmer knob insert sleeve ring", "Fit magnetic tool organizer wall panel", "Install portable pancake maker",
-    "Repair broken floor tile edge chipping", "Replace broken outlet terminal screw ring", "Fit over-door umbrella and cane holder",
-    "Install foldable director’s chair", "Repair broken ceiling vent damper actuator arm", "Replace broken dimmer knob insert sleeve bushing",
-    "Fit wall-mounted kite rack", "Install solar-powered string lights", "Repair broken window screen spline peeling",
-    "Replace broken light fixture mounting plate screw", "Fit under-cabinet mouthwash dispenser", "Install foldable lounge chair",
-    "Repair broken ceiling fan blade hub screw", "Replace broken faucet handle set screw washer ring",
-    "Fit wall-mounted drone rack", "Install solar-powered landscape spotlight", "Repair broken door jamb checking",
-    "Replace broken dimmer knob insert sleeve collar", "Fit magnetic tool storage wall panel", "Install portable crepe maker",
-    "Repair broken floor tile center chipping", "Replace broken outlet terminal screw clip", "Fit over-door backpack hanger",
-    "Install foldable rocking chair", "Repair broken ceiling vent damper gear tooth", "Replace broken dimmer knob insert sleeve ring washer",
-    "Fit wall-mounted helmet rack", "Install solar-powered outdoor lantern", "Repair broken window screen spline fraying at corner",
-    "Replace broken light fixture canopy bolt", "Fit under-cabinet hand sanitizer dispenser", "Install foldable Adirondack chair",
-    "Repair broken ceiling fan downrod locknut washer", "Replace broken shower handle set screw washer collar",
-    "Fit wall-mounted bicycle bell rack", "Install solar-powered garden light", "Repair broken door jamb splitting at joint",
-    "Replace broken dimmer knob insert sleeve ring bushing", "Fit magnetic tool holder wall panel", "Install portable donut maker",
-    "Repair broken floor tile corner chipping", "Replace broken outlet terminal screw washer ring", "Fit over-door pet leash hanger",
-    "Install foldable glider swing", "Repair broken ceiling vent damper spring clip washer", "Replace broken dimmer knob insert sleeve collar washer",
-    "Fit wall-mounted scooter rack", "Install solar-powered outdoor chandelier", "Repair broken window screen spline separation at corner",
-    "Replace broken light fixture arm bolt", "Fit under-cabinet lotion dispenser", "Install foldable porch swing",
-    "Repair broken ceiling fan blade bracket screw washer", "Replace broken faucet handle set screw washer collar ring",
-    "Fit wall-mounted unicycle rack", "Install solar-powered gazebo light", "Repair broken door jamb warping at joint",
-    "Replace broken dimmer knob insert sleeve collar ring", "Fit magnetic tool organizer wall rack", "Install portable funnel cake maker",
-    "Repair broken floor tile edge flaking", "Replace broken outlet terminal screw washer ring clip", "Fit over-door sports equipment hanger",
-    "Install foldable hammock chair", "Repair broken ceiling vent damper actuator arm washer", "Replace broken dimmer knob insert sleeve collar ring washer",
-    "Fit wall-mounted tricycle rack", "Install solar-powered pergola light", "Repair broken window screen spline lifting at corner",
-    "Replace broken light fixture pivot bolt", "Fit under-cabinet sunscreen dispenser", "Install foldable rocking glider",
-    "Repair broken ceiling fan downrod coupling screw washer", "Replace broken shower handle set screw washer collar ring washer",
-    "Fit wall-mounted tandem bike rack", "Install solar-powered terrace light", "Repair broken door jamb cracking at joint",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring", "Fit magnetic tool storage wall rack", "Install portable cotton candy maker",
-    "Repair broken floor tile center flaking", "Replace broken outlet terminal screw washer ring clip washer", "Fit over-door gardening tool hanger",
-    "Install foldable sun lounger", "Repair broken ceiling vent damper gear tooth wear", "Replace broken dimmer knob insert sleeve collar ring washer ring washer",
-    "Fit wall-mounted recumbent bike rack", "Install solar-powered deck light", "Repair broken window screen spline peeling at corner",
-    "Replace broken light fixture rotation bolt", "Fit under-cabinet insect repellent dispenser", "Install foldable zero gravity chair",
-    "Repair broken ceiling fan blade hub screw washer", "Replace broken faucet handle set screw washer collar ring washer ring",
-    "Fit wall-mounted elliptical rack", "Install solar-powered patio umbrella light", "Repair broken door jamb splintering at joint",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring", "Fit magnetic tool holder wall rack", "Install portable kettle corn maker",
-    "Repair broken floor tile corner flaking", "Replace broken outlet terminal screw washer ring clip washer ring", "Fit over-door yoga mat hanger",
-    "Install foldable therapy chair", "Repair broken ceiling vent damper spring clip washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer",
-    "Fit wall-mounted rowing machine rack", "Install solar-powered cabana light", "Repair broken window screen spline delamination at corner",
-    "Replace broken light fixture mounting plate bolt", "Fit under-cabinet disinfectant dispenser", "Install foldable massage chair",
-    "Repair broken ceiling fan downrod locknut washer ring", "Replace broken shower handle set screw washer collar ring washer ring washer",
-    "Fit wall-mounted stair climber rack", "Install solar-powered lanai light", "Repair broken door jamb warping at joint seam",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring", "Fit magnetic tool organizer wall storage", "Install portable popcorn popper",
-    "Repair broken floor tile edge chipping flake", "Replace broken outlet terminal screw washer ring clip washer ring washer", "Fit over-door fitness band hanger",
-    "Install foldable meditation chair", "Repair broken ceiling vent damper actuator arm washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted exercise bike rack", "Install solar-powered veranda light", "Repair broken window screen spline lifting at corner seam",
-    "Replace broken light fixture canopy nut", "Fit under-cabinet hand wipe dispenser", "Install foldable relaxation chair",
-    "Repair broken ceiling fan blade bracket screw washer ring", "Replace broken faucet handle set screw washer collar ring washer ring washer ring",
-    "Fit wall-mounted weight rack", "Install solar-powered lanai fan light", "Repair broken door jamb splitting at joint seam",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring", "Fit magnetic tool storage wall organizer", "Install portable nacho cheese maker",
-    "Repair broken floor tile center chipping flake", "Replace broken outlet terminal screw washer ring clip washer ring washer ring", "Fit over-door resistance band hanger",
-    "Install foldable reading chair", "Repair broken ceiling vent damper gear tooth wear flat", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted dumbbell rack", "Install solar-powered poolside light", "Repair broken window screen spline peeling at corner seam",
-    "Replace broken light fixture arm nut", "Fit under-cabinet sanitizing wipe dispenser", "Install foldable reclining chair",
-    "Repair broken ceiling fan downrod coupling screw washer ring", "Replace broken shower handle set screw washer collar ring washer ring washer ring washer",
-    "Fit wall-mounted kettlebell rack", "Install solar-powered garden path light", "Repair broken door jamb cracking at joint seam",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool holder wall organizer", "Install portable pretzel maker",
-    "Repair broken floor tile corner chipping flake", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer", "Fit over-door foam roller hanger",
-    "Install foldable lounge recliner", "Repair broken ceiling vent damper spring clip washer ring washer", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted medicine ball rack", "Install solar-powered backyard light", "Repair broken window screen spline separation at corner seam",
-    "Replace broken light fixture pivot nut", "Fit under-cabinet first aid dispenser", "Install foldable therapy recliner",
-    "Repair broken ceiling fan blade hub screw washer ring", "Replace broken faucet handle set screw washer collar ring washer ring washer ring washer ring",
-    "Fit wall-mounted sandbag rack", "Install solar-powered outdoor string lights", "Repair broken door jamb splintering at joint seam",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool organizer wall storage panel", "Install portable waffle cone maker",
-    "Repair broken floor tile edge flaking chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring", "Fit over-door stretching strap hanger",
-    "Install foldable massage recliner", "Repair broken ceiling vent damper actuator arm washer ring washer", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted stability ball rack", "Install solar-powered terrace string lights", "Repair broken window screen spline lifting at corner seam gap",
-    "Replace broken light fixture rotation nut", "Fit under-cabinet allergy spray dispenser", "Install foldable zero gravity recliner",
-    "Repair broken ceiling fan downrod locknut washer ring washer", "Replace broken shower handle set screw washer collar ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted jump rope hanger", "Install solar-powered patio string lights", "Repair broken door jamb warping at joint seam crack",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool storage wall organizer panel", "Install portable churro maker",
-    "Repair broken floor tile center flaking chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring washer", "Fit over-door yoga block hanger",
-    "Install foldable therapy zero gravity chair", "Repair broken ceiling vent damper gear tooth wear flat spot", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted foam roller rack", "Install solar-powered gazebo string lights", "Repair broken window screen spline peeling at corner seam gap",
-    "Replace broken light fixture mounting plate nut", "Fit under-cabinet pain reliever dispenser", "Install foldable relaxation recliner",
-    "Repair broken ceiling fan blade bracket screw washer ring washer", "Replace broken faucet handle set screw washer collar ring washer ring washer ring washer ring washer ring",
-    "Fit wall-mounted resistance band rack", "Install solar-powered pergola string lights", "Repair broken door jamb splitting at joint seam crack",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool holder wall storage panel", "Install portable funnel cake fryer",
-    "Repair broken floor tile corner flaking chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring washer ring", "Fit over-door meditation cushion hanger",
-    "Install foldable massage therapy recliner", "Repair broken ceiling vent damper spring clip washer ring washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted exercise mat rack", "Install solar-powered deck string lights", "Repair broken window screen spline separation at corner seam gap",
-    "Replace broken light fixture canopy washer", "Fit under-cabinet muscle rub dispenser", "Install foldable zero gravity massage recliner",
-    "Repair broken ceiling fan downrod coupling screw washer ring washer", "Replace broken shower handle set screw washer collar ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted therapy ball rack", "Install solar-powered lanai string lights", "Repair broken door jamb cracking at joint seam crack",
-    "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring", "Fit magnetic tool organizer wall storage rack", "Install portable cotton candy machine",
-    "Repair broken floor tile edge chipping flake chip", "Replace broken outlet terminal screw washer ring clip washer ring washer ring washer ring washer ring washer", "Fit over-door fitness equipment hanger",
-    "Install foldable therapy zero gravity massage recliner", "Repair broken ceiling vent damper actuator arm washer ring washer ring", "Replace broken dimmer knob insert sleeve collar ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer ring washer",
-    "Fit wall-mounted wellness product rack", "Install solar-powered veranda string lights"
+    "Install compost bins", "Repair broken window track", "Replace broken shelf pins",
+    "Fit over-the-door organizers", "Install foldable desk", "Repair broken ceiling vent damper",
+    "Replace broken dimmer knob", "Fit wall-mounted magazine rack", "Install outdoor movie screen",
+    "Repair broken ceiling fan downrod", "Replace broken shower head", "Fit wall-mounted ski rack",
+    "Install solar pathway lights", "Repair broken door jamb", "Replace broken hinge pin",
+    "Fit magnetic spice racks", "Install portable dishwasher", "Repair broken floor tile edge",
+    "Replace broken outlet terminal", "Fit over-door shoe organizer", "Install foldable chair",
+    "Repair broken ceiling vent damper spring", "Replace broken dimmer knob insert washer",
+    "Fit wall-mounted surfboard rack", "Install solar-powered outdoor fan", "Repair broken window screen spline delamination",
+    "Replace broken light fixture pivot screw", "Fit under-cabinet toothbrush holder", "Install foldable lawn chair",
+    "Repair broken ceiling fan blade bracket screw", "Replace broken shower handle set screw washer",
+    "Fit wall-mounted tandem bike rack", "Install solar-powered patio string lights", "Repair broken door jamb cracking",
+    "Replace broken dimmer knob insert sleeve", "Fit magnetic tool organizer panel", "Install portable smoothie maker",
+    "Repair broken floor tile corner", "Replace broken outlet terminal screw washer", "Fit over-door coat hanger",
+    "Install foldable therapy chair", "Repair broken ceiling vent damper spring clip", "Replace broken dimmer knob insert sleeve washer",
+    "Fit wall-mounted tricycle rack", "Install solar-powered veranda string lights", "Repair broken window screen spline separation",
+    "Replace broken light fixture rotation screw", "Fit under-cabinet floss dispenser", "Install foldable recliner",
+    "Repair broken ceiling fan downrod coupling screw", "Replace broken shower handle set screw washer collar",
+    "Fit wall-mounted unicycle rack", "Install solar-powered deck string lights", "Repair broken door jamb splitting",
+    "Replace broken dimmer knob insert sleeve collar", "Fit magnetic tool storage wall panel", "Install portable waffle maker",
+    "Repair broken floor tile center chipping", "Replace broken outlet terminal screw washer ring", "Fit over-door hat and scarf hanger",
+    "Install foldable director's chair", "Repair broken ceiling vent damper gear tooth", "Replace broken dimmer knob insert sleeve collar ring washer",
+    "Fit wall-mounted wellness product rack", "Install solar-powered landscape spotlight"
   ],
   "painting": [
     "Primer application", "Finish coating", "Texture painting", "Faux finishing", "Wallpaper",
@@ -3676,7 +3832,6 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
-                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </td>
@@ -3756,7 +3911,6 @@
                         <div class="mobile-item-value">
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${description}" required autocomplete="off">
-                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </div>
@@ -4361,7 +4515,6 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" required autocomplete="off">
-                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </td>
@@ -4946,7 +5099,7 @@
                         .print-company-name {
                             font-family: 'Inter', sans-serif;
                             font-size: 18px;
-                            font-weight: 400;
+                            font-weight: 400; /* Regular weight */
                             color: #1a3a5f;
                             margin-bottom: 4px;
                         }
@@ -4974,7 +5127,7 @@
                         }
                         .print-document-number {
                             font-size: 16px;
-                            font-weight: 700;
+                            font-weight: 400; /* Regular weight */
                             color: #1a3a5f;
                             margin-bottom: 4px;
                         }
@@ -4995,7 +5148,7 @@
                             border: 1px solid #e5e7eb;
                         }
                         .print-address-title {
-                            font-weight: 700;
+                            font-weight: 400; /* Regular weight */
                             color: #1a3a5f;
                             margin-bottom: 8px;
                             font-size: 11px;
@@ -5019,7 +5172,7 @@
                         }
                         .print-address-line strong {
                             color: #000000;
-                            font-weight: 600;
+                            font-weight: 400; /* Regular weight */
                         }
                         .print-items-table {
                             width: 100%;
@@ -5032,7 +5185,7 @@
                             color: blac;
                             padding: 10px;
                             text-align: left;
-                            font-weight: 700;
+                            font-weight: 400; /* Regular weight */
                             font-size: 10px;
                             text-transform: uppercase;
                             letter-spacing: 0.4px;
@@ -5048,7 +5201,7 @@
                             background: #f9fafb;
                         }
                         .print-items-table .description {
-                            font-weight: 600;
+                            font-weight: 400; /* Regular weight */
                             color: #000000;
                             font-size: 10px;
                         }
@@ -5056,12 +5209,12 @@
                         .print-items-table .hours {
                             text-align: center;
                             color: #000000;
-                            font-weight: 500;
+                            font-weight: 400; /* Regular weight */
                         }
                         .print-items-table .rate,
                         .print-items-table .amount {
                             text-align: right;
-                            font-weight: 600;
+                            font-weight: 400; /* Regular weight */
                             color: #000000;
                         }
                         .print-summary {
@@ -5078,7 +5231,7 @@
                             border-left: 3px solid #3b82f6;
                         }
                         .print-payment-title {
-                            font-weight: 400;
+                            font-weight: 400; /* Regular weight */
                             color: #1a3a5f;
                             margin-bottom: 8px;
                             font-size: 11px;
@@ -5093,11 +5246,11 @@
                         }
                         .print-payment-label {
                             color: #000000;
-                            font-weight: 500;
+                            font-weight: 400; /* Regular weight */
                         }
                         .print-payment-value {
                             color: #000000;
-                            font-weight: 400;
+                            font-weight: 400; /* Regular weight */
                         }
                         .print-totals-block {
                             width: 280px;
@@ -5113,16 +5266,16 @@
                         }
                         .print-totals-table .label {
                             color: #000000;
-                            font-weight: 400;
+                            font-weight: 400; /* Regular weight */
                         }
                         .print-totals-table .value {
                             text-align: right;
                             color: #000000;
-                            font-weight: 600;
+                            font-weight: 400; /* Regular weight */
                         }
                         .print-totals-table .grand-total td {
                             background: #f3f4f6;
-                            font-weight: 400;
+                            font-weight: 400; /* Regular weight */
                             color: #1a3a5f;
                             font-size: 11px;
                             border-top: 2px solid #1a3a5f;
@@ -5495,7 +5648,6 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
-                                <div class="autocomplete-hint">Ctrl+Space for suggestions</div>
                                 <div class="autocomplete-list"></div>
                             </div>
                         </td>
@@ -5646,196 +5798,333 @@
             }
         }
 
-        // Enhanced Autocomplete setup function with mobile improvements
-        function enableAutocomplete(inputElement, listElement) {
-            if (!inputElement || !listElement) {
-                console.error("Autocomplete elements not found");
-                return;
-            }
-            
-            let selectedIndex = -1;
-            let isMobile = isMobileDevice();
-            let triggerTimeout = null;
-            let lastTriggerTime = 0;
-            let isCtrlSpacePressed = false;
-            
-            // Clear any existing event listeners
-            inputElement.removeEventListener('input', handleInput);
-            inputElement.removeEventListener('keydown', handleKeydown);
-            inputElement.removeEventListener('keyup', handleKeyup);
-            
-            function handleInput(e) {
-                const value = inputElement.value.toLowerCase().trim();
-                listElement.innerHTML = '';
-                listElement.style.display = 'none';
-                selectedIndex = -1;
+       // Enhanced Autocomplete setup function with mobile improvements - REMOVED HIGHLIGHTING
+function enableAutocomplete(inputElement, listElement) {
+    if (!inputElement || !listElement) {
+        console.error("Autocomplete elements not found");
+        return;
+    }
+    
+    let selectedIndex = -1;
+    let isMobile = isMobileDevice();
+    let triggerTimeout = null;
+    let lastTriggerTime = 0;
+    let backdropElement = document.getElementById('autocompleteBackdrop');
+    
+    // Clear any existing event listeners
+    inputElement.removeEventListener('input', handleInput);
+    inputElement.removeEventListener('keydown', handleKeydown);
+    inputElement.removeEventListener('keyup', handleKeyup);
+    inputElement.removeEventListener('focus', handleFocus);
+    inputElement.removeEventListener('blur', handleBlur);
+    
+    function handleInput(e) {
+        const value = inputElement.value.toLowerCase().trim();
+        listElement.innerHTML = '';
+        listElement.style.display = 'none';
+        selectedIndex = -1;
 
-                // Don't trigger on single character unless it's Ctrl+Space
-                if (value.length < 2 && !isCtrlSpacePressed) {
-                    return;
-                }
-
-                if (value.length > 0) {
-                    // Get matches with intelligent ranking
-                    const matches = getRankedMatches(value);
-
-                    if (matches.length > 0) {
-                        // Limit to 10 results for better performance
-                        const limitedMatches = matches.slice(0, 10);
-                        
-                        limitedMatches.forEach((item, index) => {
-                            const div = document.createElement('div');
-                            div.className = 'autocomplete-item';
-                            
-                            // Create highlighted text
-                            const highlightedText = highlightMatch(item.text, value);
-                            div.innerHTML = `
-                                <span>${highlightedText}</span>
-                                <span class="type-badge">${item.category}</span>
-                            `;
-                            
-                            div.tabIndex = 0;
-                            
-                            // Mouse event
-                            div.addEventListener('mousedown', (e) => {
-                                e.preventDefault();
-                                selectSuggestion(item.text);
-                            });
-                            
-                            // Touch event for mobile
-                            div.addEventListener('touchstart', (e) => {
-                                e.preventDefault();
-                                selectSuggestion(item.text);
-                                inputElement.blur();
-                            });
-                            
-                            // Keyboard accessibility
-                            div.addEventListener('keydown', (e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    selectSuggestion(item.text);
-                                }
-                            });
-                            
-                            listElement.appendChild(div);
-                        });
-                        
-                        listElement.style.display = 'block';
-                        
-                        // Auto-select first suggestion
-                        if (limitedMatches.length > 0) {
-                            selectedIndex = 0;
-                            updateSelection(listElement.querySelectorAll('.autocomplete-item'), selectedIndex);
-                        }
-                    }
-                }
-            }
-            
-            function handleKeydown(e) {
-                const items = listElement.querySelectorAll('.autocomplete-item');
-                
-                // Check for Ctrl+Space to force suggestions
-                if (e.ctrlKey && e.code === 'Space') {
-                    e.preventDefault();
-                    isCtrlSpacePressed = true;
-                    handleInput(e);
-                    return;
-                }
-                
-                // Check for space or comma to trigger suggestions
-                if ((e.code === 'Space' || e.code === 'Comma') && inputElement.value.trim().length >= 2) {
-                    const now = Date.now();
-                    if (now - lastTriggerTime > 500) { // Debounce to avoid multiple triggers
-                        lastTriggerTime = now;
-                        handleInput(e);
-                    }
-                    return;
-                }
-                
-                if (listElement.style.display === 'block') {
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        selectedIndex = (selectedIndex + 1) % items.length;
-                        updateSelection(items, selectedIndex);
-                    } else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        selectedIndex = selectedIndex <= 0 ? items.length - 1 : selectedIndex - 1;
-                        updateSelection(items, selectedIndex);
-                    } else if (e.key === 'Enter' && selectedIndex >= 0) {
-                        e.preventDefault();
-                        const selectedItem = items[selectedIndex];
-                        if (selectedItem) {
-                            const text = selectedItem.querySelector('span').textContent;
-                            selectSuggestion(text);
-                        }
-                    } else if (e.key === 'Tab' && selectedIndex >= 0) {
-                        e.preventDefault();
-                        const selectedItem = items[selectedIndex];
-                        if (selectedItem) {
-                            const text = selectedItem.querySelector('span').textContent;
-                            selectSuggestion(text);
-                        }
-                    } else if (e.key === 'Escape') {
-                        listElement.style.display = 'none';
-                        selectedIndex = -1;
-                    }
-                }
-            }
-            
-            function handleKeyup(e) {
-                // Reset Ctrl+Space flag when keys are released
-                if (e.key === 'Control') {
-                    isCtrlSpacePressed = false;
-                }
-            }
-            
-            function selectSuggestion(text) {
-                // Get current cursor position
-                const cursorPos = inputElement.selectionStart;
-                const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-                const textAfterCursor = inputElement.value.substring(cursorPos);
-                
-                // Find the last word boundary before cursor
-                const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-                const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-                const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-                
-                // Replace the last word with the suggestion
-                const newValue = textBeforeCursor.substring(0, lastBoundaryIndex + 1) + text + textAfterCursor;
-                
-                // Set the new value and position cursor after the suggestion
-                inputElement.value = newValue;
-                const newCursorPos = lastBoundaryIndex + 1 + text.length;
-                inputElement.setSelectionRange(newCursorPos, newCursorPos);
-                
-                listElement.style.display = 'none';
-                selectedIndex = -1;
-                inputElement.focus();
-                
-                // Trigger input event to update any listeners
-                inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-            
-            // Add event listeners
-            inputElement.addEventListener('input', handleInput);
-            inputElement.addEventListener('keydown', handleKeydown);
-            inputElement.addEventListener('keyup', handleKeyup);
-            
-            // Hide autocomplete when clicking outside
-            document.addEventListener('click', function hideAutocomplete(e) {
-                if (!e.target.closest('.autocomplete-container')) {
-                    listElement.style.display = 'none';
-                    selectedIndex = -1;
-                }
-            });
-            
-            document.addEventListener('touchstart', function hideAutocompleteTouch(e) {
-                if (!e.target.closest('.autocomplete-container')) {
-                    listElement.style.display = 'none';
-                    selectedIndex = -1;
-                }
-            });
+        // Get current cursor position
+        const cursorPos = inputElement.selectionStart;
+        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+        
+        // Find the last word boundary before cursor (space or comma)
+        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+        const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+        const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+        
+        // Extract the current word being typed
+        const currentWord = textBeforeCursor.substring(lastBoundaryIndex + 1).trim();
+        
+        // Don't trigger on single character unless it's Ctrl+Space
+        if (currentWord.length < 2) {
+            return;
         }
+
+        if (currentWord.length > 0) {
+            // Get matches with intelligent ranking
+            const matches = getRankedMatches(currentWord);
+
+            if (matches.length > 0) {
+                // Limit to 10 results for better performance
+                const limitedMatches = matches.slice(0, 10);
+                
+                limitedMatches.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    
+                    // REMOVED HIGHLIGHTING - Just use plain text
+                    div.innerHTML = `
+                        <span>${item.text}</span>
+                        <span class="type-badge">${item.category}</span>
+                    `;
+                    
+                    div.tabIndex = 0;
+                    
+                    // Mouse event
+                    div.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        selectSuggestion(item.text, lastBoundaryIndex);
+                    });
+                    
+                    // Touch event for mobile
+                    div.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        selectSuggestion(item.text, lastBoundaryIndex);
+                        inputElement.blur();
+                    });
+                    
+                    // Keyboard accessibility
+                    div.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            selectSuggestion(item.text, lastBoundaryIndex);
+                        }
+                    });
+                    
+                    listElement.appendChild(div);
+                });
+                
+                listElement.style.display = 'block';
+                
+                // Show backdrop on mobile
+                if (isMobile) {
+                    backdropElement.classList.add('active');
+                }
+                
+                // Auto-select first suggestion
+                if (limitedMatches.length > 0) {
+                    selectedIndex = 0;
+                    updateSelection(listElement.querySelectorAll('.autocomplete-item'), selectedIndex);
+                }
+            }
+        }
+    }
+    
+    function handleKeydown(e) {
+        const items = listElement.querySelectorAll('.autocomplete-item');
+        
+        // Check for space or comma to trigger suggestions
+        if ((e.code === 'Space' || e.code === 'Comma') && inputElement.value.trim().length >= 2) {
+            const now = Date.now();
+            if (now - lastTriggerTime > 500) { // Debounce to avoid multiple triggers
+                lastTriggerTime = now;
+                handleInput(e);
+            }
+            return;
+        }
+        
+        if (listElement.style.display === 'block') {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = (selectedIndex + 1) % items.length;
+                updateSelection(items, selectedIndex);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = selectedIndex <= 0 ? items.length - 1 : selectedIndex - 1;
+                updateSelection(items, selectedIndex);
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                e.preventDefault();
+                const selectedItem = items[selectedIndex];
+                if (selectedItem) {
+                    const text = selectedItem.querySelector('span').textContent;
+                    
+                    // Find the last word boundary before cursor
+                    const cursorPos = inputElement.selectionStart;
+                    const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+                    const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+                    const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+                    const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+                    
+                    selectSuggestion(text, lastBoundaryIndex);
+                }
+            } else if (e.key === 'Tab' && selectedIndex >= 0) {
+                e.preventDefault();
+                const selectedItem = items[selectedIndex];
+                if (selectedItem) {
+                    const text = selectedItem.querySelector('span').textContent;
+                    
+                    // Find the last word boundary before cursor
+                    const cursorPos = inputElement.selectionStart;
+                    const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+                    const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+                    const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+                    const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+                    
+                    selectSuggestion(text, lastBoundaryIndex);
+                }
+            } else if (e.key === 'Escape') {
+                hideAutocomplete();
+            }
+        }
+    }
+    
+    function handleKeyup(e) {
+        // Check for labour charge detection
+        if (e.key === ' ' || e.key === 'Enter') {
+            checkForLabourCharge(inputElement.value);
+        }
+    }
+    
+    function handleFocus() {
+        // Trigger autocomplete on focus if there's already text
+        if (inputElement.value.trim().length >= 2) {
+            handleInput(new Event('input'));
+        }
+    }
+    
+    function handleBlur() {
+        // Delay hiding autocomplete to allow click events to register
+        setTimeout(() => {
+            hideAutocomplete();
+        }, 200);
+    }
+    
+    function hideAutocomplete() {
+        listElement.style.display = 'none';
+        selectedIndex = -1;
+        backdropElement.classList.remove('active');
+    }
+    
+    function selectSuggestion(text, lastBoundaryIndex) {
+        // Get current cursor position
+        const cursorPos = inputElement.selectionStart;
+        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+        const textAfterCursor = inputElement.value.substring(cursorPos);
+        
+        // If lastBoundaryIndex is not provided, calculate it
+        if (lastBoundaryIndex === undefined) {
+            const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+            const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+            lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+        }
+        
+        // Replace the last word with the suggestion
+        const newValue = textBeforeCursor.substring(0, lastBoundaryIndex + 1) + text + textAfterCursor;
+        
+        // Set the new value
+        inputElement.value = newValue;
+        
+        // Position cursor after the suggestion
+        const newCursorPos = lastBoundaryIndex + 1 + text.length;
+        inputElement.setSelectionRange(newCursorPos, newCursorPos);
+        
+        // Prevent text selection by clearing any existing selection
+        if (window.getSelection) {
+            window.getSelection().removeAllRanges();
+        } else if (document.selection) {
+            document.selection.empty();
+        }
+        
+        hideAutocomplete();
+        inputElement.focus();
+        
+        // Trigger input event to update any listeners
+        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    
+    // Check for labour charge patterns
+    function checkForLabourCharge(value) {
+        const labourPattern = /(\d+)\s*(persons?|workers?|labour)/i;
+        const match = value.match(labourPattern);
+        
+        if (match) {
+            const count = parseInt(match[1]);
+            if (count >= 1 && count <= 10) {
+                // Suggest labour charge based on the number
+                const suggestion = `${count} ${count === 1 ? 'Person' : 'Persons'} Labour`;
+                
+                // Check if already suggested
+                if (!value.includes(suggestion)) {
+                    // Add to suggestions list
+                    if (!listElement.innerHTML) {
+                        listElement.innerHTML = '';
+                    }
+                    
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerHTML = `
+                        <span>${suggestion}</span>
+                        <span class="type-badge">labour</span>
+                    `;
+                    
+                    div.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        
+                        // Find the last word boundary before cursor
+                        const cursorPos = inputElement.selectionStart;
+                        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+                        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+                        const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+                        const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+                        
+                        selectSuggestion(suggestion, lastBoundaryIndex);
+                    });
+                    
+                    div.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        
+                        // Find the last word boundary before cursor
+                        const cursorPos = inputElement.selectionStart;
+                        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
+                        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
+                        const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
+                        const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
+                        
+                        selectSuggestion(suggestion, lastBoundaryIndex);
+                        inputElement.blur();
+                    });
+                    
+                    // Insert at the beginning of the list
+                    if (listElement.firstChild) {
+                        listElement.insertBefore(div, listElement.firstChild);
+                    } else {
+                        listElement.appendChild(div);
+                    }
+                    
+                    listElement.style.display = 'block';
+                    
+                    // Show backdrop on mobile
+                    if (isMobile) {
+                        backdropElement.classList.add('active');
+                    }
+                }
+            }
+        }
+    }
+    
+    // Add event listeners
+    inputElement.addEventListener('input', handleInput);
+    inputElement.addEventListener('keydown', handleKeydown);
+    inputElement.addEventListener('keyup', handleKeyup);
+    inputElement.addEventListener('focus', handleFocus);
+    inputElement.addEventListener('blur', handleBlur);
+    
+    // Hide autocomplete when clicking outside
+    document.addEventListener('click', function hideAutocomplete(e) {
+        if (!e.target.closest('.autocomplete-container')) {
+            hideAutocomplete();
+        }
+    });
+    
+    document.addEventListener('touchstart', function hideAutocompleteTouch(e) {
+        if (!e.target.closest('.autocomplete-container')) {
+            hideAutocomplete();
+        }
+    });
+    
+    // Handle backdrop click on mobile
+    backdropElement.addEventListener('click', function() {
+        hideAutocomplete();
+        inputElement.blur();
+    });
+    
+    backdropElement.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        hideAutocomplete();
+        inputElement.blur();
+    });
+}
 
         // Get ranked matches for autocomplete
         function getRankedMatches(query) {
@@ -5881,22 +6170,22 @@
             });
         }
 
-        // Highlight matching parts of the text
-        function highlightMatch(text, query) {
-            const textLower = text.toLowerCase();
-            const queryLower = query.toLowerCase();
-            const index = textLower.indexOf(queryLower);
-            
-            if (index === -1) {
-                return text;
-            }
-            
-            const before = text.substring(0, index);
-            const match = text.substring(index, index + query.length);
-            const after = text.substring(index + query.length);
-            
-            return `${before}<span class="highlight">${match}</span>${after}`;
-        }
+        // REMOVED HIGHLIGHT MATCH FUNCTION - NO LONGER NEEDED
+        // function highlightMatch(text, query) {
+        //     const textLower = text.toLowerCase();
+        //     const queryLower = query.toLowerCase();
+        //     const index = textLower.indexOf(queryLower);
+        //     
+        //     if (index === -1) {
+        //         return text;
+        //     }
+        //     
+        //     const before = text.substring(0, index);
+        //     const match = text.substring(index, index + query.length);
+        //     const after = text.substring(index + query.length);
+        //     
+        //     return `${before}<span class="highlight">${match}</span>${after}`;
+        // }
 
         // Helper function to update selection styling
         function updateSelection(items, selectedIndex) {
