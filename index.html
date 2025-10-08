@@ -3937,8 +3937,10 @@
                 const qty = parseFloat(quantityInput.value) || 0;
                 const hrs = parseFloat(hoursInput.value) || 0;
                 const rt = parseFloat(rateInput.value) || 0;
-                // Fixed calculation: amount = (quantity * rate) * (hours * rate)
-                const amt = (qty * hrs) + (qty * rt) + (hrs * rt);
+                const pair1 = qty * hrs;
+const pair2 = qty * rt;
+const pair3 = hrs * rt;
+const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amount field
                 amountInput.value = amt.toFixed(2);
                 calculateTotals();
             };
@@ -6401,3 +6403,4 @@
     </script>
 </body>
 </html>
+
