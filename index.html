@@ -13,12 +13,21 @@
     <meta name="msapplication-TileColor" content="#1a3a5f">
     <meta name="msapplication-config" content="/browserconfig.xml">
     
-    <!-- PWA Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <!-- PWA Icons - Updated for better mobile support -->
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="logo.png">
     <link rel="manifest" href="site.webmanifest">
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#1a3a5f">
+    <link rel="mask-icon" href="logo.png" color="#1a3a5f">
+    
+    <!-- Additional PWA icon sizes for better compatibility -->
+    <link rel="apple-touch-icon" sizes="57x57" href="logo.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="logo.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="logo.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="logo.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="logo.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="logo.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="logo.png">
     
     <title>Invoicing System - SMART SQUAD M BUILD PTY LTD</title>
     
@@ -243,6 +252,37 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        /* Date and Time Display Styles */
+        .date-time-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-md);
+            padding: 8px 12px;
+            color: var(--text-dark);
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+
+        .date-time-display:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .current-date {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .current-time {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-color);
         }
 
         .user-dropdown {
@@ -532,6 +572,19 @@
             .glass-input:focus {
                 transform: scale(1.02);
                 box-shadow: 0 0 0 3px rgba(26, 58, 95, 0.2);
+            }
+            
+            /* Adjust date-time display for mobile */
+            .date-time-display {
+                padding: 6px 10px;
+            }
+            
+            .current-date {
+                font-size: 0.8rem;
+            }
+            
+            .current-time {
+                font-size: 0.9rem;
             }
         }
 
@@ -2847,6 +2900,13 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Date and Time Display -->
+            <div class="date-time-display" id="dateTimeDisplay">
+                <div class="current-date" id="currentDate"></div>
+                <div class="current-time" id="currentTime"></div>
+            </div>
+            
             <div class="user-info">
                 <div class="user-dropdown">
                     <div class="user-email" id="userEmail">user@example.com</div>
@@ -2962,7 +3022,7 @@
                                         <td><input type="number" class="glass-input medium item-quantity" value="1" min="0" step="1"></td>
                                         <td><input type="number" class="glass-input medium item-hours" value="0" min="0" step="0.5"></td>
                                         <td><input type="number" class="glass-input medium-large item-rate" value="0.00" min="0" step="0.01" required></td>
-                                        <td><input type="text" class="glass-input small item-amount" value="0.00, 0.00, 0.00" readonly></td>
+                                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
                                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
                                         <!-- Hidden input for image data -->
                                         <input type="hidden" class="item-image">
@@ -3801,6 +3861,36 @@
             
             // Store original form values for cancel functionality
             storeOriginalFormValues();
+            
+            // Initialize date and time display
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        }
+
+        // Update date and time display
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format date
+            const options = { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('en-US', options);
+            
+            // Format time
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const timeString = now.toLocaleTimeString('en-US', timeOptions);
+            
+            // Update DOM
+            document.getElementById('currentDate').textContent = dateString;
+            document.getElementById('currentTime').textContent = timeString;
         }
 
         // Store original form values for cancel functionality
@@ -4055,17 +4145,12 @@
             
             // Calculate amount when quantity, hours, or rate changes
             const calculateAmount = () => {
+                // Use standard accounting calculation: Quantity × Rate
                 const qty = parseFloat(quantityInput.value) || 0;
-                const hrs = parseFloat(hoursInput.value) || 0;
                 const rt = parseFloat(rateInput.value) || 0;
+                const amt = qty * rt;
                 
-                // Updated calculation: display multiple amounts as (qty * hrs), (qty * rt), (hrs * rt)
-                const pair1 = qty * hrs;
-                const pair2 = qty * rt;
-                const pair3 = hrs * rt;
-                const amt = `${pair1.toFixed(2)}, ${pair2.toFixed(2)}, ${pair3.toFixed(2)}`;  // Concatenated for display in amount field
-                
-                amountInput.value = amt;
+                amountInput.value = amt.toFixed(2);
                 calculateTotals();
             };
             
@@ -4620,7 +4705,7 @@
                         <td><input type="number" class="glass-input medium item-quantity" value="1" min="0" step="1"></td>
                         <td><input type="number" class="glass-input medium item-hours" value="0" min="0" step="0.5"></td>
                         <td><input type="number" class="glass-input medium-large item-rate" value="0.00" min="0" step="0.01" required></td>
-                        <td><input type="text" class="glass-input small item-amount" value="0.00, 0.00, 0.00" readonly></td>
+                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
                         <!-- Hidden input for image data -->
                         <input type="hidden" class="item-image">
@@ -4664,17 +4749,17 @@
                     e.target.classList.contains('item-hours') || 
                     e.target.classList.contains('item-rate')) {
                     const row = e.target.closest('.item-row');
-                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                    const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
-                    const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
+                    const quantityInput = row.querySelector('.item-quantity');
+                    const hoursInput = row.querySelector('.item-hours');
+                    const rateInput = row.querySelector('.item-rate');
+                    const amountInput = row.querySelector('.item-amount');
                     
-                    // Updated calculation: display multiple amounts as (qty * hrs), (qty * rt), (hrs * rt)
-                    const pair1 = quantity * hours;
-                    const pair2 = quantity * rate;
-                    const pair3 = hours * rate;
-                    const amount = `${pair1.toFixed(2)}, ${pair2.toFixed(2)}, ${pair3.toFixed(2)}`;  // Concatenated for display in amount field
+                    // Use standard accounting calculation: Quantity × Rate
+                    const qty = parseFloat(quantityInput.value) || 0;
+                    const rt = parseFloat(rateInput.value) || 0;
+                    const amt = qty * rt;
                     
-                    row.querySelector('.item-amount').value = amount;
+                    amountInput.value = amt.toFixed(2);
                     calculateTotals();
                 }
             });
@@ -4916,13 +5001,13 @@
                     rate = parseFloat(item.querySelector('.item-rate').value) || 0;
                 }
                 
-                if (description && rate > 0 && (quantity > 0 || hours > 0)) {
+                if (description && rate > 0 && quantity > 0) {
                     hasValidItem = true;
                 }
             });
             
             if (!hasValidItem) {
-                showNotification('At least one valid item is required (with description, rate, and either quantity or hours)', 'error');
+                showNotification('At least one valid item is required (with description, rate, and quantity)', 'error');
                 return false;
             }
 
@@ -5050,7 +5135,7 @@
                             imageData = imageInput.dataset.imageData || null;
                         }
                         
-                        if (description && rate > 0 && (quantity > 0 || hours > 0)) {
+                        if (description && rate > 0 && quantity > 0) {
                             itemsArray.push({
                                 description: description,
                                 quantity: quantity,
@@ -5077,7 +5162,7 @@
                             imageData = imageInput.dataset.imageData || null;
                         }
                         
-                        if (description && rate > 0 && (quantity > 0 || hours > 0)) {
+                        if (description && rate > 0 && quantity > 0) {
                             itemsArray.push({
                                 description: description,
                                 quantity: quantity,
@@ -5229,7 +5314,7 @@
                 firstRow.querySelector('.item-quantity').value = '1';
                 firstRow.querySelector('.item-hours').value = '0';
                 firstRow.querySelector('.item-rate').value = '0.00';
-                firstRow.querySelector('.item-amount').value = '0.00, 0.00, 0.00';
+                firstRow.querySelector('.item-amount').value = '0.00';
             }
 
             document.getElementById('subtotal').textContent = '$0.00';
@@ -5243,6 +5328,22 @@
             storeOriginalFormValues();
         }
 
+        // Standard accounting calculation function for item amounts
+        function calculateItemAmount(quantityInput, hoursInput, rateInput) {
+            // Standard accounting calculation: Amount = Quantity × Rate
+            // Hours is just for reference/display and doesn't affect the calculation
+            const qty = parseFloat(quantityInput.value) || 0;
+            const rt = parseFloat(rateInput.value) || 0;
+            
+            // If Quantity is 0, the amount should be 0 regardless of hours
+            if (qty === 0) {
+                return 0;
+            }
+            
+            // Standard calculation: Quantity × Rate
+            return qty * rt;
+        }
+
         // Calculate totals
         function calculateTotals() {
             let subtotal = 0;
@@ -5252,16 +5353,14 @@
                 const itemCards = document.querySelectorAll('.mobile-item-card');
                 itemCards.forEach(card => {
                     const amountStr = card.querySelector('.item-amount').value;
-                    // Parse the first value from the comma-separated string
-                    const amount = parseFloat(amountStr.split(',')[0]) || 0;
+                    const amount = parseFloat(amountStr) || 0;
                     subtotal += amount;
                 });
             } else {
                 // Desktop version
                 document.querySelectorAll('.item-row').forEach(row => {
                     const amountStr = row.querySelector('.item-amount').value;
-                    // Parse the first value from the comma-separated string
-                    const amount = parseFloat(amountStr.split(',')[0]) || 0;
+                    const amount = parseFloat(amountStr) || 0;
                     subtotal += amount;
                 });
             }
@@ -5332,7 +5431,7 @@
                         <td class="quantity">${item.quantity}</td>
                         <td class="hours">${item.hours}</td>
                         <td class="rate">$${item.rate.toFixed(2)}</td>
-                        <td class="amount">${item.amount}</td>
+                        <td class="amount">${item.amount.toFixed(2)}</td>
                     </tr>
                 `;
             });
@@ -5958,7 +6057,7 @@
                         <td><input type="number" class="glass-input medium item-quantity" value="${item.quantity}" min="0" step="1"></td>
                         <td><input type="number" class="glass-input medium item-hours" value="${item.hours}" min="0" step="0.5"></td>
                         <td><input type="number" class="glass-input medium-large item-rate" value="${item.rate}" min="0" step="0.01" required></td>
-                        <td><input type="text" class="glass-input small item-amount" value="${item.amount}" readonly></td>
+                        <td><input type="text" class="glass-input small item-amount" value="${item.amount.toFixed(2)}" readonly></td>
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
                         <!-- Hidden input for image data -->
                         <input type="hidden" class="item-image">
@@ -6010,7 +6109,7 @@
             const modalBody = document.getElementById('detailModalBody');
             let itemsHTML = '<table class="detail-items"><thead><tr><th>Description</th><th>Quantity</th><th>Hours</th><th>Rate ($)</th><th>Amount ($)</th></tr></thead><tbody>';
             data.items.forEach(item => {
-                itemsHTML += `<tr><td>${item.description}</td><td>${item.quantity}</td><td>${item.hours}</td><td>${item.rate.toFixed(2)}</td><td>${item.amount}</td></tr>`;
+                itemsHTML += `<tr><td>${item.description}</td><td>${item.quantity}</td><td>${item.hours}</td><td>${item.rate.toFixed(2)}</td><td>${item.amount.toFixed(2)}</td></tr>`;
             });
             itemsHTML += '</tbody></table>';
 
@@ -6129,160 +6228,221 @@
             }
         }
 
-        // Classic Dropdown Autocomplete
-        function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
-            if (!inputElement || !suggestionElement) {
-                console.error("Autocomplete elements not found");
-                return;
-            }
-            
-            // Create a dropdown container for suggestions
-            const dropdownContainer = document.createElement('div');
-            dropdownContainer.className = 'autocomplete-dropdown';
-            dropdownContainer.style.position = 'absolute';
-            dropdownContainer.style.top = '100%';
-            dropdownContainer.style.left = '0';
-            dropdownContainer.style.right = '0';
-            dropdownContainer.style.zIndex = '100';
-            dropdownContainer.style.backgroundColor = 'white';
-            dropdownContainer.style.border = '1px solid var(--border-color)';
-            dropdownContainer.style.borderTop = 'none';
-            dropdownContainer.style.borderRadius = '0 0 var(--border-radius-md) var(--border-radius-md)';
-            dropdownContainer.style.maxHeight = '200px';
-            dropdownContainer.style.overflowY = 'auto';
+       // Classic Dropdown Autocomplete - Modified to support multiple listings
+function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
+    if (!inputElement || !suggestionElement) {
+        console.error("Autocomplete elements not found");
+        return;
+    }
+    
+    // Create a dropdown container for suggestions
+    const dropdownContainer = document.createElement('div');
+    dropdownContainer.className = 'autocomplete-dropdown';
+    dropdownContainer.style.position = 'absolute';
+    dropdownContainer.style.top = '100%';
+    dropdownContainer.style.left = '0';
+    dropdownContainer.style.right = '0';
+    dropdownContainer.style.zIndex = '100';
+    dropdownContainer.style.backgroundColor = 'white';
+    dropdownContainer.style.border = '1px solid var(--border-color)';
+    dropdownContainer.style.borderTop = 'none';
+    dropdownContainer.style.borderRadius = '0 0 var(--border-radius-md) var(--border-radius-md)';
+    dropdownContainer.style.maxHeight = '200px';
+    dropdownContainer.style.overflowY = 'auto';
+    dropdownContainer.style.display = 'none';
+    dropdownContainer.style.boxShadow = 'var(--shadow-md)';
+    
+    // Insert the dropdown after the input container
+    const inputContainer = inputElement.closest('.autocomplete-container');
+    inputContainer.appendChild(dropdownContainer);
+    
+    let currentMatches = [];
+    let selectedIndex = -1;
+    let lastInputValue = '';
+    
+    // Clear any existing event listeners
+    inputElement.removeEventListener('input', handleInput);
+    inputElement.removeEventListener('keydown', handleKeydown);
+    inputElement.removeEventListener('blur', handleBlur);
+    inputElement.removeEventListener('focus', handleFocus);
+    
+    function handleInput(e) {
+        const fullValue = inputElement.value;
+        const cursorPosition = inputElement.selectionStart;
+        
+        // Find the current item being typed (from last comma or start to cursor)
+        const beforeCursor = fullValue.substring(0, cursorPosition);
+        const lastCommaIndex = beforeCursor.lastIndexOf(',');
+        const lastSemicolonIndex = beforeCursor.lastIndexOf(';');
+        const lastDelimiterIndex = Math.max(lastCommaIndex, lastSemicolonIndex);
+        
+        const currentItem = beforeCursor.substring(lastDelimiterIndex + 1).trim();
+        const value = currentItem.toLowerCase();
+        
+        dropdownContainer.innerHTML = '';
+        selectedIndex = -1;
+        
+        // Don't trigger on single character or empty
+        if (value.length < 2) {
             dropdownContainer.style.display = 'none';
-            dropdownContainer.style.boxShadow = 'var(--shadow-md)';
-            
-            // Insert the dropdown after the input container
-            const inputContainer = inputElement.closest('.autocomplete-container');
-            inputContainer.appendChild(dropdownContainer);
-            
-            let currentMatches = [];
-            let selectedIndex = -1;
-            
-            // Clear any existing event listeners
-            inputElement.removeEventListener('input', handleInput);
-            inputElement.removeEventListener('keydown', handleKeydown);
-            inputElement.removeEventListener('blur', handleBlur);
-            inputElement.removeEventListener('focus', handleFocus);
-            
-            function handleInput(e) {
-                const value = inputElement.value.toLowerCase().trim();
-                dropdownContainer.innerHTML = '';
-                selectedIndex = -1;
-                
-                // Don't trigger on single character
-                if (value.length < 2) {
-                    dropdownContainer.style.display = 'none';
-                    return;
-                }
-
-                // Get matches with intelligent ranking
-                currentMatches = getRankedMatches(value);
-
-                if (currentMatches.length > 0) {
-                    // Create suggestion items
-                    currentMatches.forEach((match, index) => {
-                        const item = document.createElement('div');
-                        item.className = 'autocomplete-item';
-                        item.textContent = match.text;
-                        item.style.padding = '10px 15px';
-                        item.style.cursor = 'pointer';
-                        item.style.borderBottom = '1px solid var(--border-color)';
-                        
-                        // Highlight the matching part
-                        const regex = new RegExp(`(${value})`, 'gi');
-                        item.innerHTML = match.text.replace(regex, '<strong>$1</strong>');
-                        
-                        // Add hover effect
-                        item.addEventListener('mouseenter', () => {
-                            selectedIndex = index;
-                            updateSelection();
-                        });
-                        
-                        // Add click handler
-                        item.addEventListener('click', () => {
-                            inputElement.value = match.text;
-                            dropdownContainer.style.display = 'none';
-                            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-                            inputElement.focus();
-                        });
-                        
-                        dropdownContainer.appendChild(item);
-                    });
-                    
-                    dropdownContainer.style.display = 'block';
-                } else {
-                    dropdownContainer.style.display = 'none';
-                }
-            }
-            
-            function handleKeydown(e) {
-                if (dropdownContainer.style.display === 'none') return;
-                
-                switch (e.key) {
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
-                        updateSelection();
-                        break;
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        selectedIndex = Math.max(selectedIndex - 1, 0);
-                        updateSelection();
-                        break;
-                    case 'Enter':
-                        e.preventDefault();
-                        if (selectedIndex >= 0 && selectedIndex < currentMatches.length) {
-                            inputElement.value = currentMatches[selectedIndex].text;
-                            dropdownContainer.style.display = 'none';
-                            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                        break;
-                    case 'Escape':
-                        dropdownContainer.style.display = 'none';
-                        selectedIndex = -1;
-                        break;
-                }
-            }
-            
-            function updateSelection() {
-                const items = dropdownContainer.querySelectorAll('.autocomplete-item');
-                items.forEach((item, index) => {
-                    if (index === selectedIndex) {
-                        item.style.backgroundColor = 'var(--bg-light)';
-                    } else {
-                        item.style.backgroundColor = 'white';
-                    }
-                });
-            }
-            
-            function handleBlur() {
-                // Delay hiding to allow click on suggestion
-                setTimeout(() => {
-                    dropdownContainer.style.display = 'none';
-                }, 200);
-            }
-            
-            function handleFocus() {
-                // Trigger autocomplete on focus if there's already text
-                if (inputElement.value.trim().length >= 2) {
-                    handleInput(new Event('input'));
-                }
-            }
-            
-            // Add event listeners
-            inputElement.addEventListener('input', handleInput);
-            inputElement.addEventListener('keydown', handleKeydown);
-            inputElement.addEventListener('blur', handleBlur);
-            inputElement.addEventListener('focus', handleFocus);
-            
-            // Hide the inline suggestion elements
-            suggestionElement.style.display = 'none';
-            if (acceptButton) {
-                acceptButton.style.display = 'none';
-            }
+            return;
         }
+
+        // Get matches with intelligent ranking
+        currentMatches = getRankedMatches(value);
+
+        if (currentMatches.length > 0) {
+            // Create suggestion items
+            currentMatches.forEach((match, index) => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.textContent = match.text;
+                item.style.padding = '10px 15px';
+                item.style.cursor = 'pointer';
+                item.style.borderBottom = '1px solid var(--border-color)';
+                
+                // Highlight the matching part
+                const regex = new RegExp(`(${value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                item.innerHTML = match.text.replace(regex, '<strong>$1</strong>');
+                
+                // Add hover effect
+                item.addEventListener('mouseenter', () => {
+                    selectedIndex = index;
+                    updateSelection();
+                });
+                
+                // Add click handler
+                item.addEventListener('click', () => {
+                    // Replace only the current item with the selected suggestion
+                    const beforeItem = fullValue.substring(0, lastDelimiterIndex + 1);
+                    const afterCursor = fullValue.substring(cursorPosition);
+                    
+                    // Add the selected item with a comma and space
+                    inputElement.value = beforeItem + match.text + ', ' + afterCursor;
+                    
+                    // Set cursor position after the comma and space
+                    const newCursorPosition = beforeItem.length + match.text.length + 2;
+                    inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
+                    
+                    dropdownContainer.style.display = 'none';
+                    inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                    inputElement.focus();
+                });
+                
+                dropdownContainer.appendChild(item);
+            });
+            
+            dropdownContainer.style.display = 'block';
+        } else {
+            dropdownContainer.style.display = 'none';
+        }
+        
+        // Update the last input value
+        lastInputValue = value;
+    }
+    
+    function handleKeydown(e) {
+        if (dropdownContainer.style.display === 'none') return;
+        
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
+                updateSelection();
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                updateSelection();
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && selectedIndex < currentMatches.length) {
+                    // Replace only the current item with the selected suggestion
+                    const fullValue = inputElement.value;
+                    const cursorPosition = inputElement.selectionStart;
+                    
+                    const beforeCursor = fullValue.substring(0, cursorPosition);
+                    const lastCommaIndex = beforeCursor.lastIndexOf(',');
+                    const lastSemicolonIndex = beforeCursor.lastIndexOf(';');
+                    const lastDelimiterIndex = Math.max(lastCommaIndex, lastSemicolonIndex);
+                    
+                    const beforeItem = fullValue.substring(0, lastDelimiterIndex + 1);
+                    const afterCursor = fullValue.substring(cursorPosition);
+                    
+                    // Add the selected item with a comma and space
+                    inputElement.value = beforeItem + currentMatches[selectedIndex].text + ', ' + afterCursor;
+                    
+                    // Set cursor position after the comma and space
+                    const newCursorPosition = beforeItem.length + currentMatches[selectedIndex].text.length + 2;
+                    inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
+                    
+                    dropdownContainer.style.display = 'none';
+                    inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                break;
+            case 'Escape':
+                dropdownContainer.style.display = 'none';
+                selectedIndex = -1;
+                break;
+            case ',':
+            case ';':
+                // When user types a comma or semicolon, hide suggestions temporarily
+                dropdownContainer.style.display = 'none';
+                // But don't prevent the default behavior
+                break;
+        }
+    }
+    
+    function updateSelection() {
+        const items = dropdownContainer.querySelectorAll('.autocomplete-item');
+        items.forEach((item, index) => {
+            if (index === selectedIndex) {
+                item.style.backgroundColor = 'var(--bg-light)';
+            } else {
+                item.style.backgroundColor = 'white';
+            }
+        });
+    }
+    
+    function handleBlur() {
+        // Delay hiding to allow click on suggestion
+        setTimeout(() => {
+            dropdownContainer.style.display = 'none';
+        }, 200);
+    }
+    
+    function handleFocus() {
+        // Trigger autocomplete on focus if there's already text
+        const fullValue = inputElement.value;
+        const cursorPosition = inputElement.selectionStart;
+        
+        // Find the current item being typed
+        const beforeCursor = fullValue.substring(0, cursorPosition);
+        const lastCommaIndex = beforeCursor.lastIndexOf(',');
+        const lastSemicolonIndex = beforeCursor.lastIndexOf(';');
+        const lastDelimiterIndex = Math.max(lastCommaIndex, lastSemicolonIndex);
+        
+        const currentItem = beforeCursor.substring(lastDelimiterIndex + 1).trim();
+        
+        if (currentItem.length >= 2) {
+            handleInput(new Event('input'));
+        }
+    }
+    
+    // Add event listeners
+    inputElement.addEventListener('input', handleInput);
+    inputElement.addEventListener('keydown', handleKeydown);
+    inputElement.addEventListener('blur', handleBlur);
+    inputElement.addEventListener('focus', handleFocus);
+    
+    // Hide the inline suggestion elements
+    suggestionElement.style.display = 'none';
+    if (acceptButton) {
+        acceptButton.style.display = 'none';
+    }
+}
+
 
         // Get ranked matches for autocomplete
         function getRankedMatches(query) {
