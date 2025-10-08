@@ -480,62 +480,44 @@
             background: white;
         }
 
+        .glass-input:disabled {
+            background-color: rgba(229, 231, 235, 0.5);
+            cursor: not-allowed;
+        }
+
         .large { width: 100%; }
         .small { width: 80px; }
         .xsmall { width: 60px; }
 
-        /* Modern Non-Intrusive Autocomplete Styles - REMOVED HIGHLIGHTING */
+        /* Classic Dropdown Autocomplete Styles */
         .autocomplete-container {
             position: relative;
             width: 100%;
-            z-index: 100;
+            z-index: 10;
         }
 
-        .autocomplete-list {
+        .autocomplete-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
-            max-height: 200px;
-            overflow-y: auto;
+            z-index: 100;
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-md);
-            z-index: 9999 !important;
+            border-top: none;
+            border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+            max-height: 200px;
+            overflow-y: auto;
             display: none;
-            box-shadow: var(--shadow-lg);
-            margin-top: 4px;
-            /* Improved scrolling for mobile */
-            -webkit-overflow-scrolling: touch;
-            /* Prevent zoom on iOS */
-            transform: translateZ(0);
-            /* Enhanced mobile positioning */
-            will-change: transform;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            /* Modern glassmorphism effect */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--shadow-md);
         }
 
         .autocomplete-item {
-            padding: 10px 14px;
+            padding: 10px 15px;
             cursor: pointer;
-            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
-            transition: all var(--transition-fast);
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color var(--transition-fast);
             font-size: 14px;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            /* Ensure consistent touch target size */
-            min-height: 44px;
-            /* Mobile-friendly */
-            position: relative;
-            overflow: hidden;
-            background: transparent;
-            color: var(--text-dark);
         }
 
         .autocomplete-item:last-child {
@@ -543,37 +525,18 @@
         }
 
         .autocomplete-item:hover {
-            background: rgba(26, 58, 95, 0.05);
+            background-color: var(--bg-light);
         }
 
-        .autocomplete-item.selected {
-            background: rgba(26, 58, 95, 0.1);
+        .autocomplete-item strong {
             color: var(--primary-color);
-        }
-
-        /* REMOVED HIGHLIGHT STYLES */
-        /* .autocomplete-item .highlight {
             font-weight: 600;
-            color: var(--accent-color);
         }
 
-        .autocomplete-item.selected .highlight {
-            color: var(--primary-color);
-        } */
-
-        .autocomplete-item .type-badge {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: var(--border-radius-sm);
-            background: var(--bg-light);
-            color: var(--text-light);
-            flex-shrink: 0;
-            text-transform: lowercase;
-        }
-
-        .autocomplete-item.selected .type-badge {
-            background: rgba(26, 58, 95, 0.1);
-            color: var(--primary-color);
+        /* Hide the inline suggestion elements */
+        .autocomplete-suggestion,
+        .autocomplete-accept {
+            display: none !important;
         }
 
         /* Form Layout - Two Column for Desktop */
@@ -591,30 +554,11 @@
             flex: 2;
         }
 
-        /* Items Section - Modern Card Layout */
+        /* Items Section - Integrated into Main Form */
         .items-section {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--border-radius-lg);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-            box-shadow: var(--glass-shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .items-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            background-size: 200% 100%;
-            animation: gradient-shift 8s ease infinite;
+            margin-top: var(--spacing-lg);
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-lg);
         }
 
         .items-header {
@@ -1523,20 +1467,6 @@
                 font-style: italic;
             }
             
-            .print-watermark {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(-45deg);
-                font-size: 120px;
-                font-weight: 900;
-                color: rgba(26, 58, 95, 0.04);
-                text-transform: uppercase;
-                letter-spacing: 10px;
-                pointer-events: none;
-                z-index: -1;
-            }
-            
             /* Hide all non-print elements */
             .app-header, .glass-card, .document-tabs-container, .modal, .notification-container {
                 display: none !important;
@@ -2020,16 +1950,20 @@
             flex-wrap: wrap;
         }
 
-        /* Mobile Responsive Styles */
+        /* Mobile Responsive Styles - ENHANCED FOR ALL DEVICES */
         @media (max-width: 768px) {
             body {
                 padding: var(--spacing-xs);
+                /* Enhanced mobile viewport handling */
+                height: 100vh;
+                overflow-x: hidden;
             }
 
             .app-header {
                 flex-direction: column;
                 align-items: stretch;
                 gap: var(--spacing-sm);
+                padding: var(--spacing-sm);
             }
             
             .user-info {
@@ -2062,6 +1996,7 @@
             
             .table-container {
                 overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
             }
             
             .share-options {
@@ -2074,46 +2009,6 @@
             
             .settings-modal {
                 width: 95vw;
-            }
-            
-            /* Modern Mobile Autocomplete Styles */
-            .autocomplete-list {
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                top: auto !important;
-                max-height: 40vh !important;
-                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
-                z-index: 10001 !important;
-                margin-top: 0 !important;
-                /* Improved scrolling for mobile */
-                -webkit-overflow-scrolling: touch;
-                /* Prevent zoom on iOS */
-                transform: translateZ(0);
-                /* Add backdrop for better visibility */
-                background: rgba(255, 255, 255, 0.98) !important;
-                /* Safe area support */
-                padding-bottom: calc(var(--spacing-sm) + var(--mobile-safe-area-bottom));
-            }
-            
-            .autocomplete-item {
-                padding: 12px 16px !important;
-                font-size: 16px !important;
-                border-bottom: 1px solid rgba(229, 231, 235, 0.5) !important;
-                min-height: 44px !important;
-                display: flex !important;
-                align-items: center !important;
-                /* Add subtle animation for better UX */
-                transition: background-color var(--transition-fast) !important;
-                /* Safe area support */
-                padding-left: calc(16px + var(--mobile-safe-area-left)) !important;
-                padding-right: calc(16px + var(--mobile-safe-area-right)) !important;
-            }
-            
-            .autocomplete-item:active {
-                background-color: rgba(26, 58, 95, 0.05) !important;
             }
             
             /* Mobile items section - card view */
@@ -2161,6 +2056,7 @@
             .modal-content {
                 width: 95vw;
                 margin: 10px;
+                max-height: 90vh;
             }
 
             .modal-header {
@@ -2169,6 +2065,8 @@
 
             .modal-body {
                 padding: var(--spacing-sm);
+                max-height: 60vh;
+                overflow-y: auto;
             }
 
             .modal-footer {
@@ -2214,6 +2112,36 @@
             .settings-tab {
                 padding: 8px 12px;
                 font-size: 0.85rem;
+            }
+
+            /* Enhanced PWA mobile responsiveness */
+            .app-container {
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .glass-card {
+                margin: var(--spacing-sm);
+                border-radius: var(--border-radius-md);
+            }
+
+            .form-section h3 {
+                font-size: 1.1rem;
+            }
+
+            .items-title {
+                font-size: 1.1rem;
+            }
+
+            .document-tabs-title {
+                font-size: 1.1rem;
+            }
+
+            /* Better mobile viewport handling */
+            @supports (-webkit-touch-callout: none) {
+                body {
+                    -webkit-text-size-adjust: 100%;
+                }
             }
         }
 
@@ -2594,20 +2522,6 @@
             color: #000000;
             font-style: italic;
         }
-        
-        .print-template-watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            font-weight: 900;
-            color: rgba(26, 58, 95, 0.04);
-            text-transform: uppercase;
-            letter-spacing: 10px;
-            pointer-events: none;
-            z-index: -1;
-        }
 
         /* Login page logo */
         .auth-logo {
@@ -2647,24 +2561,6 @@
         /* Autocomplete keyboard shortcut hint - REMOVED */
         .autocomplete-hint {
             display: none; /* Hide the keyboard shortcut hint */
-        }
-
-        /* Mobile Autocomplete Backdrop */
-        .autocomplete-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 10000;
-            display: none;
-            /* Improved touch handling */
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .autocomplete-backdrop.active {
-            display: block;
         }
 
         /* Install PWA Banner */
@@ -2742,15 +2638,51 @@
             box-shadow: var(--shadow-md);
         }
 
+        /* Image attachment styles */
+        .image-attachment {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .image-info {
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .remove-image {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all var(--transition-normal);
+        }
+
+        .remove-image:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Notification Container -->
     <div class="notification-container" id="notificationContainer"></div>
-
-    <!-- Autocomplete Backdrop for Mobile -->
-    <div class="autocomplete-backdrop" id="autocompleteBackdrop"></div>
 
     <!-- PWA Install Banner -->
     <div class="pwa-install-banner" id="pwaInstallBanner">
@@ -2880,11 +2812,62 @@
                                 <input type="text" id="workOrder" class="glass-input" placeholder="e.g., WO-001">
                             </div>
                         </div>
+                        
+                        <!-- Items Section - Integrated into Main Form -->
+                        <div class="items-section">
+                            <div class="items-header">
+                                <h3 class="items-title">Items</h3>
+                                <button type="button" class="add-item-btn" id="addItem">
+                                    <i class="fas fa-plus"></i> Add Item
+                                </button>
+                            </div>
+                            
+                            <!-- Desktop Items Table -->
+                            <table class="items-table" id="itemsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th>Hours</th>
+                                        <th>Rate ($)</th>
+                                        <th>Amount ($)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsTableBody">
+                                    <tr class="item-row">
+                                        <td>
+                                            <div class="autocomplete-container">
+                                                <input type="text" class="glass-input large item-description" required autocomplete="off">
+                                                <div class="autocomplete-suggestion"></div>
+                                                <button class="autocomplete-accept" style="display: none;">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
+                                        <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
+                                        <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
+                                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
+                                        <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Mobile Items Container -->
+                            <div class="mobile-items-container" id="mobileItemsContainer">
+                                <!-- Mobile item cards will be added here dynamically -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-sidebar">
                     <div class="form-section">
+                        <div class="form-group">
+                            <label for="bankName" class="form-label">Bank Name</label>
+                            <input type="text" id="bankName" class="glass-input" placeholder="e.g., Commonwealth Bank">
+                        </div>
                         <div class="form-group">
                             <label for="bsb" class="form-label">Bank BSB</label>
                             <input type="text" id="bsb" class="glass-input" placeholder="e.g., 083214">
@@ -2892,6 +2875,10 @@
                         <div class="form-group">
                             <label for="account" class="form-label">Account Number</label>
                             <input type="text" id="account" class="glass-input" placeholder="e.g., 709739590">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountName" class="form-label">Account Name</label>
+                            <input type="text" id="accountName" class="glass-input" value="SMART SQUAD M BUILD PTY LTD" disabled>
                         </div>
                     </div>
 
@@ -2928,8 +2915,11 @@
                         </div>
                         <div class="payment-detail-row">
                             <span class="payment-detail-label">Account Name:</span>
-                            <span class="payment-detail-value" id="accountNameDisplay">-</span>
+                            <span class="payment-detail-value" id="accountNameDisplay">SMART SQUAD M BUILD PTY LTD</span>
                         </div>
+                        <button type="button" class="action-button glass-button" id="clearPaymentDetails" style="margin-top: 10px;">
+                            <i class="fas fa-times"></i> Clear Payment Details
+                        </button>
                     </div>
                 </div>
             </div>
@@ -2944,50 +2934,9 @@
                 <button class="action-button glass-button" id="printPdfButton">
                     <i class="fas fa-print"></i> Print PDF
                 </button>
-            </div>
-        </div>
-
-        <!-- Items Section - Separated from Main Form -->
-        <div class="items-section">
-            <div class="items-header">
-                <h3 class="items-title">Items</h3>
-                <button type="button" class="add-item-btn" id="addItem">
-                    <i class="fas fa-plus"></i> Add Item
+                <button class="action-button glass-button" id="emailButton">
+                    <i class="fas fa-envelope"></i> Email
                 </button>
-            </div>
-            
-            <!-- Desktop Items Table -->
-            <table class="items-table" id="itemsTable">
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Hours</th>
-                        <th>Rate ($)</th>
-                        <th>Amount ($)</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="itemsTableBody">
-                    <tr class="item-row">
-                        <td>
-                            <div class="autocomplete-container">
-                                <input type="text" class="glass-input large item-description" required autocomplete="off">
-                                <div class="autocomplete-list"></div>
-                            </div>
-                        </td>
-                        <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
-                        <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
-                        <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
-                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
-                        <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <!-- Mobile Items Container -->
-            <div class="mobile-items-container" id="mobileItemsContainer">
-                <!-- Mobile item cards will be added here dynamically -->
             </div>
         </div>
 
@@ -2998,11 +2947,11 @@
                 <div class="sequence-display">
                     <div class="sequence-row">
                         <div class="sequence-label">Next Invoice Number:</div>
-                        <div class="sequence-value" id="nextInvNumber">INV-00001</div>
+                        <div class="sequence-value" id="nextInvNumber">INV-00255</div>
                     </div>
                     <div class="sequence-row">
                         <div class="sequence-label">Next Quote Number:</div>
-                        <div class="sequence-value" id="nextQotNumber">QOT-00001</div>
+                        <div class="sequence-value" id="nextQotNumber">QOT-00288</div>
                     </div>
                 </div>
             </div>
@@ -3160,7 +3109,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="settingsCompanyAddress" class="form-label">Address</label>
-                                <input type="text" id="settingsCompanyAddress" class="glass-input" value="27 Kathryn st doveton">
+                                <input type="text" id="settingsCompanyAddress" class="glass-input" value="">
                             </div>
                             <div class="form-group">
                                 <label for="settingsCompanyWebsite" class="form-label">Website</label>
@@ -3201,7 +3150,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="settingsBankAccountName" class="form-label">Account Name</label>
-                                <input type="text" id="settingsBankAccountName" class="glass-input" placeholder="e.g., SMART SQUAD M BUILD PTY LTD">
+                                <input type="text" id="settingsBankAccountName" class="glass-input" value="SMART SQUAD M BUILD PTY LTD" disabled>
                             </div>
                         </form>
                     </div>
@@ -3278,14 +3227,14 @@
             abn: "14 670 018 069",
             email: "smartsquad.m23@gmail.com",
             phone: "0470 136 187",
-            address: "27 Kathryn st doveton",
+            address: "",
             website: ""
         };
         let bankInfo = {
             name: "",
             bsb: "",
             account: "",
-            accountName: ""
+            accountName: "SMART SQUAD M BUILD PTY LTD"
         };
         let appearanceSettings = {
             primaryColor: "#1a3a5f",
@@ -3294,7 +3243,7 @@
             pdfFooter: "Thank you for your business!",
             pdfTerms: "Payment due within 14 days. Late payments may incur interest at 5% per month."
         };
-        let userSequences = { nextInvNumber: 1, nextQotNumber: 1 };
+        let userSequences = { nextInvNumber: 255, nextQotNumber: 288 }; // Updated starting numbers
         let logoData = "logo.png";
         let editingDocId = null;
         let firebaseInitialized = false;
@@ -3437,28 +3386,21 @@
     "Replace broken switch actuators", "Fit smart thermostats", "Install solar attic vents",
     "Repair broken railing spindles", "Replace broken patio door rollers", "Fit automatic gate openers",
     "Install compost bins", "Repair broken window track", "Replace broken shelf pins",
-    "Fit over-the-door organizers", "Install foldable desk", "Repair broken ceiling vent damper",
+    "Fit over-the-door organizers", "Install foldable chair", "Repair broken ceiling vent damper",
     "Replace broken dimmer knob", "Fit wall-mounted magazine rack", "Install outdoor movie screen",
     "Repair broken ceiling fan downrod", "Replace broken shower head", "Fit wall-mounted ski rack",
     "Install solar pathway lights", "Repair broken door jamb", "Replace broken hinge pin",
     "Fit magnetic spice racks", "Install portable dishwasher", "Repair broken floor tile edge",
-    "Replace broken outlet terminal", "Fit over-door shoe organizer", "Install foldable chair",
+    "Replace broken outlet terminal", "Fit over-door coat hanger", "Install foldable lawn chair",
     "Repair broken ceiling vent damper spring", "Replace broken dimmer knob insert washer",
-    "Fit wall-mounted surfboard rack", "Install solar-powered outdoor fan", "Repair broken window screen spline delamination",
-    "Replace broken light fixture pivot screw", "Fit under-cabinet toothbrush holder", "Install foldable lawn chair",
+    "Fit wall-mounted tandem bike rack", "Install solar-powered veranda string lights", "Repair broken window screen spline delamination",
+    "Replace broken light fixture pivot screw", "Fit under-cabinet toothbrush holder", "Install foldable therapy chair",
     "Repair broken ceiling fan blade bracket screw", "Replace broken shower handle set screw washer",
-    "Fit wall-mounted tandem bike rack", "Install solar-powered patio string lights", "Repair broken door jamb cracking",
+    "Fit wall-mounted tricycle rack", "Install solar-powered deck string lights", "Repair broken door jamb cracking",
     "Replace broken dimmer knob insert sleeve", "Fit magnetic tool organizer panel", "Install portable smoothie maker",
-    "Repair broken floor tile corner", "Replace broken outlet terminal screw washer", "Fit over-door coat hanger",
-    "Install foldable therapy chair", "Repair broken ceiling vent damper spring clip", "Replace broken dimmer knob insert sleeve washer",
-    "Fit wall-mounted tricycle rack", "Install solar-powered veranda string lights", "Repair broken window screen spline separation",
-    "Replace broken light fixture rotation screw", "Fit under-cabinet floss dispenser", "Install foldable recliner",
-    "Repair broken ceiling fan downrod coupling screw", "Replace broken shower handle set screw washer collar",
-    "Fit wall-mounted unicycle rack", "Install solar-powered deck string lights", "Repair broken door jamb splitting",
-    "Replace broken dimmer knob insert sleeve collar", "Fit magnetic tool storage wall panel", "Install portable waffle maker",
-    "Repair broken floor tile center chipping", "Replace broken outlet terminal screw washer ring", "Fit over-door hat and scarf hanger",
-    "Install foldable director's chair", "Repair broken ceiling vent damper gear tooth", "Replace broken dimmer knob insert sleeve collar ring washer",
-    "Fit wall-mounted wellness product rack", "Install solar-powered landscape spotlight"
+    "Repair broken floor tile corner", "Replace broken outlet terminal screw washer", "Fit over-door shoe organizer",
+    "Install foldable chair", "Repair broken ceiling vent damper spring clip", "Replace broken dimmer knob insert sleeve washer",
+    "Fit wall-mounted surfboard rack", "Install solar-powered landscape spotlight"
   ],
   "painting": [
     "Primer application", "Finish coating", "Texture painting", "Faux finishing", "Wallpaper",
@@ -3757,8 +3699,10 @@
                 jobAddress: document.getElementById('jobAddress').value,
                 jobNumber: document.getElementById('jobNumber').value,
                 workOrder: document.getElementById('workOrder').value,
+                bankName: document.getElementById('bankName').value,
                 bsb: document.getElementById('bsb').value,
-                account: document.getElementById('account').value
+                account: document.getElementById('account').value,
+                accountName: document.getElementById('accountName').value
             };
             
             // Store items
@@ -3802,8 +3746,10 @@
             document.getElementById('jobAddress').value = originalFormValues.jobAddress;
             document.getElementById('jobNumber').value = originalFormValues.jobNumber;
             document.getElementById('workOrder').value = originalFormValues.workOrder;
+            document.getElementById('bankName').value = originalFormValues.bankName;
             document.getElementById('bsb').value = originalFormValues.bsb;
             document.getElementById('account').value = originalFormValues.account;
+            document.getElementById('accountName').value = originalFormValues.accountName;
             
             // Clear and restore items
             if (isMobileDevice()) {
@@ -3832,7 +3778,10 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
-                                <div class="autocomplete-list"></div>
+                                <div class="autocomplete-suggestion"></div>
+                                <button class="autocomplete-accept" style="display: none;">
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                         </td>
                         <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
@@ -3842,7 +3791,7 @@
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
                     `;
                     itemsTableBody.appendChild(newRow);
-                    enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
+                    enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-suggestion'), newRow.querySelector('.autocomplete-accept'));
                 });
             }
             
@@ -3861,9 +3810,10 @@
             // Initialize desktop autocomplete
             document.querySelectorAll('.item-description').forEach(input => {
                 const container = input.closest('.autocomplete-container');
-                const list = container.querySelector('.autocomplete-list');
-                if (input && list) {
-                    enableAutocomplete(input, list);
+                const suggestion = container.querySelector('.autocomplete-suggestion');
+                const acceptBtn = container.querySelector('.autocomplete-accept');
+                if (input && suggestion && acceptBtn) {
+                    enableAutocomplete(input, suggestion, acceptBtn);
                 }
             });
             
@@ -3871,9 +3821,10 @@
             document.querySelectorAll('.mobile-item-card').forEach(card => {
                 const input = card.querySelector('.item-description');
                 const container = input?.closest('.autocomplete-container');
-                const list = container?.querySelector('.autocomplete-list');
-                if (input && list) {
-                    enableAutocomplete(input, list);
+                const suggestion = container?.querySelector('.autocomplete-suggestion');
+                const acceptBtn = container?.querySelector('.autocomplete-accept');
+                if (input && suggestion && acceptBtn) {
+                    enableAutocomplete(input, suggestion, acceptBtn);
                 }
             });
         }
@@ -3911,7 +3862,10 @@
                         <div class="mobile-item-value">
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${description}" required autocomplete="off">
-                                <div class="autocomplete-list"></div>
+                                <div class="autocomplete-suggestion"></div>
+                                <button class="autocomplete-accept" style="display: none;">
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -3959,7 +3913,8 @@
             const hoursInput = card.querySelector('.item-hours');
             const rateInput = card.querySelector('.item-rate');
             const amountInput = card.querySelector('.item-amount');
-            const autocompleteList = card.querySelector('.autocomplete-list');
+            const suggestion = card.querySelector('.autocomplete-suggestion');
+            const acceptBtn = card.querySelector('.autocomplete-accept');
             
             // Toggle expand/collapse
             header.addEventListener('click', () => {
@@ -3982,8 +3937,8 @@
                 const qty = parseFloat(quantityInput.value) || 0;
                 const hrs = parseFloat(hoursInput.value) || 0;
                 const rt = parseFloat(rateInput.value) || 0;
-                const baseUnit = qty > 0 ? qty : hrs;
-                const amt = baseUnit * rt;
+                // Fixed calculation: amount = (quantity * rate) * (hours * rate)
+                const amt = (qty * hrs * rt);
                 amountInput.value = amt.toFixed(2);
                 calculateTotals();
             };
@@ -3993,7 +3948,7 @@
             rateInput.addEventListener('input', calculateAmount);
             
             // Setup autocomplete for description
-            enableAutocomplete(descriptionInput, autocompleteList);
+            enableAutocomplete(descriptionInput, suggestion, acceptBtn);
             
             // Expand the first item by default
             if (container.children.length === 1) {
@@ -4045,14 +4000,20 @@
                     
                     // Load bank details for form
                     if (userData.bankDetails) {
+                        const bankName = userData.bankDetails.bankName || '';
                         const bsb = userData.bankDetails.bsb || '';
                         const account = userData.bankDetails.account || '';
+                        const accountName = userData.bankDetails.accountName || 'SMART SQUAD M BUILD PTY LTD';
                         
+                        document.getElementById('bankName').value = bankName;
                         document.getElementById('bsb').value = bsb;
                         document.getElementById('account').value = account;
+                        document.getElementById('accountName').value = accountName;
                         
+                        localStorage.setItem('userBankName', bankName);
                         localStorage.setItem('userBSB', bsb);
                         localStorage.setItem('userAccount', account);
+                        localStorage.setItem('userAccountName', accountName);
                     }
                     
                     updateCompanyInfoHeader();
@@ -4117,14 +4078,14 @@
             document.getElementById('settingsCompanyABN').value = companyInfo.abn;
             document.getElementById('settingsCompanyEmail').value = companyInfo.email;
             document.getElementById('settingsCompanyPhone').value = companyInfo.phone;
-            document.getElementById('settingsCompanyAddress').value = companyInfo.address;
+            document.getElementById('settingsCompanyAddress').value = companyInfo.address || '';
             document.getElementById('settingsCompanyWebsite').value = companyInfo.website || '';
             
             // Bank details
             document.getElementById('settingsBankName').value = bankInfo.name || '';
             document.getElementById('settingsBankBSB').value = bankInfo.bsb || '';
             document.getElementById('settingsBankAccount').value = bankInfo.account || '';
-            document.getElementById('settingsBankAccountName').value = bankInfo.accountName || '';
+            document.getElementById('settingsBankAccountName').value = bankInfo.accountName || 'SMART SQUAD M BUILD PTY LTD';
             
             // Appearance settings
             document.getElementById('settingsPrimaryColor').value = appearanceSettings.primaryColor;
@@ -4182,7 +4143,7 @@
                 bankInfo.name = document.getElementById('settingsBankName').value;
                 bankInfo.bsb = document.getElementById('settingsBankBSB').value;
                 bankInfo.account = document.getElementById('settingsBankAccount').value;
-                bankInfo.accountName = document.getElementById('settingsBankAccountName').value;
+                bankInfo.accountName = document.getElementById('settingsBankAccountName').value || 'SMART SQUAD M BUILD PTY LTD';
                 
                 // Update appearance settings from form
                 appearanceSettings.primaryColor = document.getElementById('settingsPrimaryColor').value;
@@ -4208,7 +4169,7 @@
                         abn: "14 670 018 069",
                         email: "smartsquad.m23@gmail.com",
                         phone: "0470 136 187",
-                        address: "27 Kathryn st doveton",
+                        address: "",
                         website: ""
                     };
                     
@@ -4216,7 +4177,7 @@
                         name: "",
                         bsb: "",
                         account: "",
-                        accountName: ""
+                        accountName: "SMART SQUAD M BUILD PTY LTD"
                     };
                     
                     appearanceSettings = {
@@ -4493,6 +4454,14 @@
                     printDocument(documentData);
                 }
             });
+            
+            // Add email button event listener
+            document.getElementById('emailButton').addEventListener('click', () => {
+                const documentData = getDocumentDataFromForm();
+                if (documentData) {
+                    emailDocument(documentData);
+                }
+            });
 
             // Update the add item button event listener
             document.getElementById('addItem').addEventListener('click', () => {
@@ -4502,9 +4471,10 @@
                     // Initialize autocomplete for the new card
                     setTimeout(() => {
                         const input = card.querySelector('.item-description');
-                        const list = card.querySelector('.autocomplete-list');
-                        if (input && list) {
-                            enableAutocomplete(input, list);
+                        const suggestion = card.querySelector('.autocomplete-suggestion');
+                        const acceptBtn = card.querySelector('.autocomplete-accept');
+                        if (input && suggestion && acceptBtn) {
+                            enableAutocomplete(input, suggestion, acceptBtn);
                         }
                     }, 100);
                 } else {
@@ -4515,7 +4485,10 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" required autocomplete="off">
-                                <div class="autocomplete-list"></div>
+                                <div class="autocomplete-suggestion"></div>
+                                <button class="autocomplete-accept" style="display: none;">
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                         </td>
                         <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
@@ -4529,9 +4502,10 @@
                     // Initialize autocomplete for the new row
                     setTimeout(() => {
                         const input = newRow.querySelector('.item-description');
-                        const list = newRow.querySelector('.autocomplete-list');
-                        if (input && list) {
-                            enableAutocomplete(input, list);
+                        const suggestion = newRow.querySelector('.autocomplete-suggestion');
+                        const acceptBtn = newRow.querySelector('.autocomplete-accept');
+                        if (input && suggestion && acceptBtn) {
+                            enableAutocomplete(input, suggestion, acceptBtn);
                         }
                         newRow.querySelector('.item-description').focus();
                     }, 100);
@@ -4556,14 +4530,17 @@
                 }
             });
 
+            // Fixed calculation for desktop items
             document.getElementById('itemsTableBody').addEventListener('input', function(e) {
-                if (e.target.classList.contains('item-quantity') || e.target.classList.contains('item-hours') || e.target.classList.contains('item-rate')) {
+                if (e.target.classList.contains('item-quantity') || 
+                    e.target.classList.contains('item-hours') || 
+                    e.target.classList.contains('item-rate')) {
                     const row = e.target.closest('.item-row');
                     const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
                     const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
                     const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                    const baseUnit = quantity > 0 ? quantity : hours;
-                    const amount = baseUnit * rate;
+                    // Fixed calculation: amount = (quantity * rate) * (hours * rate)
+                    const amount = (quantity * rate) * (hours * rate);
                     row.querySelector('.item-amount').value = amount.toFixed(2);
                     calculateTotals();
                 }
@@ -4615,35 +4592,69 @@
                     loadUserSequences();
                 }
             });
+            
+            // Clear payment details button
+            document.getElementById('clearPaymentDetails').addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear the payment details?')) {
+                    document.getElementById('bankName').value = '';
+                    document.getElementById('bsb').value = '';
+                    document.getElementById('account').value = '';
+                    // Don't clear account name as it's a static field
+                    updatePaymentDetailsDisplay();
+                    
+                    // Also clear from storage
+                    localStorage.removeItem('lastPaymentDetails');
+                    
+                    if (currentUser) {
+                        db.collection('users').doc(currentUser.uid).update({
+                            lastPaymentDetails: firebase.firestore.FieldValue.delete()
+                        }).catch(error => {
+                            console.error("Error clearing payment details from Firestore:", error);
+                        });
+                    }
+                }
+            });
         }
 
         // Load bank details
         async function loadBankDetails() {
             if (!currentUser) return;
             
+            const savedBankName = localStorage.getItem('userBankName');
             const savedBSB = localStorage.getItem('userBSB');
             const savedAccount = localStorage.getItem('userAccount');
+            const savedAccountName = localStorage.getItem('userAccountName');
             
+            if (savedBankName) {
+                document.getElementById('bankName').value = savedBankName;
+            }
             if (savedBSB) {
                 document.getElementById('bsb').value = savedBSB;
             }
             if (savedAccount) {
                 document.getElementById('account').value = savedAccount;
             }
+            // Account name is static, so we don't load it from storage
             
             try {
                 const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
                 if (userDoc.exists) {
                     const userData = userDoc.data();
                     if (userData.bankDetails) {
+                        const bankName = userData.bankDetails.bankName || '';
                         const bsb = userData.bankDetails.bsb || '';
                         const account = userData.bankDetails.account || '';
+                        const accountName = userData.bankDetails.accountName || 'SMART SQUAD M BUILD PTY LTD';
                         
+                        document.getElementById('bankName').value = bankName;
                         document.getElementById('bsb').value = bsb;
                         document.getElementById('account').value = account;
+                        document.getElementById('accountName').value = accountName;
                         
+                        localStorage.setItem('userBankName', bankName);
                         localStorage.setItem('userBSB', bsb);
                         localStorage.setItem('userAccount', account);
+                        localStorage.setItem('userAccountName', accountName);
                     }
                 }
             } catch (error) {
@@ -4655,15 +4666,19 @@
         async function saveBankDetails() {
             if (!currentUser) return;
             
+            const bankName = document.getElementById('bankName').value.trim();
             const bsb = document.getElementById('bsb').value.trim();
             const account = document.getElementById('account').value.trim();
+            const accountName = document.getElementById('accountName').value.trim();
             
+            localStorage.setItem('userBankName', bankName);
             localStorage.setItem('userBSB', bsb);
             localStorage.setItem('userAccount', account);
+            localStorage.setItem('userAccountName', accountName);
             
             try {
                 await db.collection('users').doc(currentUser.uid).update({
-                    bankDetails: { bsb, account },
+                    bankDetails: { bankName, bsb, account, accountName },
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 console.log("Bank details saved to Firestore");
@@ -4681,13 +4696,13 @@
 
                 if (userDoc.exists) {
                     const userData = userDoc.data();
-                    userSequences.nextInvNumber = userData.nextInvNumber || 1;
-                    userSequences.nextQotNumber = userData.nextQotNumber || 1;
+                    userSequences.nextInvNumber = userData.nextInvNumber || 255; // Default to 255
+                    userSequences.nextQotNumber = userData.nextQotNumber || 288; // Default to 288
                     console.log("Loaded sequences:", userSequences);
                 } else {
                     console.log("User document not found, initializing sequences.");
-                    userSequences.nextInvNumber = 1;
-                    userSequences.nextQotNumber = 1;
+                    userSequences.nextInvNumber = 255;
+                    userSequences.nextQotNumber = 288;
                 }
 
                 updateSequenceDisplay();
@@ -4695,7 +4710,7 @@
             } catch (error) {
                 console.error("Error loading user sequences:", error);
                 showNotification("Error loading document sequences. Please try again.", "error");
-                userSequences = { nextInvNumber: 1, nextQotNumber: 1 };
+                userSequences = { nextInvNumber: 255, nextQotNumber: 288 };
                 updateSequenceDisplay();
             }
         }
@@ -4781,6 +4796,73 @@
             return true;
         }
 
+        // Save the last used payment details
+        async function saveLastPaymentDetails() {
+            if (!currentUser) return;
+            
+            const bankName = document.getElementById('bankName').value.trim();
+            const bsb = document.getElementById('bsb').value.trim();
+            const account = document.getElementById('account').value.trim();
+            const accountName = document.getElementById('accountName').value.trim();
+            
+            // Save to localStorage for immediate access
+            localStorage.setItem('lastPaymentDetails', JSON.stringify({
+                bankName, bsb, account, accountName
+            }));
+            
+            // Save to Firebase for persistence across devices
+            try {
+                await db.collection('users').doc(currentUser.uid).set({
+                    lastPaymentDetails: { bankName, bsb, account, accountName },
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                console.log("Last payment details saved to Firestore");
+            } catch (error) {
+                console.error("Error saving last payment details to Firestore: ", error);
+            }
+        }
+
+        // Load the last used payment details
+        async function loadLastPaymentDetails() {
+            // First try to load from localStorage for immediate access
+            const localDetails = localStorage.getItem('lastPaymentDetails');
+            if (localDetails) {
+                try {
+                    const details = JSON.parse(localDetails);
+                    populatePaymentDetails(details);
+                } catch (e) {
+                    console.error("Error parsing local payment details:", e);
+                }
+            }
+            
+            // Then try to load from Firebase for the most up-to-date details
+            if (!currentUser) return;
+            
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
+                if (userDoc.exists && userDoc.data().lastPaymentDetails) {
+                    const details = userDoc.data().lastPaymentDetails;
+                    populatePaymentDetails(details);
+                    
+                    // Update localStorage with the latest from Firebase
+                    localStorage.setItem('lastPaymentDetails', JSON.stringify(details));
+                }
+            } catch (error) {
+                console.error("Error loading last payment details from Firestore: ", error);
+            }
+        }
+
+        // Helper function to populate payment details in the form
+        function populatePaymentDetails(details) {
+            if (details.bankName) document.getElementById('bankName').value = details.bankName;
+            if (details.bsb) document.getElementById('bsb').value = details.bsb;
+            if (details.account) document.getElementById('account').value = details.account;
+            if (details.accountName) document.getElementById('accountName').value = details.accountName;
+            
+            // Update the display
+            updatePaymentDetailsDisplay();
+        }
+
         // Save document
         async function saveDocument() {
             if (!currentUser || currentUser.uid !== ALLOWED_UID) {
@@ -4808,46 +4890,56 @@
                 const jobAddress = document.getElementById('jobAddress').value.trim();
                 const jobNumber = document.getElementById('jobNumber').value.trim();
                 const workOrder = document.getElementById('workOrder').value.trim();
+                const bankName = document.getElementById('bankName').value.trim();
                 const bsb = document.getElementById('bsb').value.trim();
                 const account = document.getElementById('account').value.trim();
+                const accountName = document.getElementById('accountName').value.trim();
 
                 await saveBankDetails();
 
                 // Get items based on device type
                 let itemsArray = [];
+                let imagesArray = [];
+                
                 if (isMobileDevice()) {
                     const itemCards = document.querySelectorAll('.mobile-item-card');
-                    itemCards.forEach(card => {
+                    itemCards.forEach((card, index) => {
                         const description = card.querySelector('.item-description').value.trim();
                         const quantity = parseFloat(card.querySelector('.item-quantity').value) || 0;
                         const hours = parseFloat(card.querySelector('.item-hours').value) || 0;
                         const rate = parseFloat(card.querySelector('.item-rate').value) || 0;
                         const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                        const imageInput = card.querySelector('.item-image');
+                        
                         if (description && rate > 0 && (quantity > 0 || hours > 0)) {
                             itemsArray.push({
                                 description: description,
                                 quantity: quantity,
                                 hours: hours,
                                 rate: rate,
-                                amount: amount
+                                amount: amount,
+                                image: imageInput.dataset.imageData || null
                             });
                         }
                     });
                 } else {
                     const itemRows = document.querySelectorAll('.item-row');
-                    itemRows.forEach(row => {
+                    itemRows.forEach((row, index) => {
                         const description = row.querySelector('.item-description').value.trim();
                         const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
                         const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
                         const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
                         const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                        const imageInput = row.querySelector('.item-image');
+                        
                         if (description && rate > 0 && (quantity > 0 || hours > 0)) {
                             itemsArray.push({
                                 description: description,
                                 quantity: quantity,
                                 hours: hours,
                                 rate: rate,
-                                amount: amount
+                                amount: amount,
+                                image: imageInput.dataset.imageData || null
                             });
                         }
                     });
@@ -4890,8 +4982,10 @@
                     gst: parseFloat(gstElement.textContent.replace('$', '')),
                     total: parseFloat(totalElement.textContent.replace('$', '')),
                     bankDetails: {
+                        bankName: bankName,
                         bsb: bsb,
                         account: account,
+                        accountName: accountName,
                         name: bankInfo.name,
                         accountName: bankInfo.accountName
                     },
@@ -4928,6 +5022,14 @@
                 console.log(`Document ${result.action} with ID: `, result.docId);
                 showNotification(`Document ${result.action === 'created' ? 'saved' : 'updated'} successfully!`, "success");
 
+                // After successfully saving the document, save the payment details
+                try {
+                    await saveLastPaymentDetails();
+                    console.log("Payment details saved for future use");
+                } catch (error) {
+                    console.error("Error saving payment details:", error);
+                }
+
                 loadDocuments();
 
             } catch (error) {
@@ -4959,6 +5061,12 @@
             document.getElementById('jobAddress').value = '';
             document.getElementById('jobNumber').value = '';
             document.getElementById('workOrder').value = '';
+            
+            // Don't clear payment details - they should persist
+            // document.getElementById('bankName').value = '';
+            // document.getElementById('bsb').value = '';
+            // document.getElementById('account').value = '';
+            // document.getElementById('accountName').value = '';
 
             if (isMobileDevice()) {
                 // Mobile version - reset to one empty item
@@ -5019,15 +5127,15 @@
 
         // Update payment details display
         function updatePaymentDetailsDisplay() {
+            const bankName = document.getElementById('bankName').value.trim();
             const bsb = document.getElementById('bsb').value.trim();
             const account = document.getElementById('account').value.trim();
+            const accountName = document.getElementById('accountName').value.trim();
             
+            document.getElementById('bankNameDisplay').textContent = bankName || '-';
             document.getElementById('bsbDisplay').textContent = bsb || '-';
             document.getElementById('accountDisplay').textContent = account || '-';
-            
-            // Update bank name and account name from bankInfo
-            document.getElementById('bankNameDisplay').textContent = bankInfo.name || '-';
-            document.getElementById('accountNameDisplay').textContent = bankInfo.accountName || '-';
+            document.getElementById('accountNameDisplay').textContent = accountName || 'SMART SQUAD M BUILD PTY LTD';
         }
 
         // Print Document Function
@@ -5038,6 +5146,29 @@
             printWindow.document.close();
             printWindow.onload = () => {
                 printWindow.print();
+                printWindow.close();
+            };
+        }
+
+        // Email Document Function
+        function emailDocument(data) {
+            // Generate PDF first
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            const printHTML = generatePrintHTML(data);
+            printWindow.document.write(printHTML);
+            printWindow.document.close();
+            
+            printWindow.onload = () => {
+                // Convert to PDF and create download link
+                printWindow.print();
+                
+                // Create a mailto link with the document details
+                const subject = `${data.type} ${data.number} from ${companyInfo.name}`;
+                const body = `Dear ${data.billTo.name},\n\nPlease find attached your ${data.type.toLowerCase()} ${data.number} for ${data.total.toFixed(2)}.\n\nIf you have any questions, please don't hesitate to contact us.\n\nBest regards,\n${companyInfo.name}\n${companyInfo.phone}\n${companyInfo.email}`;
+                
+                const mailtoLink = `mailto:${data.billTo.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                window.location.href = mailtoLink;
+                
                 printWindow.close();
             };
         }
@@ -5289,24 +5420,10 @@
                             color: #000000;
                             font-style: italic;
                         }
-                        .print-watermark {
-                            position: absolute;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%) rotate(-45deg);
-                            font-size: 120px;
-                            font-weight: 900;
-                            color: rgba(26, 58, 95, 0.04);
-                            text-transform: uppercase;
-                            letter-spacing: 10px;
-                            pointer-events: none;
-                            z-index: -1;
-                        }
                     </style>
                 </head>
                 <body>
                     <div class="print-document">
-                        <div class="print-watermark">${data.type}</div>
                         
                         <div class="print-header">
                             <div class="print-logo-section">
@@ -5364,7 +5481,7 @@
                                 <div class="print-payment-title">Payment Details</div>
                                 <div class="print-payment-row">
                                     <span class="print-payment-label">Bank:</span>
-                                    <span class="print-payment-value">${data.bankDetails?.name || 'N/A'}</span>
+                                    <span class="print-payment-value">${data.bankDetails?.bankName || 'N/A'}</span>
                                 </div>
                                 <div class="print-payment-row">
                                     <span class="print-payment-label">BSB:</span>
@@ -5422,8 +5539,17 @@
                     const hours = parseFloat(card.querySelector('.item-hours').value) || 0;
                     const rate = parseFloat(card.querySelector('.item-rate').value) || 0;
                     const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                    const imageInput = card.querySelector('.item-image');
+                    
                     if (description) {
-                        items.push({ description, quantity, hours, rate, amount });
+                        items.push({ 
+                            description, 
+                            quantity, 
+                            hours, 
+                            rate, 
+                            amount,
+                            image: imageInput.dataset.imageData || null
+                        });
                     }
                 });
             } else {
@@ -5434,8 +5560,17 @@
                     const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
                     const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
                     const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                    const imageInput = row.querySelector('.item-image');
+                    
                     if (description) {
-                        items.push({ description, quantity, hours, rate, amount });
+                        items.push({ 
+                            description, 
+                            quantity, 
+                            hours, 
+                            rate, 
+                            amount,
+                            image: imageInput.dataset.imageData || null
+                        });
                     }
                 });
             }
@@ -5460,8 +5595,10 @@
                 gst: parseFloat(document.getElementById('gst').textContent.replace('$', '')),
                 total: parseFloat(document.getElementById('total').textContent.replace('$', '')),
                 bankDetails: {
+                    bankName: document.getElementById('bankName').value.trim(),
                     bsb: document.getElementById('bsb').value.trim(),
                     account: document.getElementById('account').value.trim(),
+                    accountName: document.getElementById('accountName').value.trim(),
                     name: bankInfo.name,
                     accountName: bankInfo.accountName
                 },
@@ -5618,8 +5755,10 @@
             document.getElementById('jobAddress').value = data.jobDetails.address || '';
             document.getElementById('jobNumber').value = data.jobDetails.number || '';
             document.getElementById('workOrder').value = data.jobDetails.workOrder || '';
-            document.getElementById('bsb').value = data.bankDetails.bsb || '';
-            document.getElementById('account').value = data.bankDetails.account || '';
+            document.getElementById('bankName').value = data.bankDetails?.bankName || '';
+            document.getElementById('bsb').value = data.bankDetails?.bsb || '';
+            document.getElementById('account').value = data.bankDetails?.account || '';
+            document.getElementById('accountName').value = data.bankDetails?.accountName || 'SMART SQUAD M BUILD PTY LTD';
 
             // Clear and repopulate items
             if (isMobileDevice()) {
@@ -5633,7 +5772,8 @@
                         item.quantity,
                         item.hours,
                         item.rate,
-                        item.amount
+                        item.amount,
+                        item.image
                     );
                 });
             } else {
@@ -5648,7 +5788,10 @@
                         <td>
                             <div class="autocomplete-container">
                                 <input type="text" class="glass-input large item-description" value="${item.description}" required autocomplete="off">
-                                <div class="autocomplete-list"></div>
+                                <div class="autocomplete-suggestion"></div>
+                                <button class="autocomplete-accept" style="display: none;">
+                                    <i class="fas fa-check"></i>
+                                </button>
                             </div>
                         </td>
                         <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
@@ -5658,7 +5801,32 @@
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
                     `;
                     itemsTableBody.appendChild(newRow);
-                    enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-list'));
+                    
+                    // Set image data if exists
+                    if (item.image) {
+                        const imageInput = newRow.querySelector('.item-image');
+                        imageInput.dataset.imageData = item.image;
+                        
+                        // Show image preview
+                        const imagePreview = document.createElement('div');
+                        imagePreview.className = 'image-attachment';
+                        imagePreview.innerHTML = `
+                            <img src="${item.image}" class="image-preview" alt="Item image">
+                            <div class="image-info">
+                                <div>Image attached</div>
+                                <button type="button" class="remove-image">Remove</button>
+                            </div>
+                        `;
+                        imageInput.parentNode.parentNode.insertBefore(imagePreview, imageInput.parentNode);
+                        
+                        // Add remove image functionality
+                        imagePreview.querySelector('.remove-image').addEventListener('click', () => {
+                            delete imageInput.dataset.imageData;
+                            imagePreview.remove();
+                        });
+                    }
+                    
+                    enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-suggestion'), newRow.querySelector('.autocomplete-accept'));
                 });
             }
 
@@ -5760,7 +5928,7 @@
                     <h4><i class="fas fa-credit-card"></i> Payment Details</h4>
                     <div class="detail-row">
                         <div class="detail-label">Bank:</div>
-                        <div class="detail-value">${data.bankDetails?.name || 'N/A'}</div>
+                        <div class="detail-value">${data.bankDetails?.bankName || 'N/A'}</div>
                     </div>
                     <div class="detail-row">
                         <div class="detail-label">BSB:</div>
@@ -5798,333 +5966,160 @@
             }
         }
 
-       // Enhanced Autocomplete setup function with mobile improvements - REMOVED HIGHLIGHTING
-function enableAutocomplete(inputElement, listElement) {
-    if (!inputElement || !listElement) {
-        console.error("Autocomplete elements not found");
-        return;
-    }
-    
-    let selectedIndex = -1;
-    let isMobile = isMobileDevice();
-    let triggerTimeout = null;
-    let lastTriggerTime = 0;
-    let backdropElement = document.getElementById('autocompleteBackdrop');
-    
-    // Clear any existing event listeners
-    inputElement.removeEventListener('input', handleInput);
-    inputElement.removeEventListener('keydown', handleKeydown);
-    inputElement.removeEventListener('keyup', handleKeyup);
-    inputElement.removeEventListener('focus', handleFocus);
-    inputElement.removeEventListener('blur', handleBlur);
-    
-    function handleInput(e) {
-        const value = inputElement.value.toLowerCase().trim();
-        listElement.innerHTML = '';
-        listElement.style.display = 'none';
-        selectedIndex = -1;
-
-        // Get current cursor position
-        const cursorPos = inputElement.selectionStart;
-        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-        
-        // Find the last word boundary before cursor (space or comma)
-        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-        const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-        const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-        
-        // Extract the current word being typed
-        const currentWord = textBeforeCursor.substring(lastBoundaryIndex + 1).trim();
-        
-        // Don't trigger on single character unless it's Ctrl+Space
-        if (currentWord.length < 2) {
-            return;
-        }
-
-        if (currentWord.length > 0) {
-            // Get matches with intelligent ranking
-            const matches = getRankedMatches(currentWord);
-
-            if (matches.length > 0) {
-                // Limit to 10 results for better performance
-                const limitedMatches = matches.slice(0, 10);
+        // Classic Dropdown Autocomplete
+        function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
+            if (!inputElement || !suggestionElement) {
+                console.error("Autocomplete elements not found");
+                return;
+            }
+            
+            // Create a dropdown container for suggestions
+            const dropdownContainer = document.createElement('div');
+            dropdownContainer.className = 'autocomplete-dropdown';
+            dropdownContainer.style.position = 'absolute';
+            dropdownContainer.style.top = '100%';
+            dropdownContainer.style.left = '0';
+            dropdownContainer.style.right = '0';
+            dropdownContainer.style.zIndex = '100';
+            dropdownContainer.style.backgroundColor = 'white';
+            dropdownContainer.style.border = '1px solid var(--border-color)';
+            dropdownContainer.style.borderTop = 'none';
+            dropdownContainer.style.borderRadius = '0 0 var(--border-radius-md) var(--border-radius-md)';
+            dropdownContainer.style.maxHeight = '200px';
+            dropdownContainer.style.overflowY = 'auto';
+            dropdownContainer.style.display = 'none';
+            dropdownContainer.style.boxShadow = 'var(--shadow-md)';
+            
+            // Insert the dropdown after the input container
+            const inputContainer = inputElement.closest('.autocomplete-container');
+            inputContainer.appendChild(dropdownContainer);
+            
+            let currentMatches = [];
+            let selectedIndex = -1;
+            
+            // Clear any existing event listeners
+            inputElement.removeEventListener('input', handleInput);
+            inputElement.removeEventListener('keydown', handleKeydown);
+            inputElement.removeEventListener('blur', handleBlur);
+            inputElement.removeEventListener('focus', handleFocus);
+            
+            function handleInput(e) {
+                const value = inputElement.value.toLowerCase().trim();
+                dropdownContainer.innerHTML = '';
+                selectedIndex = -1;
                 
-                limitedMatches.forEach((item, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'autocomplete-item';
-                    
-                    // REMOVED HIGHLIGHTING - Just use plain text
-                    div.innerHTML = `
-                        <span>${item.text}</span>
-                        <span class="type-badge">${item.category}</span>
-                    `;
-                    
-                    div.tabIndex = 0;
-                    
-                    // Mouse event
-                    div.addEventListener('mousedown', (e) => {
-                        e.preventDefault();
-                        selectSuggestion(item.text, lastBoundaryIndex);
+                // Don't trigger on single character
+                if (value.length < 2) {
+                    dropdownContainer.style.display = 'none';
+                    return;
+                }
+
+                // Get matches with intelligent ranking
+                currentMatches = getRankedMatches(value);
+
+                if (currentMatches.length > 0) {
+                    // Create suggestion items
+                    currentMatches.forEach((match, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'autocomplete-item';
+                        item.textContent = match.text;
+                        item.style.padding = '10px 15px';
+                        item.style.cursor = 'pointer';
+                        item.style.borderBottom = '1px solid var(--border-color)';
+                        
+                        // Highlight the matching part
+                        const regex = new RegExp(`(${value})`, 'gi');
+                        item.innerHTML = match.text.replace(regex, '<strong>$1</strong>');
+                        
+                        // Add hover effect
+                        item.addEventListener('mouseenter', () => {
+                            selectedIndex = index;
+                            updateSelection();
+                        });
+                        
+                        // Add click handler
+                        item.addEventListener('click', () => {
+                            inputElement.value = match.text;
+                            dropdownContainer.style.display = 'none';
+                            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+                            inputElement.focus();
+                        });
+                        
+                        dropdownContainer.appendChild(item);
                     });
                     
-                    // Touch event for mobile
-                    div.addEventListener('touchstart', (e) => {
+                    dropdownContainer.style.display = 'block';
+                } else {
+                    dropdownContainer.style.display = 'none';
+                }
+            }
+            
+            function handleKeydown(e) {
+                if (dropdownContainer.style.display === 'none') return;
+                
+                switch (e.key) {
+                    case 'ArrowDown':
                         e.preventDefault();
-                        selectSuggestion(item.text, lastBoundaryIndex);
-                        inputElement.blur();
-                    });
-                    
-                    // Keyboard accessibility
-                    div.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            selectSuggestion(item.text, lastBoundaryIndex);
+                        selectedIndex = Math.min(selectedIndex + 1, currentMatches.length - 1);
+                        updateSelection();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, 0);
+                        updateSelection();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && selectedIndex < currentMatches.length) {
+                            inputElement.value = currentMatches[selectedIndex].text;
+                            dropdownContainer.style.display = 'none';
+                            inputElement.dispatchEvent(new Event('input', { bubbles: true }));
                         }
-                    });
-                    
-                    listElement.appendChild(div);
-                });
-                
-                listElement.style.display = 'block';
-                
-                // Show backdrop on mobile
-                if (isMobile) {
-                    backdropElement.classList.add('active');
-                }
-                
-                // Auto-select first suggestion
-                if (limitedMatches.length > 0) {
-                    selectedIndex = 0;
-                    updateSelection(listElement.querySelectorAll('.autocomplete-item'), selectedIndex);
+                        break;
+                    case 'Escape':
+                        dropdownContainer.style.display = 'none';
+                        selectedIndex = -1;
+                        break;
                 }
             }
-        }
-    }
-    
-    function handleKeydown(e) {
-        const items = listElement.querySelectorAll('.autocomplete-item');
-        
-        // Check for space or comma to trigger suggestions
-        if ((e.code === 'Space' || e.code === 'Comma') && inputElement.value.trim().length >= 2) {
-            const now = Date.now();
-            if (now - lastTriggerTime > 500) { // Debounce to avoid multiple triggers
-                lastTriggerTime = now;
-                handleInput(e);
-            }
-            return;
-        }
-        
-        if (listElement.style.display === 'block') {
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                selectedIndex = (selectedIndex + 1) % items.length;
-                updateSelection(items, selectedIndex);
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                selectedIndex = selectedIndex <= 0 ? items.length - 1 : selectedIndex - 1;
-                updateSelection(items, selectedIndex);
-            } else if (e.key === 'Enter' && selectedIndex >= 0) {
-                e.preventDefault();
-                const selectedItem = items[selectedIndex];
-                if (selectedItem) {
-                    const text = selectedItem.querySelector('span').textContent;
-                    
-                    // Find the last word boundary before cursor
-                    const cursorPos = inputElement.selectionStart;
-                    const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-                    const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-                    const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-                    const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-                    
-                    selectSuggestion(text, lastBoundaryIndex);
-                }
-            } else if (e.key === 'Tab' && selectedIndex >= 0) {
-                e.preventDefault();
-                const selectedItem = items[selectedIndex];
-                if (selectedItem) {
-                    const text = selectedItem.querySelector('span').textContent;
-                    
-                    // Find the last word boundary before cursor
-                    const cursorPos = inputElement.selectionStart;
-                    const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-                    const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-                    const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-                    const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-                    
-                    selectSuggestion(text, lastBoundaryIndex);
-                }
-            } else if (e.key === 'Escape') {
-                hideAutocomplete();
-            }
-        }
-    }
-    
-    function handleKeyup(e) {
-        // Check for labour charge detection
-        if (e.key === ' ' || e.key === 'Enter') {
-            checkForLabourCharge(inputElement.value);
-        }
-    }
-    
-    function handleFocus() {
-        // Trigger autocomplete on focus if there's already text
-        if (inputElement.value.trim().length >= 2) {
-            handleInput(new Event('input'));
-        }
-    }
-    
-    function handleBlur() {
-        // Delay hiding autocomplete to allow click events to register
-        setTimeout(() => {
-            hideAutocomplete();
-        }, 200);
-    }
-    
-    function hideAutocomplete() {
-        listElement.style.display = 'none';
-        selectedIndex = -1;
-        backdropElement.classList.remove('active');
-    }
-    
-    function selectSuggestion(text, lastBoundaryIndex) {
-        // Get current cursor position
-        const cursorPos = inputElement.selectionStart;
-        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-        const textAfterCursor = inputElement.value.substring(cursorPos);
-        
-        // If lastBoundaryIndex is not provided, calculate it
-        if (lastBoundaryIndex === undefined) {
-            const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-            const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-            lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-        }
-        
-        // Replace the last word with the suggestion
-        const newValue = textBeforeCursor.substring(0, lastBoundaryIndex + 1) + text + textAfterCursor;
-        
-        // Set the new value
-        inputElement.value = newValue;
-        
-        // Position cursor after the suggestion
-        const newCursorPos = lastBoundaryIndex + 1 + text.length;
-        inputElement.setSelectionRange(newCursorPos, newCursorPos);
-        
-        // Prevent text selection by clearing any existing selection
-        if (window.getSelection) {
-            window.getSelection().removeAllRanges();
-        } else if (document.selection) {
-            document.selection.empty();
-        }
-        
-        hideAutocomplete();
-        inputElement.focus();
-        
-        // Trigger input event to update any listeners
-        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    
-    // Check for labour charge patterns
-    function checkForLabourCharge(value) {
-        const labourPattern = /(\d+)\s*(persons?|workers?|labour)/i;
-        const match = value.match(labourPattern);
-        
-        if (match) {
-            const count = parseInt(match[1]);
-            if (count >= 1 && count <= 10) {
-                // Suggest labour charge based on the number
-                const suggestion = `${count} ${count === 1 ? 'Person' : 'Persons'} Labour`;
-                
-                // Check if already suggested
-                if (!value.includes(suggestion)) {
-                    // Add to suggestions list
-                    if (!listElement.innerHTML) {
-                        listElement.innerHTML = '';
-                    }
-                    
-                    const div = document.createElement('div');
-                    div.className = 'autocomplete-item';
-                    div.innerHTML = `
-                        <span>${suggestion}</span>
-                        <span class="type-badge">labour</span>
-                    `;
-                    
-                    div.addEventListener('mousedown', (e) => {
-                        e.preventDefault();
-                        
-                        // Find the last word boundary before cursor
-                        const cursorPos = inputElement.selectionStart;
-                        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-                        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-                        const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-                        const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-                        
-                        selectSuggestion(suggestion, lastBoundaryIndex);
-                    });
-                    
-                    div.addEventListener('touchstart', (e) => {
-                        e.preventDefault();
-                        
-                        // Find the last word boundary before cursor
-                        const cursorPos = inputElement.selectionStart;
-                        const textBeforeCursor = inputElement.value.substring(0, cursorPos);
-                        const lastSpaceIndex = textBeforeCursor.lastIndexOf(' ');
-                        const lastCommaIndex = textBeforeCursor.lastIndexOf(',');
-                        const lastBoundaryIndex = Math.max(lastSpaceIndex, lastCommaIndex);
-                        
-                        selectSuggestion(suggestion, lastBoundaryIndex);
-                        inputElement.blur();
-                    });
-                    
-                    // Insert at the beginning of the list
-                    if (listElement.firstChild) {
-                        listElement.insertBefore(div, listElement.firstChild);
+            
+            function updateSelection() {
+                const items = dropdownContainer.querySelectorAll('.autocomplete-item');
+                items.forEach((item, index) => {
+                    if (index === selectedIndex) {
+                        item.style.backgroundColor = 'var(--bg-light)';
                     } else {
-                        listElement.appendChild(div);
+                        item.style.backgroundColor = 'white';
                     }
-                    
-                    listElement.style.display = 'block';
-                    
-                    // Show backdrop on mobile
-                    if (isMobile) {
-                        backdropElement.classList.add('active');
-                    }
+                });
+            }
+            
+            function handleBlur() {
+                // Delay hiding to allow click on suggestion
+                setTimeout(() => {
+                    dropdownContainer.style.display = 'none';
+                }, 200);
+            }
+            
+            function handleFocus() {
+                // Trigger autocomplete on focus if there's already text
+                if (inputElement.value.trim().length >= 2) {
+                    handleInput(new Event('input'));
                 }
             }
+            
+            // Add event listeners
+            inputElement.addEventListener('input', handleInput);
+            inputElement.addEventListener('keydown', handleKeydown);
+            inputElement.addEventListener('blur', handleBlur);
+            inputElement.addEventListener('focus', handleFocus);
+            
+            // Hide the inline suggestion elements
+            suggestionElement.style.display = 'none';
+            if (acceptButton) {
+                acceptButton.style.display = 'none';
+            }
         }
-    }
-    
-    // Add event listeners
-    inputElement.addEventListener('input', handleInput);
-    inputElement.addEventListener('keydown', handleKeydown);
-    inputElement.addEventListener('keyup', handleKeyup);
-    inputElement.addEventListener('focus', handleFocus);
-    inputElement.addEventListener('blur', handleBlur);
-    
-    // Hide autocomplete when clicking outside
-    document.addEventListener('click', function hideAutocomplete(e) {
-        if (!e.target.closest('.autocomplete-container')) {
-            hideAutocomplete();
-        }
-    });
-    
-    document.addEventListener('touchstart', function hideAutocompleteTouch(e) {
-        if (!e.target.closest('.autocomplete-container')) {
-            hideAutocomplete();
-        }
-    });
-    
-    // Handle backdrop click on mobile
-    backdropElement.addEventListener('click', function() {
-        hideAutocomplete();
-        inputElement.blur();
-    });
-    
-    backdropElement.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        hideAutocomplete();
-        inputElement.blur();
-    });
-}
 
         // Get ranked matches for autocomplete
         function getRankedMatches(query) {
@@ -6170,33 +6165,50 @@ function enableAutocomplete(inputElement, listElement) {
             });
         }
 
-        // REMOVED HIGHLIGHT MATCH FUNCTION - NO LONGER NEEDED
-        // function highlightMatch(text, query) {
-        //     const textLower = text.toLowerCase();
-        //     const queryLower = query.toLowerCase();
-        //     const index = textLower.indexOf(queryLower);
-        //     
-        //     if (index === -1) {
-        //         return text;
-        //     }
-        //     
-        //     const before = text.substring(0, index);
-        //     const match = text.substring(index, index + query.length);
-        //     const after = text.substring(index + query.length);
-        //     
-        //     return `${before}<span class="highlight">${match}</span>${after}`;
-        // }
-
-        // Helper function to update selection styling
-        function updateSelection(items, selectedIndex) {
-            items.forEach((item, index) => {
-                if (index === selectedIndex) {
-                    item.classList.add('selected');
-                    item.scrollIntoView({ block: 'nearest' });
-                } else {
-                    item.classList.remove('selected');
+        // Handle image upload
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Check file type
+                if (!file.type.match('image.*')) {
+                    showNotification('Please select an image file.', 'error');
+                    return;
                 }
-            });
+                
+                // Check file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('Image size should be less than 5MB.', 'error');
+                    return;
+                }
+                
+                // Read file and store as base64
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const imageData = event.target.result;
+                    
+                    // Store image data in the input element
+                    e.target.dataset.imageData = imageData;
+                    
+                    // Show image preview
+                    const imagePreview = document.createElement('div');
+                    imagePreview.className = 'image-attachment';
+                    imagePreview.innerHTML = `
+                        <img src="${imageData}" class="image-preview" alt="Item image">
+                        <div class="image-info">
+                            <div>Image attached</div>
+                            <button type="button" class="remove-image">Remove</button>
+                        </div>
+                    `;
+                    e.target.parentNode.parentNode.insertBefore(imagePreview, e.target.parentNode);
+                    
+                    // Add remove image functionality
+                    imagePreview.querySelector('.remove-image').addEventListener('click', () => {
+                        delete e.target.dataset.imageData;
+                        imagePreview.remove();
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         // Show notification
@@ -6234,8 +6246,8 @@ function enableAutocomplete(inputElement, listElement) {
                         companyInfo: companyInfo,
                         bankInfo: bankInfo,
                         appearanceSettings: appearanceSettings,
-                        nextInvNumber: 1,
-                        nextQotNumber: 1,
+                        nextInvNumber: 255,
+                        nextQotNumber: 288,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
@@ -6374,13 +6386,17 @@ function enableAutocomplete(inputElement, listElement) {
             }
         });
 
-        // Save bank details when BSB or Account fields change
+        // Save bank details when bank fields change
+        document.getElementById('bankName')?.addEventListener('blur', saveBankDetails);
         document.getElementById('bsb')?.addEventListener('blur', saveBankDetails);
         document.getElementById('account')?.addEventListener('blur', saveBankDetails);
+        // Account name is static, so we don't save it on blur
         
         // Update payment details display when bank info changes
+        document.getElementById('bankName')?.addEventListener('input', updatePaymentDetailsDisplay);
         document.getElementById('bsb')?.addEventListener('input', updatePaymentDetailsDisplay);
         document.getElementById('account')?.addEventListener('input', updatePaymentDetailsDisplay);
+        // Account name is static, so we don't update it on input
 
     </script>
 </body>
