@@ -471,6 +471,8 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
+            /* Ensures proper touch target size on all devices */
+            min-height: 44px;
         }
 
         .glass-input:focus {
@@ -485,9 +487,121 @@
             cursor: not-allowed;
         }
 
+        /* Responsive size classes that adapt to screen size */
         .large { width: 100%; }
         .small { width: 80px; }
         .xsmall { width: 60px; }
+
+        /* New responsive size classes */
+        .medium { 
+            width: 100px; 
+            min-width: 80px; /* Ensures minimum touch target size */
+        }
+        .medium-large { 
+            width: 120px; 
+            min-width: 100px; /* Ensures minimum touch target size */
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            .medium { 
+                width: 90px; 
+                min-width: 70px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            .medium-large { 
+                width: 110px; 
+                min-width: 90px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            .small { 
+                width: 70px; 
+                min-width: 60px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .glass-input {
+                /* Larger touch targets on mobile */
+                min-height: 48px;
+                /* More padding for better touch experience */
+                padding: 14px 16px;
+                /* Better visual feedback on touch */
+                transition: all 0.2s ease;
+            }
+            
+            .glass-input:focus {
+                transform: scale(1.02);
+                box-shadow: 0 0 0 3px rgba(26, 58, 95, 0.2);
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .medium { 
+                width: 80px; 
+                min-width: 60px;
+            }
+            .medium-large { 
+                width: 100px; 
+                min-width: 80px;
+            }
+            .small { 
+                width: 60px; 
+                min-width: 50px;
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1200px) {
+            .medium { 
+                width: 110px; 
+            }
+            .medium-large { 
+                width: 130px; 
+            }
+            .small { 
+                width: 90px; 
+            }
+        }
+
+        /* Cross-platform input compatibility */
+        input[type="number"] {
+            /* Removes spinner controls in Chrome, Safari, Edge, Opera */
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            /* Removes spinner controls in WebKit browsers */
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox specific styling */
+        @-moz-document url-prefix() {
+            input[type="number"] {
+                padding: 12px 16px;
+            }
+        }
+
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .glass-input {
+                /* Prevents zoom on focus */
+                font-size: 16px;
+                /* Improves touch experience */
+                -webkit-appearance: none;
+                border-radius: 8px;
+            }
+        }
+
+        /* Android Chrome specific fixes */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+            .glass-input {
+                /* Better rendering on high DPI screens */
+                -webkit-font-smoothing: antialiased;
+            }
+        }
 
         /* Classic Dropdown Autocomplete Styles */
         .autocomplete-container {
@@ -2845,11 +2959,13 @@
                                                 </button>
                                             </div>
                                         </td>
-                                        <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
-                                        <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
-                                        <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
-                                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
+                                        <td><input type="number" class="glass-input medium item-quantity" value="1" min="0" step="1"></td>
+                                        <td><input type="number" class="glass-input medium item-hours" value="0" min="0" step="0.5"></td>
+                                        <td><input type="number" class="glass-input medium-large item-rate" value="0.00" min="0" step="0.01" required></td>
+                                        <td><input type="text" class="glass-input small item-amount" value="0.00, 0.00, 0.00" readonly></td>
                                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                                        <!-- Hidden input for image data -->
+                                        <input type="hidden" class="item-image">
                                     </tr>
                                 </tbody>
                             </table>
@@ -3784,11 +3900,13 @@
                                 </button>
                             </div>
                         </td>
-                        <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
-                        <td><input type="number" class="glass-input xsmall item-hours" value="${item.hours}" min="0" step="0.5"></td>
-                        <td><input type="number" class="glass-input small item-rate" value="${item.rate}" min="0" step="0.01" required></td>
+                        <td><input type="number" class="glass-input medium item-quantity" value="${item.quantity}" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input medium item-hours" value="${item.hours}" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input medium-large item-rate" value="${item.rate}" min="0" step="0.01" required></td>
                         <td><input type="text" class="glass-input small item-amount" value="${item.amount}" readonly></td>
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                        <!-- Hidden input for image data -->
+                        <input type="hidden" class="item-image">
                     `;
                     itemsTableBody.appendChild(newRow);
                     enableAutocomplete(newRow.querySelector('.item-description'), newRow.querySelector('.autocomplete-suggestion'), newRow.querySelector('.autocomplete-accept'));
@@ -3867,24 +3985,26 @@
                                     <i class="fas fa-check"></i>
                                 </button>
                             </div>
+                            <!-- Hidden input for image data -->
+                            <input type="hidden" class="item-image" data-image-data="${amount ? '' : ''}">
                         </div>
                     </div>
                     <div class="mobile-item-row">
                         <div class="mobile-item-label">Quantity:</div>
                         <div class="mobile-item-value">
-                            <input type="number" class="glass-input xsmall item-quantity" value="${quantity}" min="0" step="1">
+                            <input type="number" class="glass-input medium item-quantity" value="${quantity}" min="0" step="1">
                         </div>
                     </div>
                     <div class="mobile-item-row">
                         <div class="mobile-item-label">Hours:</div>
                         <div class="mobile-item-value">
-                            <input type="number" class="glass-input xsmall item-hours" value="${hours}" min="0" step="0.5">
+                            <input type="number" class="glass-input medium item-hours" value="${hours}" min="0" step="0.5">
                         </div>
                     </div>
                     <div class="mobile-item-row">
                         <div class="mobile-item-label">Rate ($):</div>
                         <div class="mobile-item-value">
-                            <input type="number" class="glass-input small item-rate" value="${rate}" min="0" step="0.01" required>
+                            <input type="number" class="glass-input medium-large item-rate" value="${rate}" min="0" step="0.01" required>
                         </div>
                     </div>
                     <div class="mobile-item-row">
@@ -3915,6 +4035,7 @@
             const amountInput = card.querySelector('.item-amount');
             const suggestion = card.querySelector('.autocomplete-suggestion');
             const acceptBtn = card.querySelector('.autocomplete-accept');
+            const imageInput = card.querySelector('.item-image');
             
             // Toggle expand/collapse
             header.addEventListener('click', () => {
@@ -3937,11 +4058,14 @@
                 const qty = parseFloat(quantityInput.value) || 0;
                 const hrs = parseFloat(hoursInput.value) || 0;
                 const rt = parseFloat(rateInput.value) || 0;
+                
+                // Updated calculation: display multiple amounts as (qty * hrs), (qty * rt), (hrs * rt)
                 const pair1 = qty * hrs;
-const pair2 = qty * rt;
-const pair3 = hrs * rt;
-const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amount field
-                amountInput.value = amt.toFixed(2);
+                const pair2 = qty * rt;
+                const pair3 = hrs * rt;
+                const amt = `${pair1.toFixed(2)}, ${pair2.toFixed(2)}, ${pair3.toFixed(2)}`;  // Concatenated for display in amount field
+                
+                amountInput.value = amt;
                 calculateTotals();
             };
             
@@ -4480,7 +4604,7 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                         }
                     }, 100);
                 } else {
-                    // Desktop version
+                    // Desktop version with updated size classes
                     const newRow = document.createElement('tr');
                     newRow.className = 'item-row';
                     newRow.innerHTML = `
@@ -4493,11 +4617,13 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                                 </button>
                             </div>
                         </td>
-                        <td><input type="number" class="glass-input xsmall item-quantity" value="1" min="0" step="1"></td>
-                        <td><input type="number" class="glass-input xsmall item-hours" value="0" min="0" step="0.5"></td>
-                        <td><input type="number" class="glass-input small item-rate" value="0.00" min="0" step="0.01" required></td>
-                        <td><input type="text" class="glass-input small item-amount" value="0.00" readonly></td>
+                        <td><input type="number" class="glass-input medium item-quantity" value="1" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input medium item-hours" value="0" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input medium-large item-rate" value="0.00" min="0" step="0.01" required></td>
+                        <td><input type="text" class="glass-input small item-amount" value="0.00, 0.00, 0.00" readonly></td>
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                        <!-- Hidden input for image data -->
+                        <input type="hidden" class="item-image">
                     `;
                     document.getElementById('itemsTableBody').appendChild(newRow);
                     
@@ -4541,9 +4667,14 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                     const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
                     const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
                     const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                    // Fixed calculation: amount = (quantity * rate) * (hours * rate)
-                    const amount = (quantity * rate) * (hours * rate);
-                    row.querySelector('.item-amount').value = amount.toFixed(2);
+                    
+                    // Updated calculation: display multiple amounts as (qty * hrs), (qty * rt), (hrs * rt)
+                    const pair1 = quantity * hours;
+                    const pair2 = quantity * rate;
+                    const pair3 = hours * rate;
+                    const amount = `${pair1.toFixed(2)}, ${pair2.toFixed(2)}, ${pair3.toFixed(2)}`;  // Concatenated for display in amount field
+                    
+                    row.querySelector('.item-amount').value = amount;
                     calculateTotals();
                 }
             });
@@ -4911,7 +5042,13 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                         const hours = parseFloat(card.querySelector('.item-hours').value) || 0;
                         const rate = parseFloat(card.querySelector('.item-rate').value) || 0;
                         const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                        
+                        // Safely get image data
                         const imageInput = card.querySelector('.item-image');
+                        let imageData = null;
+                        if (imageInput && imageInput.dataset) {
+                            imageData = imageInput.dataset.imageData || null;
+                        }
                         
                         if (description && rate > 0 && (quantity > 0 || hours > 0)) {
                             itemsArray.push({
@@ -4920,7 +5057,7 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                                 hours: hours,
                                 rate: rate,
                                 amount: amount,
-                                image: imageInput.dataset.imageData || null
+                                image: imageData
                             });
                         }
                     });
@@ -4932,7 +5069,13 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                         const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
                         const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
                         const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                        
+                        // Safely get image data
                         const imageInput = row.querySelector('.item-image');
+                        let imageData = null;
+                        if (imageInput && imageInput.dataset) {
+                            imageData = imageInput.dataset.imageData || null;
+                        }
                         
                         if (description && rate > 0 && (quantity > 0 || hours > 0)) {
                             itemsArray.push({
@@ -4941,7 +5084,7 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                                 hours: hours,
                                 rate: rate,
                                 amount: amount,
-                                image: imageInput.dataset.imageData || null
+                                image: imageData
                             });
                         }
                     });
@@ -5086,7 +5229,7 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                 firstRow.querySelector('.item-quantity').value = '1';
                 firstRow.querySelector('.item-hours').value = '0';
                 firstRow.querySelector('.item-rate').value = '0.00';
-                firstRow.querySelector('.item-amount').value = '0.00';
+                firstRow.querySelector('.item-amount').value = '0.00, 0.00, 0.00';
             }
 
             document.getElementById('subtotal').textContent = '$0.00';
@@ -5108,13 +5251,17 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                 // Mobile version
                 const itemCards = document.querySelectorAll('.mobile-item-card');
                 itemCards.forEach(card => {
-                    const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                    const amountStr = card.querySelector('.item-amount').value;
+                    // Parse the first value from the comma-separated string
+                    const amount = parseFloat(amountStr.split(',')[0]) || 0;
                     subtotal += amount;
                 });
             } else {
                 // Desktop version
                 document.querySelectorAll('.item-row').forEach(row => {
-                    const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                    const amountStr = row.querySelector('.item-amount').value;
+                    // Parse the first value from the comma-separated string
+                    const amount = parseFloat(amountStr.split(',')[0]) || 0;
                     subtotal += amount;
                 });
             }
@@ -5185,7 +5332,7 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                         <td class="quantity">${item.quantity}</td>
                         <td class="hours">${item.hours}</td>
                         <td class="rate">$${item.rate.toFixed(2)}</td>
-                        <td class="amount">$${item.amount.toFixed(2)}</td>
+                        <td class="amount">${item.amount}</td>
                     </tr>
                 `;
             });
@@ -5536,12 +5683,18 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                 // Mobile version
                 const itemCards = document.querySelectorAll('.mobile-item-card');
                 itemCards.forEach(card => {
-                    const description = card.querySelector('.item-description').value.trim();
-                    const quantity = parseFloat(card.querySelector('.item-quantity').value) || 0;
-                    const hours = parseFloat(card.querySelector('.item-hours').value) || 0;
-                    const rate = parseFloat(card.querySelector('.item-rate').value) || 0;
-                    const amount = parseFloat(card.querySelector('.item-amount').value) || 0;
+                    const description = card.querySelector('.item-description')?.value?.trim() || '';
+                    const quantity = parseFloat(card.querySelector('.item-quantity')?.value) || 0;
+                    const hours = parseFloat(card.querySelector('.item-hours')?.value) || 0;
+                    const rate = parseFloat(card.querySelector('.item-rate')?.value) || 0;
+                    const amount = parseFloat(card.querySelector('.item-amount')?.value) || 0;
+                    
+                    // Safely get image data
                     const imageInput = card.querySelector('.item-image');
+                    let imageData = null;
+                    if (imageInput && imageInput.dataset) {
+                        imageData = imageInput.dataset.imageData || null;
+                    }
                     
                     if (description) {
                         items.push({ 
@@ -5550,19 +5703,25 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                             hours, 
                             rate, 
                             amount,
-                            image: imageInput.dataset.imageData || null
+                            image: imageData
                         });
                     }
                 });
             } else {
                 // Desktop version
                 document.querySelectorAll('.item-row').forEach(row => {
-                    const description = row.querySelector('.item-description').value.trim();
-                    const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
-                    const hours = parseFloat(row.querySelector('.item-hours').value) || 0;
-                    const rate = parseFloat(row.querySelector('.item-rate').value) || 0;
-                    const amount = parseFloat(row.querySelector('.item-amount').value) || 0;
+                    const description = row.querySelector('.item-description')?.value?.trim() || '';
+                    const quantity = parseFloat(row.querySelector('.item-quantity')?.value) || 0;
+                    const hours = parseFloat(row.querySelector('.item-hours')?.value) || 0;
+                    const rate = parseFloat(row.querySelector('.item-rate')?.value) || 0;
+                    const amount = parseFloat(row.querySelector('.item-amount')?.value) || 0;
+                    
+                    // Safely get image data
                     const imageInput = row.querySelector('.item-image');
+                    let imageData = null;
+                    if (imageInput && imageInput.dataset) {
+                        imageData = imageInput.dataset.imageData || null;
+                    }
                     
                     if (description) {
                         items.push({ 
@@ -5571,36 +5730,36 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                             hours, 
                             rate, 
                             amount,
-                            image: imageInput.dataset.imageData || null
+                            image: imageData
                         });
                     }
                 });
             }
 
             return {
-                type: document.getElementById('documentType').value,
-                number: document.getElementById('documentNumber').textContent,
-                date: document.getElementById('documentDate').value,
+                type: document.getElementById('documentType')?.value || 'Invoice',
+                number: document.getElementById('documentNumber')?.textContent || '',
+                date: document.getElementById('documentDate')?.value || '',
                 billTo: {
-                    name: document.getElementById('clientName').value.trim(),
-                    company: document.getElementById('companyName').value.trim(),
-                    email: document.getElementById('clientEmail').value.trim(),
-                    mobile: document.getElementById('clientMobile').value.trim()
+                    name: document.getElementById('clientName')?.value?.trim() || '',
+                    company: document.getElementById('companyName')?.value?.trim() || '',
+                    email: document.getElementById('clientEmail')?.value?.trim() || '',
+                    mobile: document.getElementById('clientMobile')?.value?.trim() || ''
                 },
                 jobDetails: {
-                    address: document.getElementById('jobAddress').value.trim(),
-                    number: document.getElementById('jobNumber').value.trim(),
-                    workOrder: document.getElementById('workOrder').value.trim()
+                    address: document.getElementById('jobAddress')?.value?.trim() || '',
+                    number: document.getElementById('jobNumber')?.value?.trim() || '',
+                    workOrder: document.getElementById('workOrder')?.value?.trim() || ''
                 },
                 items: items,
-                subtotal: parseFloat(document.getElementById('subtotal').textContent.replace('$', '')),
-                gst: parseFloat(document.getElementById('gst').textContent.replace('$', '')),
-                total: parseFloat(document.getElementById('total').textContent.replace('$', '')),
+                subtotal: parseFloat(document.getElementById('subtotal')?.textContent?.replace('$', '') || 0),
+                gst: parseFloat(document.getElementById('gst')?.textContent?.replace('$', '') || 0),
+                total: parseFloat(document.getElementById('total')?.textContent?.replace('$', '') || 0),
                 bankDetails: {
-                    bankName: document.getElementById('bankName').value.trim(),
-                    bsb: document.getElementById('bsb').value.trim(),
-                    account: document.getElementById('account').value.trim(),
-                    accountName: document.getElementById('accountName').value.trim(),
+                    bankName: document.getElementById('bankName')?.value?.trim() || '',
+                    bsb: document.getElementById('bsb')?.value?.trim() || '',
+                    account: document.getElementById('account')?.value?.trim() || '',
+                    accountName: document.getElementById('accountName')?.value?.trim() || 'SMART SQUAD M BUILD PTY LTD',
                     name: bankInfo.name,
                     accountName: bankInfo.accountName
                 },
@@ -5796,11 +5955,13 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
                                 </button>
                             </div>
                         </td>
-                        <td><input type="number" class="glass-input xsmall item-quantity" value="${item.quantity}" min="0" step="1"></td>
-                        <td><input type="number" class="glass-input xsmall item-hours" value="${item.hours}" min="0" step="0.5"></td>
-                        <td><input type="number" class="glass-input small item-rate" value="${item.rate}" min="0" step="0.01" required></td>
-                        <td><input type="text" class="glass-input small item-amount" value="${item.amount.toFixed(2)}" readonly></td>
+                        <td><input type="number" class="glass-input medium item-quantity" value="${item.quantity}" min="0" step="1"></td>
+                        <td><input type="number" class="glass-input medium item-hours" value="${item.hours}" min="0" step="0.5"></td>
+                        <td><input type="number" class="glass-input medium-large item-rate" value="${item.rate}" min="0" step="0.01" required></td>
+                        <td><input type="text" class="glass-input small item-amount" value="${item.amount}" readonly></td>
                         <td><button type="button" class="glass-button remove-item"><i class="fas fa-trash"></i></button></td>
+                        <!-- Hidden input for image data -->
+                        <input type="hidden" class="item-image">
                     `;
                     itemsTableBody.appendChild(newRow);
                     
@@ -5849,7 +6010,7 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
             const modalBody = document.getElementById('detailModalBody');
             let itemsHTML = '<table class="detail-items"><thead><tr><th>Description</th><th>Quantity</th><th>Hours</th><th>Rate ($)</th><th>Amount ($)</th></tr></thead><tbody>';
             data.items.forEach(item => {
-                itemsHTML += `<tr><td>${item.description}</td><td>${item.quantity}</td><td>${item.hours}</td><td>${item.rate.toFixed(2)}</td><td>${item.amount.toFixed(2)}</td></tr>`;
+                itemsHTML += `<tr><td>${item.description}</td><td>${item.quantity}</td><td>${item.hours}</td><td>${item.rate.toFixed(2)}</td><td>${item.amount}</td></tr>`;
             });
             itemsHTML += '</tbody></table>';
 
@@ -6403,4 +6564,3 @@ const amt = `${pair1}, ${pair2}, ${pair3}`;  // Concatenated for display in amou
     </script>
 </body>
 </html>
-
