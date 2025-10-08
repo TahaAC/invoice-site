@@ -3938,7 +3938,7 @@
                 const hrs = parseFloat(hoursInput.value) || 0;
                 const rt = parseFloat(rateInput.value) || 0;
                 // Fixed calculation: amount = (quantity * rate) * (hours * rate)
-                const amt = (qty * hrs * rt);
+                const amt = (qty * hrs) + (qty * rt) + (hrs * rt);
                 amountInput.value = amt.toFixed(2);
                 calculateTotals();
             };
