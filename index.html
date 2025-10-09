@@ -1237,6 +1237,7 @@
         .notification.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
         .notification.success { background: linear-gradient(135deg, #10b981, #059669); }
         .notification.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .notification.info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 
         .error-message, .success-message, .warning-message {
             padding: 10px 12px;
@@ -2844,12 +2845,109 @@
             transform: scale(1.05);
         }
 
+        /* Offline Status Indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--warning-color);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-weight: 600;
+            z-index: 10001;
+            display: none;
+            transform: translateY(-100%);
+            transition: transform var(--transition-normal);
+        }
+
+        .offline-indicator.show {
+            display: block;
+            transform: translateY(0);
+        }
+
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--info-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            animation: slideInUp 0.3s ease;
+        }
+
+        .sync-indicator.show {
+            display: flex;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .sync-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        /* Pending Sync Badge */
+        .pending-sync-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--warning-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-md);
+        }
+
+        .sync-status {
+            position: relative;
+            display: inline-block;
+        }
+
     </style>
 </head>
 <body>
 
     <!-- Notification Container -->
     <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Offline Status Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i> You are currently offline. Data will be saved locally and synced when you're back online.
+    </div>
+
+    <!-- Sync Indicator -->
+    <div class="sync-indicator" id="syncIndicator">
+        <div class="sync-spinner"></div>
+        <span>Syncing data...</span>
+    </div>
 
     <!-- PWA Install Banner -->
     <div class="pwa-install-banner" id="pwaInstallBanner">
@@ -3129,6 +3227,9 @@
                         <div class="sequence-label">Next Quote Number:</div>
                         <div class="sequence-value" id="nextQotNumber">QOT-00288</div>
                     </div>
+                </div>
+                <div class="sync-status">
+                    <div id="pendingSyncCount" class="pending-sync-badge" style="display: none;">0</div>
                 </div>
             </div>
 
@@ -3436,6 +3537,12 @@
         // Store original form values for cancel functionality
         let originalFormValues = {};
 
+        // Offline functionality variables
+        let isOnline = navigator.onLine;
+        let dbInstance = null;
+        let pendingSyncCount = 0;
+        let syncInProgress = false;
+
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -3448,6 +3555,452 @@
                     });
             });
         }
+
+        // Initialize IndexedDB for offline storage
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('InvoiceAppDB', 1);
+                
+                request.onerror = (event) => {
+                    console.error('IndexedDB error:', event.target.error);
+                    reject(event.target.error);
+                };
+                
+                request.onsuccess = (event) => {
+                    dbInstance = event.target.result;
+                    console.log('IndexedDB initialized successfully');
+                    resolve(dbInstance);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Create object stores for different data types
+                    if (!db.objectStoreNames.contains('documents')) {
+                        const documentStore = db.createObjectStore('documents', { keyPath: 'id' });
+                        documentStore.createIndex('type', 'type', { unique: false });
+                        documentStore.createIndex('date', 'date', { unique: false });
+                        documentStore.createIndex('syncStatus', 'syncStatus', { unique: false });
+                    }
+                    
+                    if (!db.objectStoreNames.contains('settings')) {
+                        const settingsStore = db.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                    
+                    if (!db.objectStoreNames.contains('sequences')) {
+                        const sequencesStore = db.createObjectStore('sequences', { keyPath: 'key' });
+                    }
+                    
+                    console.log('IndexedDB schema created');
+                };
+            });
+        }
+
+        // Save document to IndexedDB (for offline use)
+        function saveDocumentToIndexedDB(documentData, isUpdate = false) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['documents'], 'readwrite');
+                const store = transaction.objectStore('documents');
+                
+                // Add sync status to track if this needs to be synced with Firebase
+                const documentWithSyncStatus = {
+                    ...documentData,
+                    syncStatus: isOnline ? 'synced' : 'pending',
+                    lastModified: new Date().toISOString()
+                };
+                
+                if (isUpdate) {
+                    const request = store.put(documentWithSyncStatus);
+                    request.onsuccess = () => {
+                        console.log('Document updated in IndexedDB');
+                        resolve(documentWithSyncStatus);
+                    };
+                    request.onerror = (event) => {
+                        console.error('Error updating document in IndexedDB:', event.target.error);
+                        reject(event.target.error);
+                    };
+                } else {
+                    // Generate a temporary ID if we don't have one yet
+                    if (!documentWithSyncStatus.id) {
+                        documentWithSyncStatus.id = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    }
+                    
+                    const request = store.add(documentWithSyncStatus);
+                    request.onsuccess = () => {
+                        console.log('Document saved to IndexedDB');
+                        resolve(documentWithSyncStatus);
+                    };
+                    request.onerror = (event) => {
+                        console.error('Error saving document to IndexedDB:', event.target.error);
+                        reject(event.target.error);
+                    };
+                }
+                
+                transaction.oncomplete = () => {
+                    if (!isOnline) {
+                        updatePendingSyncCount();
+                    }
+                };
+            });
+        }
+
+        // Get documents from IndexedDB
+        function getDocumentsFromIndexedDB(type = null) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['documents'], 'readonly');
+                const store = transaction.objectStore('documents');
+                
+                let documents = [];
+                
+                if (type) {
+                    const index = store.index('type');
+                    const request = index.getAll(type);
+                    
+                    request.onsuccess = () => {
+                        documents = request.result;
+                        resolve(documents);
+                    };
+                    
+                    request.onerror = (event) => {
+                        console.error('Error getting documents from IndexedDB:', event.target.error);
+                        reject(event.target.error);
+                    };
+                } else {
+                    const request = store.getAll();
+                    
+                    request.onsuccess = () => {
+                        documents = request.result;
+                        resolve(documents);
+                    };
+                    
+                    request.onerror = (event) => {
+                        console.error('Error getting documents from IndexedDB:', event.target.error);
+                        reject(event.target.error);
+                    };
+                }
+            });
+        }
+
+        // Get pending documents that need to be synced
+        function getPendingDocuments() {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['documents'], 'readonly');
+                const store = transaction.objectStore('documents');
+                const index = store.index('syncStatus');
+                const request = index.getAll('pending');
+                
+                request.onsuccess = () => {
+                    const pendingDocs = request.result;
+                    resolve(pendingDocs);
+                };
+                
+                request.onerror = (event) => {
+                    console.error('Error getting pending documents:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Update sync status of a document
+        function updateDocumentSyncStatus(documentId, status) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['documents'], 'readwrite');
+                const store = transaction.objectStore('documents');
+                
+                const getRequest = store.get(documentId);
+                getRequest.onsuccess = () => {
+                    const document = getRequest.result;
+                    if (document) {
+                        document.syncStatus = status;
+                        document.lastModified = new Date().toISOString();
+                        
+                        const updateRequest = store.put(document);
+                        updateRequest.onsuccess = () => {
+                            resolve(document);
+                        };
+                        
+                        updateRequest.onerror = (event) => {
+                            console.error('Error updating document sync status:', event.target.error);
+                            reject(event.target.error);
+                        };
+                    } else {
+                        reject(new Error('Document not found'));
+                    }
+                };
+                
+                getRequest.onerror = (event) => {
+                    console.error('Error getting document for sync status update:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Save settings to IndexedDB
+        function saveSettingsToIndexedDB(settings) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['settings'], 'readwrite');
+                const store = transaction.objectStore('settings');
+                
+                const request = store.put({
+                    key: 'userSettings',
+                    value: settings,
+                    lastModified: new Date().toISOString()
+                });
+                
+                request.onsuccess = () => {
+                    console.log('Settings saved to IndexedDB');
+                    resolve(settings);
+                };
+                
+                request.onerror = (event) => {
+                    console.error('Error saving settings to IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Get settings from IndexedDB
+        function getSettingsFromIndexedDB() {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['settings'], 'readonly');
+                const store = transaction.objectStore('settings');
+                
+                const request = store.get('userSettings');
+                
+                request.onsuccess = () => {
+                    const settings = request.result ? request.result.value : null;
+                    resolve(settings);
+                };
+                
+                request.onerror = (event) => {
+                    console.error('Error getting settings from IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Save sequences to IndexedDB
+        function saveSequencesToIndexedDB(sequences) {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['sequences'], 'readwrite');
+                const store = transaction.objectStore('sequences');
+                
+                const request = store.put({
+                    key: 'userSequences',
+                    value: sequences,
+                    lastModified: new Date().toISOString()
+                });
+                
+                request.onsuccess = () => {
+                    console.log('Sequences saved to IndexedDB');
+                    resolve(sequences);
+                };
+                
+                request.onerror = (event) => {
+                    console.error('Error saving sequences to IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Get sequences from IndexedDB
+        function getSequencesFromIndexedDB() {
+            return new Promise((resolve, reject) => {
+                if (!dbInstance) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = dbInstance.transaction(['sequences'], 'readonly');
+                const store = transaction.objectStore('sequences');
+                
+                const request = store.get('userSequences');
+                
+                request.onsuccess = () => {
+                    const sequences = request.result ? request.result.value : { nextInvNumber: 255, nextQotNumber: 288 };
+                    resolve(sequences);
+                };
+                
+                request.onerror = (event) => {
+                    console.error('Error getting sequences from IndexedDB:', event.target.error);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        // Update pending sync count
+        async function updatePendingSyncCount() {
+            try {
+                const pendingDocs = await getPendingDocuments();
+                pendingSyncCount = pendingDocs.length;
+                
+                const badge = document.getElementById('pendingSyncCount');
+                if (pendingSyncCount > 0) {
+                    badge.textContent = pendingSyncCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error updating pending sync count:', error);
+            }
+        }
+
+        // Sync pending documents with Firebase
+        async function syncPendingDocuments() {
+            if (!isOnline || syncInProgress || !currentUser) {
+                return;
+            }
+            
+            syncInProgress = true;
+            showSyncIndicator();
+            
+            try {
+                const pendingDocs = await getPendingDocuments();
+                
+                if (pendingDocs.length === 0) {
+                    hideSyncIndicator();
+                    syncInProgress = false;
+                    return;
+                }
+                
+                console.log(`Syncing ${pendingDocs.length} pending documents...`);
+                
+                for (const doc of pendingDocs) {
+                    try {
+                        // Remove syncStatus and lastModified before sending to Firebase
+                        const { syncStatus, lastModified, ...firebaseDoc } = doc;
+                        
+                        if (doc.id.startsWith('temp_')) {
+                            // This is a new document, create it in Firebase
+                            firebaseDoc.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                            firebaseDoc.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                            
+                            const docRef = await db.collection('quotes').add(firebaseDoc);
+                            
+                            // Update the document in IndexedDB with the new Firebase ID
+                            const transaction = dbInstance.transaction(['documents'], 'readwrite');
+                            const store = transaction.objectStore('documents');
+                            
+                            // Delete the temp document
+                            store.delete(doc.id);
+                            
+                            // Add the new document with the Firebase ID
+                            const syncedDoc = {
+                                ...firebaseDoc,
+                                id: docRef.id,
+                                syncStatus: 'synced',
+                                lastModified: new Date().toISOString()
+                            };
+                            
+                            store.put(syncedDoc);
+                            
+                            console.log(`Created new document in Firebase with ID: ${docRef.id}`);
+                        } else {
+                            // This is an existing document, update it in Firebase
+                            firebaseDoc.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+                            
+                            await db.collection('quotes').doc(doc.id).update(firebaseDoc);
+                            
+                            // Update the sync status in IndexedDB
+                            await updateDocumentSyncStatus(doc.id, 'synced');
+                            
+                            console.log(`Updated document in Firebase with ID: ${doc.id}`);
+                        }
+                    } catch (error) {
+                        console.error(`Error syncing document ${doc.id}:`, error);
+                        // Continue with other documents even if one fails
+                    }
+                }
+                
+                // Refresh the document list
+                await loadDocuments();
+                
+                // Update the pending sync count
+                await updatePendingSyncCount();
+                
+                showNotification('All documents synced successfully!', 'success');
+            } catch (error) {
+                console.error('Error during sync:', error);
+                showNotification('Error syncing documents. Please try again.', 'error');
+            } finally {
+                hideSyncIndicator();
+                syncInProgress = false;
+            }
+        }
+
+        // Show sync indicator
+        function showSyncIndicator() {
+            document.getElementById('syncIndicator').classList.add('show');
+        }
+
+        // Hide sync indicator
+        function hideSyncIndicator() {
+            document.getElementById('syncIndicator').classList.remove('show');
+        }
+
+        // Show offline indicator
+        function showOfflineIndicator() {
+            document.getElementById('offlineIndicator').classList.add('show');
+        }
+
+        // Hide offline indicator
+        function hideOfflineIndicator() {
+            document.getElementById('offlineIndicator').classList.remove('show');
+        }
+
+        // Handle online/offline events
+        window.addEventListener('online', () => {
+            isOnline = true;
+            hideOfflineIndicator();
+            showNotification('You are back online!', 'success');
+            
+            // Try to sync pending documents
+            if (currentUser) {
+                syncPendingDocuments();
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            showOfflineIndicator();
+            showNotification('You are currently offline. Data will be saved locally.', 'warning');
+        });
 
         // PWA Install Prompt
         let deferredPrompt;
@@ -3812,9 +4365,31 @@
                     document.getElementById('userEmail').textContent = user.email;
                     authRetryCount = 0;
                     
-                    await loadUserSettings();
-                    await loadUserSequences();
-                    initializeApp();
+                    // Initialize IndexedDB
+                    try {
+                        await initIndexedDB();
+                        
+                        // Load data from IndexedDB first (for faster UI)
+                        await loadUserSequencesFromIndexedDB();
+                        await loadUserSettingsFromIndexedDB();
+                        
+                        // Then try to sync with Firebase if online
+                        if (isOnline) {
+                            await loadUserSettings();
+                            await loadUserSequences();
+                            await syncPendingDocuments();
+                        }
+                        
+                        initializeApp();
+                    } catch (error) {
+                        console.error("Error initializing IndexedDB:", error);
+                        showNotification("Error initializing offline storage. Some features may not work properly.", "warning");
+                        
+                        // Fallback to Firebase-only mode
+                        await loadUserSettings();
+                        await loadUserSequences();
+                        initializeApp();
+                    }
                 } else if (user) {
                     await auth.signOut();
                     showNotification("Access denied. You are not authorized to use this system.", "error");
@@ -3836,10 +4411,57 @@
             });
         }
 
+        // Load user settings from IndexedDB
+        async function loadUserSettingsFromIndexedDB() {
+            try {
+                const settings = await getSettingsFromIndexedDB();
+                if (settings) {
+                    companyInfo = settings.companyInfo || companyInfo;
+                    bankInfo = settings.bankInfo || bankInfo;
+                    appearanceSettings = settings.appearanceSettings || appearanceSettings;
+                    logoData = settings.logoData || logoData;
+                    
+                    updateCompanyInfoHeader();
+                    updateHeaderLogo(logoData);
+                    populateSettingsForm();
+                    updatePaymentDetailsDisplay();
+                    applyAppearanceSettings();
+                    
+                    console.log("Loaded settings from IndexedDB");
+                }
+            } catch (error) {
+                console.error("Error loading settings from IndexedDB:", error);
+            }
+        }
+
+        // Load user sequences from IndexedDB
+        async function loadUserSequencesFromIndexedDB() {
+            try {
+                const sequences = await getSequencesFromIndexedDB();
+                if (sequences) {
+                    userSequences = sequences;
+                    updateSequenceDisplay();
+                    updateDocumentNumberDisplay();
+                    
+                    console.log("Loaded sequences from IndexedDB");
+                }
+            } catch (error) {
+                console.error("Error loading sequences from IndexedDB:", error);
+            }
+        }
+
         // Initialize the main application
         function initializeApp() {
             document.getElementById('appContainer').style.display = 'block';
             document.getElementById('authModal').style.display = 'none';
+            
+            // Show/hide offline indicator based on current status
+            if (isOnline) {
+                hideOfflineIndicator();
+            } else {
+                showOfflineIndicator();
+            }
+            
             updateCompanyInfoHeader();
             updateHeaderLogo(logoData);
             loadDocuments();
@@ -3865,6 +4487,9 @@
             // Initialize date and time display
             updateDateTime();
             setInterval(updateDateTime, 1000);
+            
+            // Update pending sync count
+            updatePendingSyncCount();
         }
 
         // Update date and time display
@@ -4227,6 +4852,14 @@
                         localStorage.setItem('userAccountName', accountName);
                     }
                     
+                    // Save to IndexedDB for offline use
+                    await saveSettingsToIndexedDB({
+                        companyInfo,
+                        bankInfo,
+                        appearanceSettings,
+                        logoData
+                    });
+                    
                     updateCompanyInfoHeader();
                     updateHeaderLogo(logoData);
                     populateSettingsForm();
@@ -4238,6 +4871,14 @@
                     updateHeaderLogo(logoData);
                     populateSettingsForm();
                     updatePaymentDetailsDisplay();
+                    
+                    // Save default settings to IndexedDB
+                    await saveSettingsToIndexedDB({
+                        companyInfo,
+                        bankInfo,
+                        appearanceSettings,
+                        logoData
+                    });
                 }
             } catch (error) {
                 console.error("Error loading user settings: " + error.message);
@@ -4264,6 +4905,14 @@
                     appearanceSettings: appearanceSettings,
                     logoUrl: logoData,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Also save to IndexedDB for offline use
+                await saveSettingsToIndexedDB({
+                    companyInfo,
+                    bankInfo,
+                    appearanceSettings,
+                    logoData
                 });
                 
                 showNotification("Settings saved successfully!", "success");
@@ -4366,7 +5015,7 @@
                 // Apply appearance settings
                 applyAppearanceSettings();
                 
-                // Save to Firebase
+                // Save to Firebase and IndexedDB
                 saveUserSettings();
                 updatePaymentDetailsDisplay();
             });
@@ -4407,7 +5056,7 @@
                     // Update form
                     populateSettingsForm();
                     
-                    // Save to Firebase
+                    // Save to Firebase and IndexedDB
                     saveUserSettings();
                     updatePaymentDetailsDisplay();
                 }
@@ -4917,10 +5566,16 @@
                     userSequences.nextInvNumber = userData.nextInvNumber || 255; // Default to 255
                     userSequences.nextQotNumber = userData.nextQotNumber || 288; // Default to 288
                     console.log("Loaded sequences:", userSequences);
+                    
+                    // Save to IndexedDB for offline use
+                    await saveSequencesToIndexedDB(userSequences);
                 } else {
                     console.log("User document not found, initializing sequences.");
                     userSequences.nextInvNumber = 255;
                     userSequences.nextQotNumber = 288;
+                    
+                    // Save to IndexedDB for offline use
+                    await saveSequencesToIndexedDB(userSequences);
                 }
 
                 updateSequenceDisplay();
@@ -5225,32 +5880,65 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                let result;
-                if (editingDocId) {
-                    await db.collection('quotes').doc(editingDocId).update(documentData);
-                    result = { action: 'updated', docId: editingDocId };
-                    
+                // Save to IndexedDB first (for immediate feedback)
+                const savedDoc = await saveDocumentToIndexedDB(documentData, !!editingDocId);
+                
+                // If online, also save to Firebase
+                if (isOnline) {
+                    let result;
+                    if (editingDocId) {
+                        await db.collection('quotes').doc(editingDocId).update(documentData);
+                        result = { action: 'updated', docId: editingDocId };
+                        
+                        editingDocId = null;
+                        clearForm();
+                    } else {
+                        documentData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                        const docRef = await db.collection('quotes').add(documentData);
+                        result = { action: 'created', docId: docRef.id };
+                        
+                        // Update the document in IndexedDB with the Firebase ID
+                        if (savedDoc.id.startsWith('temp_')) {
+                            const transaction = dbInstance.transaction(['documents'], 'readwrite');
+                            const store = transaction.objectStore('documents');
+                            
+                            // Delete the temp document
+                            store.delete(savedDoc.id);
+                            
+                            // Add the new document with the Firebase ID
+                            const syncedDoc = {
+                                ...documentData,
+                                id: docRef.id,
+                                syncStatus: 'synced',
+                                lastModified: new Date().toISOString()
+                            };
+                            
+                            store.put(syncedDoc);
+                        }
+
+                        const sequenceKey = type === 'Invoice' ? 'nextInvNumber' : 'nextQotNumber';
+                        await db.collection('users').doc(ALLOWED_UID).update({
+                            [sequenceKey]: firebase.firestore.FieldValue.increment(1),
+                            lastSequenceUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        userSequences[sequenceKey]++;
+                        updateSequenceDisplay();
+                        
+                        // Save updated sequences to IndexedDB
+                        await saveSequencesToIndexedDB(userSequences);
+                        
+                        clearForm();
+                    }
+
+                    console.log(`Document ${result.action} with ID: `, result.docId);
+                    showNotification(`Document ${result.action === 'created' ? 'saved' : 'updated'} successfully!`, "success");
+                } else {
+                    // If offline, just show a success message for local save
+                    showNotification("Document saved locally. It will sync when you're back online.", "info");
                     editingDocId = null;
                     clearForm();
-                } else {
-                    documentData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    const docRef = await db.collection('quotes').add(documentData);
-                    result = { action: 'created', docId: docRef.id };
-
-                    const sequenceKey = type === 'Invoice' ? 'nextInvNumber' : 'nextQotNumber';
-                    await db.collection('users').doc(ALLOWED_UID).update({
-                        [sequenceKey]: firebase.firestore.FieldValue.increment(1),
-                        lastSequenceUpdate: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    userSequences[sequenceKey]++;
-                    updateSequenceDisplay();
-                    
-                    clearForm();
                 }
-
-                console.log(`Document ${result.action} with ID: `, result.docId);
-                showNotification(`Document ${result.action === 'created' ? 'saved' : 'updated'} successfully!`, "success");
 
                 // After successfully saving the document, save the payment details
                 try {
@@ -5880,38 +6568,80 @@
             quotationsTableBody.innerHTML = '<tr><td colspan="6" class="loading-message">Loading...</td></tr>';
 
             try {
-                console.log("Loading documents for user:", currentUser.uid);
-                
-                const querySnapshot = await db.collection('quotes')
-                    .where('userId', '==', ALLOWED_UID)
-                    .orderBy('date', 'desc')
-                    .get({ source: 'server' });
+                if (isOnline) {
+                    // If online, load from Firebase
+                    console.log("Loading documents from Firebase...");
                     
-                console.log("Query completed. Found:", querySnapshot.size, "documents");
-                
-                invoicesTableBody.innerHTML = '';
-                quotationsTableBody.innerHTML = '';
-                
-                if (querySnapshot.empty) {
-                    console.log("No documents found");
-                    invoicesTableBody.innerHTML = '<tr><td colspan="6">No invoices found</td></tr>';
-                    quotationsTableBody.innerHTML = '<tr><td colspan="6">No quotations found</td></tr>';
-                    return;
+                    const querySnapshot = await db.collection('quotes')
+                        .where('userId', '==', ALLOWED_UID)
+                        .orderBy('date', 'desc')
+                        .get({ source: 'server' });
+                        
+                    console.log("Query completed. Found:", querySnapshot.size, "documents");
+                    
+                    invoicesTableBody.innerHTML = '';
+                    quotationsTableBody.innerHTML = '';
+                    
+                    if (querySnapshot.empty) {
+                        console.log("No documents found");
+                        invoicesTableBody.innerHTML = '<tr><td colspan="6">No invoices found</td></tr>';
+                        quotationsTableBody.innerHTML = '<tr><td colspan="6">No quotations found</td></tr>';
+                        return;
+                    }
+                    
+                    allDocuments = [];
+                    
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        console.log("Document data:", data);
+                        
+                        allDocuments.push({
+                            id: doc.id,
+                            data: data
+                        });
+                    });
+                    
+                    // Also save to IndexedDB for offline use
+                    const transaction = dbInstance.transaction(['documents'], 'readwrite');
+                    const store = transaction.objectStore('documents');
+                    
+                    // Clear existing documents
+                    store.clear();
+                    
+                    // Add all documents from Firebase
+                    allDocuments.forEach((doc) => {
+                        const documentWithSyncStatus = {
+                            ...doc.data,
+                            id: doc.id,
+                            syncStatus: 'synced',
+                            lastModified: new Date().toISOString()
+                        };
+                        store.put(documentWithSyncStatus);
+                    });
+                    
+                    renderDocuments(allDocuments);
+                } else {
+                    // If offline, load from IndexedDB
+                    console.log("Loading documents from IndexedDB...");
+                    
+                    const documents = await getDocumentsFromIndexedDB();
+                    
+                    if (documents.length === 0) {
+                        invoicesTableBody.innerHTML = '<tr><td colspan="6">No documents found</td></tr>';
+                        quotationsTableBody.innerHTML = '<tr><td colspan="6">No quotations found</td></tr>';
+                        return;
+                    }
+                    
+                    allDocuments = documents.map(doc => ({
+                        id: doc.id,
+                        data: doc
+                    }));
+                    
+                    renderDocuments(allDocuments);
                 }
                 
-                allDocuments = [];
-                
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    console.log("Document data:", data);
-                    
-                    allDocuments.push({
-                        id: doc.id,
-                        data: data
-                    });
-                });
-                
-                renderDocuments(allDocuments);
+                // Update pending sync count
+                await updatePendingSyncCount();
 
             } catch (error) {
                 console.error("Error loading documents:", error);
@@ -5946,8 +6676,14 @@
             documents.forEach((doc) => {
                 const data = doc.data;
                 const row = document.createElement('tr');
+                
+                // Add a visual indicator for pending sync
+                const syncStatusClass = data.syncStatus === 'pending' ? 'pending-sync' : '';
+                const syncIndicator = data.syncStatus === 'pending' ? 
+                    '<i class="fas fa-clock" style="color: var(--warning-color);" title="Pending sync"></i>' : '';
+                
                 row.innerHTML = `
-                    <td>${data.type}</td>
+                    <td>${data.type} ${syncIndicator}</td>
                     <td>${data.number}</td>
                     <td>${data.date}</td>
                     <td>${data.billTo.name}</td>
@@ -5990,7 +6726,16 @@
                 row.querySelector('.delete').addEventListener('click', async () => {
                     if (confirm(`Are you sure you want to delete ${data.type} ${data.number}?`)) {
                         try {
-                            await db.collection('quotes').doc(doc.id).delete();
+                            // Delete from Firebase if online
+                            if (isOnline) {
+                                await db.collection('quotes').doc(doc.id).delete();
+                            }
+                            
+                            // Delete from IndexedDB
+                            const transaction = dbInstance.transaction(['documents'], 'readwrite');
+                            const store = transaction.objectStore('documents');
+                            store.delete(doc.id);
+                            
                             showNotification(`${data.type} ${data.number} deleted successfully!`, "success");
                             await loadUserSequences();
                             loadDocuments();
@@ -6132,6 +6877,12 @@
                         <div class="detail-label">ID:</div>
                         <div class="detail-value">${docId}</div>
                     </div>
+                    ${data.syncStatus ? `
+                    <div class="detail-row">
+                        <div class="detail-label">Sync Status:</div>
+                        <div class="detail-value">${data.syncStatus === 'pending' ? '<i class="fas fa-clock" style="color: var(--warning-color);"></i> Pending sync' : '<i class="fas fa-check-circle" style="color: var(--success-color);"></i> Synced'}</div>
+                    </div>
+                    ` : ''}
                 </div>
                 <div class="detail-section">
                     <h4><i class="fas fa-user"></i> Bill To</h4>
@@ -6598,7 +7349,17 @@ function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
         }
 
         // Initialize the application
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Initialize IndexedDB first
+            try {
+                await initIndexedDB();
+                console.log("IndexedDB initialized successfully");
+            } catch (error) {
+                console.error("Error initializing IndexedDB:", error);
+                showNotification("Error initializing offline storage. Some features may not work properly.", "warning");
+            }
+            
+            // Then initialize Firebase
             setTimeout(() => {
                 initializeFirebase();
             }, 500);
