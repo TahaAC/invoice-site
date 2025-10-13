@@ -3596,58 +3596,48 @@
             });
         }
 
-        // Save document to IndexedDB (for offline use)
-        function saveDocumentToIndexedDB(documentData, isUpdate = false) {
-            return new Promise((resolve, reject) => {
-                if (!dbInstance) {
-                    reject(new Error('IndexedDB not initialized'));
-                    return;
-                }
-                
-                const transaction = dbInstance.transaction(['documents'], 'readwrite');
-                const store = transaction.objectStore('documents');
-                
-                // Add sync status to track if this needs to be synced with Firebase
-                const documentWithSyncStatus = {
-                    ...documentData,
-                    syncStatus: isOnline ? 'synced' : 'pending',
-                    lastModified: new Date().toISOString()
-                };
-                
-                if (isUpdate) {
-                    const request = store.put(documentWithSyncStatus);
-                    request.onsuccess = () => {
-                        console.log('Document updated in IndexedDB');
-                        resolve(documentWithSyncStatus);
-                    };
-                    request.onerror = (event) => {
-                        console.error('Error updating document in IndexedDB:', event.target.error);
-                        reject(event.target.error);
-                    };
-                } else {
-                    // Generate a temporary ID if we don't have one yet
-                    if (!documentWithSyncStatus.id) {
-                        documentWithSyncStatus.id = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    }
-                    
-                    const request = store.add(documentWithSyncStatus);
-                    request.onsuccess = () => {
-                        console.log('Document saved to IndexedDB');
-                        resolve(documentWithSyncStatus);
-                    };
-                    request.onerror = (event) => {
-                        console.error('Error saving document to IndexedDB:', event.target.error);
-                        reject(event.target.error);
-                    };
-                }
-                
-                transaction.oncomplete = () => {
-                    if (!isOnline) {
-                        updatePendingSyncCount();
-                    }
-                };
-            });
+ function saveDocumentToIndexedDB(documentData, isUpdate = false) {
+    return new Promise((resolve, reject) => {
+        if (!dbInstance) {
+            reject(new Error('IndexedDB not initialized'));
+            return;
         }
+
+        // Ensure the document has an ID, even for updates
+        let documentWithSyncStatus = { ...documentData };
+        if (!documentWithSyncStatus.id) {
+            // Generate a temporary ID if missing
+            documentWithSyncStatus.id = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Add sync status
+        documentWithSyncStatus = {
+            ...documentWithSyncStatus,
+            syncStatus: isOnline ? 'synced' : 'pending',
+            lastModified: new Date().toISOString()
+        };
+
+        const transaction = dbInstance.transaction(['documents'], 'readwrite');
+        const store = transaction.objectStore('documents');
+
+        const request = isUpdate ? store.put(documentWithSyncStatus) : store.add(documentWithSyncStatus);
+
+        request.onsuccess = () => {
+            console.log(isUpdate ? 'Document updated in IndexedDB' : 'Document saved to IndexedDB');
+            resolve(documentWithSyncStatus);
+        };
+        request.onerror = (event) => {
+            console.error(`Error ${isUpdate ? 'updating' : 'saving'} document in IndexedDB:`, event.target.error);
+            reject(event.target.error);
+        };
+
+        transaction.oncomplete = () => {
+            if (!isOnline) {
+                updatePendingSyncCount();
+            }
+        };
+    });
+}
 
         // Get documents from IndexedDB
         function getDocumentsFromIndexedDB(type = null) {
@@ -5950,9 +5940,16 @@
 
                 loadDocuments();
 
-            } catch (error) {
-                console.error('Error saving document: ', error);
-                showNotification('Error saving document: ' + error.message, 'error');
+           } catch (error) {
+    // This logs the full technical error to the browser's developer console (press F12 to see it)
+    console.error('Detailed error during save:', error);
+
+    // This is the FIX: It correctly displays the specific error message in the popup notification
+    showNotification(`Error saving document: ${error.message}`, 'error');
+
+
+    // ... rest of your finally block
+
             } finally {
                 saveButton.disabled = false;
                 saveButton.innerHTML = originalButtonText;
