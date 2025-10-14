@@ -107,6 +107,38 @@
             --mobile-safe-area-left: env(safe-area-inset-left, 0);
             --mobile-safe-area-right: env(safe-area-inset-right, 0);
         }
+/* Share dropdown styles */
+.share-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.share-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-lg);
+    min-width: 150px;
+    z-index: 1000;
+    display: none;
+    margin-top: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.share-menu.show {
+    display: block;
+}
+
+.whatsapp-share {
+    color: #25D366;
+}
+
+.sms-share {
+    color: var(--info-color);
+}
 
         /* Reset and base styles */
         * {
@@ -3326,29 +3358,48 @@
     </div>
 
     <!-- Share Modal -->
-    <div class="modal" id="shareModal">
-        <div class="modal-content share-modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Share Document</h3>
-                <button class="modal-close" id="closeShareModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Choose how you'd like to share this document:</p>
-                <div class="share-options">
-                    <div class="share-option download" id="shareDownload">
-                        <i class="fas fa-download"></i>
-                        <h4>Download PDF</h4>
-                        <p>Save PDF to device</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
+<div class="modal" id="shareModal">
+  <div class="modal-content share-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Share Document</h3>
+      <button class="modal-close" id="closeShareModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Choose how you'd like to share this document:</p>
+      <div class="share-options">
+
+        <!-- Existing Download PDF -->
+        <div class="share-option download" id="shareDownload">
+          <i class="fas fa-download"></i>
+          <h4>Download PDF</h4>
+          <p>Save PDF to device</p>
+        </div>
+
+       <!-- New WhatsApp Option -->
+<div class="share-option whatsapp" id="shareWhatsapp" tabindex="0" style="cursor:pointer;">
+    <i class="fab fa-whatsapp"></i>
+    <h4>WhatsApp</h4>
+    <p>Send invoice via WhatsApp</p>
+</div>
+
+<!-- New SMS Option -->
+<div class="share-option sms" id="shareSMS" tabindex="0" style="cursor:pointer;">
+    <i class="fas fa-sms"></i>
+    <h4>SMS</h4>
+    <p>Send invoice via SMS</p>
+</div>
+
+<div class="modal-footer">
                 <button class="action-button glass-button" id="closeShareModalFooter">
                     Close
                 </button>
             </div>
-        </div>
+      </div>
     </div>
+  </div>
+</div>
+
+            
 
     <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
@@ -3555,7 +3606,78 @@
                     });
             });
         }
+// Add this function to handle sharing
+async function shareViaWhatsApp(id, type) {
+    try {
+        const docRef = db.collection(type + 's').doc(id);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+            showNotification(`${type} not found`, 'error');
+            return;
+        }
+        
+        const data = doc.data();
+        const message = buildShareMessage(data, type);
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+        
+        document.querySelectorAll('.share-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+        
+        showNotification(`Opening WhatsApp to share ${type}`, 'info');
+    } catch (error) {
+        showNotification(`Error sharing ${type} via WhatsApp: ${error.message}`, 'error');
+    }
+}
 
+async function shareViaSMS(id, type) {
+    try {
+        const docRef = db.collection(type + 's').doc(id);
+        const doc = await docRef.get();
+        
+        if (!doc.exists) {
+            showNotification(`${type} not found`, 'error');
+            return;
+        }
+        
+        const data = doc.data();
+        const message = buildShareMessage(data, type);
+        const clientPhone = data.clientPhone || '';
+        const smsUrl = `sms:${clientPhone}?body=${encodeURIComponent(message)}`;
+        window.open(smsUrl, '_blank');
+        
+        document.querySelectorAll('.share-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+        
+        showNotification(`Opening SMS to share ${type}`, 'info');
+    } catch (error) {
+        showNotification(`Error sharing ${type} via SMS: ${error.message}`, 'error');
+    }
+}
+
+function buildShareMessage(data, type) {
+    const companyName = 'SMART SQUAD M BUILD PTY LTD';
+    const documentNumber = data.number || 'N/A';
+    const clientName = data.clientName || 'Client';
+    const totalAmount = data.totalAmount || '0.00';
+    const dueDate = data.dueDate ? formatDate(data.dueDate) : 'N/A';
+    
+    let message = `${type.charAt(0).toUpperCase() + type.slice(1)} from ${companyName}\n`;
+    message += `${type.charAt(0).toUpperCase() + type.slice(1)} Number: ${documentNumber}\n`;
+    message += `Client: ${clientName}\n`;
+    message += `Total Amount: $${totalAmount}\n`;
+    
+    if (type === 'invoice' && dueDate !== 'N/A') {
+        message += `Due Date: ${dueDate}\n`;
+    }
+    
+    message += `\nThank you for your business!`;
+    
+    return message;
+}
         // Initialize IndexedDB for offline storage
         function initIndexedDB() {
             return new Promise((resolve, reject) => {
@@ -5312,7 +5434,29 @@
                     emailDocument(documentData);
                 }
             });
+// Share via WhatsApp Function
+function shareViaWhatsApp(data) {
+    const message = `Hello ${data.billTo.name || ''},
 
+Here is your ${data.type.toLowerCase()} ${data.number} from ${companyInfo.name}.
+Total Amount: $${data.total.toFixed(2)}
+
+You can view the details here: [Link to your app or a hosted PDF if available - otherwise omit]
+
+For any questions, contact us at ${companyInfo.phone}.`;
+    
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Share via SMS Function
+function shareViaSMS(data) {
+    const message = `Hi ${data.billTo.name || ''}, here is your ${data.type.toLowerCase()} ${data.number} from ${companyInfo.name}. Total: $${data.total.toFixed(2)}. Contact ${companyInfo.phone} for details.`;
+    
+    // This works on mobile devices with SMS capability
+    const smsUrl = `sms:?body=${encodeURIComponent(message)}`;
+    window.open(smsUrl, '_blank');
+}
             // Update the add item button event listener
             document.getElementById('addItem').addEventListener('click', () => {
                 if (isMobileDevice()) {
@@ -6082,29 +6226,58 @@
                 printWindow.close();
             };
         }
+// Share via WhatsApp Function
+function shareViaWhatsApp(data) {
+    const message = `Hello ${data.billTo.name || ''},
 
-        // Email Document Function
-        function emailDocument(data) {
-            // Generate PDF first
-            const printWindow = window.open('', '_blank', 'width=800,height=600');
-            const printHTML = generatePrintHTML(data);
-            printWindow.document.write(printHTML);
-            printWindow.document.close();
-            
-            printWindow.onload = () => {
-                // Convert to PDF and create download link
-                printWindow.print();
-                
-                // Create a mailto link with the document details
-                const subject = `${data.type} ${data.number} from ${companyInfo.name}`;
-                const body = `Dear ${data.billTo.name},\n\nPlease find attached your ${data.type.toLowerCase()} ${data.number} for ${data.total.toFixed(2)}.\n\nIf you have any questions, please don't hesitate to contact us.\n\nBest regards,\n${companyInfo.name}\n${companyInfo.phone}\n${companyInfo.email}`;
-                
-                const mailtoLink = `mailto:${data.billTo.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                window.location.href = mailtoLink;
-                
-                printWindow.close();
-            };
-        }
+Here is your ${data.type.toLowerCase()} ${data.number} from ${companyInfo.name}.
+Total Amount: $${data.total.toFixed(2)}
+
+You can view the details here: [Link to your app or a hosted PDF if available - otherwise omit]
+
+For any questions, contact us at ${companyInfo.phone}.`;
+    
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Share via SMS Function
+function shareViaSMS(data) {
+    const message = `Hi ${data.billTo.name || ''}, here is your ${data.type.toLowerCase()} ${data.number} from ${companyInfo.name}. Total: $${data.total.toFixed(2)}. Contact ${companyInfo.phone} for details.`;
+    
+    // This works on mobile devices with SMS capability
+    const smsUrl = `sms:?body=${encodeURIComponent(message)}`;
+    window.open(smsUrl, '_blank');
+}
+   // Email Document Function - Modified to include client name
+function emailDocument(data) {
+    // Generate PDF first (for user to manually attach)
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    const printHTML = generatePrintHTML(data);
+    printWindow.document.write(printHTML);
+    printWindow.document.close();
+    printWindow.onload = () => {
+        printWindow.print(); // This prompts the user to print/save as PDF
+        // Note: Cannot auto-attach the PDF. User must save it and attach manually.
+    };
+
+    // Create a mailto link with the document details, including client name
+    const subject = `${data.type} ${data.number} from ${companyInfo.name}`;
+    const clientName = data.billTo.name || 'Valued Client'; // Use name or fallback
+    const body = `Dear ${clientName},
+
+Please find attached your ${data.type.toLowerCase()} ${data.number} for $${data.total.toFixed(2)}.
+If you have any questions, please don't hesitate to contact us.
+
+Best regards,
+${companyInfo.name}
+${companyInfo.phone}
+${companyInfo.email}`;
+
+    const mailtoLink = `mailto:${data.billTo.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+    // User will be prompted to send the email and must manually attach the saved PDF.
+}
 
         // Generate Print HTML
         function generatePrintHTML(data) {
@@ -7344,7 +7517,29 @@ function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
             const { data } = currentDocumentForShare;
             printDocument(data);
         }
+// Share via WhatsApp Function
+function shareViaWhatsApp(data) {
+    const message = `Hello ${data.billTo.name || ''},
 
+Here is your ${data.type.toLowerCase()} ${data.number} from ${companyInfo.name}.
+Total Amount: $${data.total.toFixed(2)}
+
+You can view the details here: [Link to your app or a hosted PDF if available - otherwise omit]
+
+For any questions, contact us at ${companyInfo.phone}.`;
+    
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Share via SMS Function
+function shareViaSMS(data) {
+    const message = `Hi ${data.billTo.name || ''}, here is your ${data.type.toLowerCase()} ${data.number} from ${companyInfo.name}. Total: $${data.total.toFixed(2)}. Contact ${companyInfo.phone} for details.`;
+    
+    // This works on mobile devices with SMS capability
+    const smsUrl = `sms:?body=${encodeURIComponent(message)}`;
+    window.open(smsUrl, '_blank');
+}
         // Initialize the application
         window.addEventListener('DOMContentLoaded', async () => {
             // Initialize IndexedDB first
@@ -7478,6 +7673,68 @@ function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
         document.getElementById('bsb')?.addEventListener('input', updatePaymentDetailsDisplay);
         document.getElementById('account')?.addEventListener('input', updatePaymentDetailsDisplay);
         // Account name is static, so we don't update it on input
+// --- WhatsApp & SMS Share Logic for Invoice Page ---
+// Ensure this code goes after the rest of your DOM is ready
+
+function getInvoiceDetailsForShare() {
+    const clientName = document.getElementById('clientName')?.value || '';
+    const mobileNumber = document.getElementById('clientMobile')?.value || '';
+    const total = document.getElementById('total')?.textContent || '';
+    const invoiceNo = document.getElementById('documentNumber')?.textContent || '';
+    const invoiceDate = document.getElementById('documentDate')?.value || '';
+    // PDF Download Button
+    let invoicePDFUrl = '';
+    // Try direct PDF button
+    const pdfDownloadBtn = document.getElementById('downloadPdfBtn');
+    if (pdfDownloadBtn && pdfDownloadBtn.hasAttribute('data-url')) {
+        invoicePDFUrl = pdfDownloadBtn.getAttribute('data-url');
+    } else if (pdfDownloadBtn && pdfDownloadBtn.href) {
+        invoicePDFUrl = pdfDownloadBtn.href;
+    } else {
+        invoicePDFUrl = window.location.href;
+    }
+
+    const shareText =
+`SMART SQUAD Invoice
+Invoice Number: ${invoiceNo}
+Client: ${clientName}
+Date: ${invoiceDate}
+Total: ${total}
+View or download PDF: ${invoicePDFUrl}`;
+
+    return { shareText, mobileNumber };
+}
+
+document.getElementById('whatsappShareBtn')?.addEventListener('click', function () {
+    const { shareText } = getInvoiceDetailsForShare();
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+});
+
+document.getElementById('smsShareBtn')?.addEventListener('click', function () {
+    const { shareText, mobileNumber } = getInvoiceDetailsForShare();
+    window.open(`sms:${mobileNumber}?body=${encodeURIComponent(shareText)}`);
+});
+
+document.getElementById('shareWhatsapp').addEventListener('click', function() {
+    var phone = document.querySelector('input[aria-label="Mobile"]').value;
+    var clientName = document.querySelector('input[aria-label="Client Name"]').value;
+    var invoiceNumber = document.querySelector('input[aria-label="Document Number#"]').value;
+    var totalAmount = document.querySelector('input[aria-label="Total Amount"]').value || "";
+    var message = `Hi ${clientName}, your invoice #${invoiceNumber} for $${totalAmount} is ready. Thank you!`;
+    var url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+});
+
+document.getElementById('shareSMS').addEventListener('click', function() {
+    var phone = document.querySelector('input[aria-label="Mobile"]').value;
+    var clientName = document.querySelector('input[aria-label="Client Name"]').value;
+    var invoiceNumber = document.querySelector('input[aria-label="Document Number#"]').value;
+    var totalAmount = document.querySelector('input[aria-label="Total Amount"]').value || "";
+    var message = `Hi ${clientName}, your invoice #${invoiceNumber} for $${totalAmount} is ready. Thank you!`;
+    var smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
+    window.open(smsUrl);
+});
+
 
     </script>
 </body>
