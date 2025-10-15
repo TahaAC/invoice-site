@@ -6906,7 +6906,7 @@ ${companyInfo.email}`;
 
         // Load documents
         async function loadDocuments() {
-            if (!currentUser || currentUser.uid !== ALLOWED_UID) {
+            if (!currentUser || !ALLOWED_UIDS.includes(currentUser.uid)) {
                 console.log("Not authenticated or wrong user");
                 return;
             }
@@ -6923,7 +6923,7 @@ ${companyInfo.email}`;
                     console.log("Loading documents from Firebase...");
                     
                     const querySnapshot = await db.collection('quotes')
-                        .where('userId', '==', ALLOWED_UID)
+                        .where('userId', 'in', ALLOWED_UIDS)
                         .orderBy('date', 'desc')
                         .get({ source: 'server' });
                         
@@ -7667,17 +7667,17 @@ function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
 
         // Ensure allowed user exists
         async function ensureAllowedUserExists() {
-            if (!currentUser || currentUser.uid !== ALLOWED_UID) {
-                console.log("Current user is not the allowed UID, skipping user creation");
+            if (!currentUser || !ALLOWED_UIDS.includes(currentUser.uid)) {
+                console.log("Current user is not in allowed UIDs, skipping user creation");
                 return;
             }
             
             try {
-                const userDoc = await db.collection('users').doc(ALLOWED_UID).get({ source: 'server' });
+                const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
                 
                 if (!userDoc.exists) {
                     console.log("Creating authorized user document...");
-                    await db.collection('users').doc(ALLOWED_UID).set({
+                    await db.collection('users').doc(currentUser.uid).set({
                         email: currentUser.email || "authorized@system.com",
                         companyInfo: companyInfo,
                         bankInfo: bankInfo,
