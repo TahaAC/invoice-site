@@ -48,6 +48,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js?v=1.0.0"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js?v=1.0.0"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js?v=1.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+    <script src="js/document-handler.js"></script>
+    <script src="js/sharing.js"></script>
     
     <!-- Include jsPDF for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -3350,9 +3353,49 @@
                 <button class="action-button glass-button" id="printDetailBtn">
                     <i class="fas fa-print"></i> Print
                 </button>
+                <button class="action-button glass-button" id="shareDetailBtn">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
                 <button class="action-button glass-button" id="closeDetailModalFooter">
                     Close
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content share-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Document</h3>
+                <button class="modal-close" id="closeShareModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-options">
+                    <div class="share-option email" id="shareEmail">
+                        <i class="fas fa-envelope"></i>
+                        <h4>Email</h4>
+                        <p>Send via email with PDF</p>
+                    </div>
+
+                    <div class="share-option whatsapp" id="shareWhatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        <h4>WhatsApp</h4>
+                        <p>Share via WhatsApp</p>
+                    </div>
+
+                    <div class="share-option sms" id="shareSMS">
+                        <i class="fas fa-sms"></i>
+                        <h4>SMS</h4>
+                        <p>Send via SMS</p>
+                    </div>
+
+                    <div class="share-option download" id="shareDownload">
+                        <i class="fas fa-download"></i>
+                        <h4>Download PDF</h4>
+                        <p>Save PDF to device</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -6885,12 +6928,12 @@ ${companyInfo.email}`;
 
                 row.querySelector('.share').addEventListener('click', () => {
                     currentDocumentForShare = { data, docId: doc.id };
-                    document.getElementById('shareModal').style.display = 'flex';
+                    showShareModal(data);
                 });
                 
                 // Add print button event listener
                 row.querySelector('.print').addEventListener('click', () => {
-                    printDocument(data);
+                    handleDocument(data, 'print');
                 });
 
                 row.querySelector('.delete').addEventListener('click', async () => {
