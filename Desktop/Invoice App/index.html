@@ -4652,10 +4652,18 @@ function buildShareMessage(data, type) {
             }
 
             auth.onAuthStateChanged(async (user) => {
+                console.log("Auth state changed. User:", user ? user.uid : 'no user');
+                if (user) {
+                    console.log("Checking if user is allowed. User UID:", user.uid);
+                    console.log("Allowed UIDs:", ALLOWED_UIDS);
+                    console.log("Is user allowed:", ALLOWED_UIDS.includes(user.uid));
+                }
                 if (user && ALLOWED_UIDS.includes(user.uid)) {
+                    console.log("User is allowed, setting up session");
                     currentUser = user;
                     document.getElementById('userEmail').textContent = user.email;
                     authRetryCount = 0;
+                    await ensureAllowedUserExists();
                     
                     // Initialize IndexedDB
                     try {
@@ -6231,7 +6239,7 @@ function shareViaSMS(data) {
                         }
 
                         const sequenceKey = type === 'Invoice' ? 'nextInvNumber' : 'nextQotNumber';
-                        await db.collection('users').doc(ALLOWED_UID).update({
+                        await db.collection('users').doc(currentUser.uid).update({
                             [sequenceKey]: firebase.firestore.FieldValue.increment(1),
                             lastSequenceUpdate: firebase.firestore.FieldValue.serverTimestamp()
                         });
@@ -7667,8 +7675,11 @@ function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
 
         // Ensure allowed user exists
         async function ensureAllowedUserExists() {
+            console.log("Checking if user exists in database. Current user:", currentUser ? currentUser.uid : 'no user');
             if (!currentUser || !ALLOWED_UIDS.includes(currentUser.uid)) {
                 console.log("Current user is not in allowed UIDs, skipping user creation");
+                console.log("Current user UID:", currentUser ? currentUser.uid : 'none');
+                console.log("Allowed UIDs:", ALLOWED_UIDS);
                 return;
             }
             
