@@ -3761,56 +3761,62 @@
                     });
             });
         }
-// Add this function to handle sharing
-async function shareViaWhatsApp(id, type) {
+// Sharing functions
+async function getDocumentForSharing(id, type) {
     try {
         const docRef = db.collection(type + 's').doc(id);
         const doc = await docRef.get();
         
         if (!doc.exists) {
             showNotification(`${type} not found`, 'error');
-            return;
+            return null;
         }
         
-        const data = doc.data();
+        return { ...doc.data(), id: doc.id };
+    } catch (error) {
+        showNotification(`Error retrieving ${type}: ${error.message}`, 'error');
+        return null;
+    }
+}
+
+async function shareViaWhatsApp(id, type) {
+    const data = await getDocumentForSharing(id, type);
+    if (!data) return;
+
+    try {
         const message = buildShareMessage(data, type);
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        const phoneNumber = data.clientPhone ? data.clientPhone.replace(/\D/g, '') : '';
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        
         window.open(whatsappUrl, '_blank');
-        
-        document.querySelectorAll('.share-menu').forEach(menu => {
-            menu.classList.remove('show');
-        });
-        
+        closeAllShareMenus();
         showNotification(`Opening WhatsApp to share ${type}`, 'info');
     } catch (error) {
-        showNotification(`Error sharing ${type} via WhatsApp: ${error.message}`, 'error');
+        showNotification(`Error sharing via WhatsApp: ${error.message}`, 'error');
     }
 }
 
 async function shareViaSMS(id, type) {
+    const data = await getDocumentForSharing(id, type);
+    if (!data) return;
+
     try {
-        const docRef = db.collection(type + 's').doc(id);
-        const doc = await docRef.get();
-        
-        if (!doc.exists) {
-            showNotification(`${type} not found`, 'error');
-            return;
-        }
-        
-        const data = doc.data();
         const message = buildShareMessage(data, type);
-        const clientPhone = data.clientPhone || '';
-        const smsUrl = `sms:${clientPhone}?body=${encodeURIComponent(message)}`;
+        const phoneNumber = data.clientPhone || '';
+        const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+        
         window.open(smsUrl, '_blank');
-        
-        document.querySelectorAll('.share-menu').forEach(menu => {
-            menu.classList.remove('show');
-        });
-        
+        closeAllShareMenus();
         showNotification(`Opening SMS to share ${type}`, 'info');
     } catch (error) {
-        showNotification(`Error sharing ${type} via SMS: ${error.message}`, 'error');
+        showNotification(`Error sharing via SMS: ${error.message}`, 'error');
     }
+}
+
+function closeAllShareMenus() {
+    document.querySelectorAll('.share-menu').forEach(menu => {
+        menu.classList.remove('show');
+    });
 }
 
 // Toggle share menu dropdown
@@ -3829,28 +3835,61 @@ function toggleShareMenu(docId) {
     }
 }
 
-// Close share menus when clicking outside
-document.addEventListener('click', (event) => {
-    if (!event.target.closest('.share-dropdown')) {
-        document.querySelectorAll('.share-menu').forEach(menu => {
-            menu.classList.remove('show');
+// Initialize share buttons
+function initializeShareButtons() {
+    // Set up click outside listener to close share menus
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.share-dropdown')) {
+            closeAllShareMenus();
+        }
+    });
+
+    // Set up share button click handlers
+    document.addEventListener('click', (event) => {
+        const shareButton = event.target.closest('.table-action-btn.share');
+        if (shareButton) {
+            const docId = shareButton.dataset.id;
+            const docType = shareButton.dataset.type || 'invoice';
+            toggleShareMenu(docId, docType);
+        }
+    });
+
+    // Set up share option click handlers
+    document.querySelectorAll('[data-share-action]').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const action = button.dataset.shareAction;
+            const docId = button.closest('[data-doc-id]').dataset.docId;
+            const docType = button.closest('[data-doc-type]').dataset.docType;
+
+            switch(action) {
+                case 'whatsapp':
+                    shareViaWhatsApp(docId, docType);
+                    break;
+                case 'sms':
+                    shareViaSMS(docId, docType);
+                    break;
+            }
         });
-    }
-});
+    });
+}
+
+// Initialize share functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeShareButtons);
 
 function buildShareMessage(data, type) {
     const companyName = 'SMART SQUAD M BUILD PTY LTD';
     const documentNumber = data.number || 'N/A';
     const clientName = data.clientName || 'Client';
-    const totalAmount = data.totalAmount || '0.00';
-    const dueDate = data.dueDate ? formatDate(data.dueDate) : 'N/A';
+    const totalAmount = formatCurrency(data.totalAmount || 0);
+    const documentDate = data.dueDate ? formatDate(data.dueDate) : 'N/A';
     
-    let message = `${type.charAt(0).toUpperCase() + type.slice(1)} from ${companyName}\n`;
-    message += `${type.charAt(0).toUpperCase() + type.slice(1)} Number: ${documentNumber}\n`;
+    const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+    let message = `${capitalizedType} Details - ${companyName}\n\n`;
+    message += `${capitalizedType} #: ${documentNumber}\n`;
     message += `Client: ${clientName}\n`;
-    message += `Total Amount: $${totalAmount}\n`;
+    message += `Amount: ${totalAmount}\n`;
     
-    if (type === 'invoice' && dueDate !== 'N/A') {
+    if (type.toLowerCase() === 'invoice' && documentDate !== 'N/A') {
         message += `Due Date: ${dueDate}\n`;
     }
     
@@ -4652,10 +4691,33 @@ function buildShareMessage(data, type) {
             }
 
             auth.onAuthStateChanged(async (user) => {
-                if (user && ALLOWED_UIDS.includes(user.uid)) {
+                console.log("Auth state changed. User:", user ? user.uid : 'no user');
+                
+                if (!user) {
+                    console.log("No authenticated user");
+                    showLoginForm();
+                    return;
+                }
+
+                console.log("Checking if user is allowed. User UID:", user.uid);
+                console.log("Allowed UIDs:", ALLOWED_UIDS);
+                
+                if (!ALLOWED_UIDS || !Array.isArray(ALLOWED_UIDS)) {
+                    console.error("ALLOWED_UIDS is not properly initialized");
+                    showNotification("System configuration error. Please contact support.", "error");
+                    showLoginForm();
+                    return;
+                }
+
+                const isUserAllowed = ALLOWED_UIDS.includes(user.uid);
+                console.log("Is user allowed:", isUserAllowed);
+
+                if (isUserAllowed) {
+                    console.log("User is allowed, setting up session");
                     currentUser = user;
                     document.getElementById('userEmail').textContent = user.email;
                     authRetryCount = 0;
+                    await ensureAllowedUserExists();
                     
                     // Initialize IndexedDB
                     try {
@@ -6052,7 +6114,19 @@ function shareViaSMS(data) {
 
         // Save document
         async function saveDocument() {
-            if (!currentUser || !ALLOWED_UIDS.includes(currentUser.uid)) {
+            if (!currentUser) {
+                showNotification('You must be signed in to save documents.', 'error');
+                return;
+            }
+
+            if (!ALLOWED_UIDS || !Array.isArray(ALLOWED_UIDS)) {
+                console.error("ALLOWED_UIDS is not properly initialized");
+                showNotification("System configuration error. Please contact support.", "error");
+                return;
+            }
+
+            if (!ALLOWED_UIDS.includes(currentUser.uid)) {
+                console.log("Not authorized to save documents. User ID:", currentUser.uid);
                 showNotification('You are not authorized to save documents.', 'error');
                 return;
             }
@@ -6231,7 +6305,7 @@ function shareViaSMS(data) {
                         }
 
                         const sequenceKey = type === 'Invoice' ? 'nextInvNumber' : 'nextQotNumber';
-                        await db.collection('users').doc(ALLOWED_UID).update({
+                        await db.collection('users').doc(currentUser.uid).update({
                             [sequenceKey]: firebase.firestore.FieldValue.increment(1),
                             lastSequenceUpdate: firebase.firestore.FieldValue.serverTimestamp()
                         });
@@ -6906,9 +6980,22 @@ ${companyInfo.email}`;
 
         // Load documents
         async function loadDocuments() {
-            if (!currentUser || currentUser.uid !== ALLOWED_UID) {
-                console.log("Not authenticated or wrong user");
-                return;
+            console.log("Loading documents, current user:", currentUser?.uid);
+            console.log("Allowed UIDs:", ALLOWED_UIDS);
+
+            if (!currentUser) {
+                console.log("Not authenticated");
+                throw new Error("You must be signed in to access documents.");
+            }
+            
+            if (!ALLOWED_UIDS || !Array.isArray(ALLOWED_UIDS)) {
+                console.error("ALLOWED_UIDS is not properly initialized");
+                throw new Error("System configuration error. Please contact support.");
+            }
+
+            if (!ALLOWED_UIDS.includes(currentUser.uid)) {
+                console.log("User not authorized");
+                throw new Error("You are not authorized to access this application.");
             }
 
             const invoicesTableBody = document.getElementById('invoicesTableBody');
@@ -6923,7 +7010,7 @@ ${companyInfo.email}`;
                     console.log("Loading documents from Firebase...");
                     
                     const querySnapshot = await db.collection('quotes')
-                        .where('userId', '==', ALLOWED_UID)
+                        .where('userId', '==', currentUser.uid)
                         .orderBy('date', 'desc')
                         .get({ source: 'server' });
                         
@@ -7041,15 +7128,15 @@ ${companyInfo.email}`;
                     <td class="actions">
                         <button class="table-action-btn view" data-id="${doc.id}"><i class="fas fa-eye"></i> View</button>
                         <button class="table-action-btn edit" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
-                        <div class="share-dropdown">
-                            <button class="table-action-btn share" onclick="toggleShareMenu('${doc.id}')" data-id="${doc.id}">
+                        <div class="share-dropdown" data-doc-id="${doc.id}" data-doc-type="${type}">
+                            <button class="table-action-btn share" data-id="${doc.id}" data-type="${type}">
                                 <i class="fas fa-share-alt"></i>
                             </button>
                             <div class="share-menu" id="shareMenu_${doc.id}">
-                                <button class="dropdown-item" onclick="shareViaWhatsApp('${doc.id}', '${type}')">
+                                <button class="dropdown-item" data-share-action="whatsapp">
                                     <i class="fab fa-whatsapp whatsapp-share"></i> WhatsApp
                                 </button>
-                                <button class="dropdown-item" onclick="shareViaSMS('${doc.id}', '${type}')">
+                                <button class="dropdown-item" data-share-action="sms">
                                     <i class="fas fa-sms sms-share"></i> SMS
                                 </button>
                             </div>
@@ -7667,17 +7754,20 @@ function enableAutocomplete(inputElement, suggestionElement, acceptButton) {
 
         // Ensure allowed user exists
         async function ensureAllowedUserExists() {
-            if (!currentUser || currentUser.uid !== ALLOWED_UID) {
-                console.log("Current user is not the allowed UID, skipping user creation");
+            console.log("Checking if user exists in database. Current user:", currentUser ? currentUser.uid : 'no user');
+            if (!currentUser || !ALLOWED_UIDS.includes(currentUser.uid)) {
+                console.log("Current user is not in allowed UIDs, skipping user creation");
+                console.log("Current user UID:", currentUser ? currentUser.uid : 'none');
+                console.log("Allowed UIDs:", ALLOWED_UIDS);
                 return;
             }
             
             try {
-                const userDoc = await db.collection('users').doc(ALLOWED_UID).get({ source: 'server' });
+                const userDoc = await db.collection('users').doc(currentUser.uid).get({ source: 'server' });
                 
                 if (!userDoc.exists) {
                     console.log("Creating authorized user document...");
-                    await db.collection('users').doc(ALLOWED_UID).set({
+                    await db.collection('users').doc(currentUser.uid).set({
                         email: currentUser.email || "authorized@system.com",
                         companyInfo: companyInfo,
                         bankInfo: bankInfo,
