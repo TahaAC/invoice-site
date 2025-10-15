@@ -1,100 +1,163 @@
-// Sharing functionality
-class ShareManager {
-    constructor() {
-        this.initializeListeners();
-    }
+// Add to your existing JavaScript code
 
-    initializeListeners() {
-        document.addEventListener('click', (e) => {
-            const shareButton = e.target.closest('[data-share-action]');
-            if (shareButton) {
-                const action = shareButton.dataset.shareAction;
-                const docId = shareButton.closest('[data-doc-id]')?.dataset.docId;
-                const docType = shareButton.closest('[data-doc-type]')?.dataset.docType;
-
-                if (docId && docType) {
-                    this.handleShare(action, docId, docType);
-                }
-            }
-        });
-    }
-
-    async handleShare(action, docId, docType) {
-        try {
-            const doc = await this.getDocument(docId, docType);
-            if (!doc) return;
-
-            switch(action) {
-                case 'whatsapp':
-                    await this.shareViaWhatsApp(doc, docType);
-                    break;
-                case 'sms':
-                    await this.shareViaSMS(doc, docType);
-                    break;
-            }
-        } catch (error) {
-            console.error('Share error:', error);
-            this.showNotification('Error sharing document. Please try again.', 'error');
-        }
-    }
-
-    async getDocument(id, type) {
-        try {
-            const doc = await firebase.firestore()
-                .collection(type + 's')
-                .doc(id)
-                .get();
-
-            if (!doc.exists) {
-                this.showNotification(`${type} not found`, 'error');
-                return null;
-            }
-
-            return { ...doc.data(), id: doc.id };
-        } catch (error) {
-            console.error('Error getting document:', error);
-            this.showNotification('Error retrieving document', 'error');
-            return null;
-        }
-    }
-
-    async shareViaWhatsApp(doc, type) {
-        const message = this.buildShareMessage(doc, type);
-        const phoneNumber = doc.clientPhone ? doc.clientPhone.replace(/\D/g, '') : '';
-        const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-        this.showNotification('Opening WhatsApp...', 'info');
-    }
-
-    async shareViaSMS(doc, type) {
-        const message = this.buildShareMessage(doc, type);
-        const phoneNumber = doc.clientPhone || '';
-        const url = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-        this.showNotification('Opening SMS...', 'info');
-    }
-
-    buildShareMessage(doc, type) {
-        const companyName = 'SMART SQUAD M BUILD PTY LTD';
-        const message = [
-            `${type.toUpperCase()} - ${companyName}`,
-            `Number: ${doc.number || 'N/A'}`,
-            `Client: ${doc.clientName || 'N/A'}`,
-            `Amount: $${(doc.totalAmount || 0).toFixed(2)}`,
-            doc.dueDate ? `Due Date: ${new Date(doc.dueDate).toLocaleDateString()}` : '',
-        ].filter(Boolean).join('\n');
-
-        return message;
-    }
-
-    showNotification(message, type = 'info') {
-        if (window.showNotification) {
-            window.showNotification(message, type);
-        } else {
-            console.log(message);
-        }
-    }
+// Share Document Functions
+async function shareDocument(doc) {
+    // Generate PDF first
+    const pdfBlob = await generatePDF(doc);
+    
+    // Show share modal
+    const shareModal = document.getElementById('shareModal');
+    shareModal.style.display = 'block';
+    
+    // Setup share options
+    setupShareOptions(doc, pdfBlob);
 }
 
-// Initialize sharing functionality
-window.shareManager = new ShareManager();
+function setupShareOptions(doc, pdfBlob) {
+    // Email sharing
+    document.getElementById('shareEmail').addEventListener('click', async () => {
+        const emailContent = await generateEmailContent(doc);
+        const subject = `${doc.type} #${doc.number} from ${companyInfo.name}`;
+        
+        // Create form data for email API
+        const formData = new FormData();
+        formData.append('to', doc.clientEmail);
+        formData.append('subject', subject);
+        formData.append('html', emailContent);
+        formData.append('attachment', pdfBlob, `${doc.type}_${doc.number}.pdf`);
+        
+        try {
+            const response = await sendEmail(formData);
+            showNotification('Email sent successfully!', 'success');
+        } catch (error) {
+            showNotification('Failed to send email. Please try again.', 'error');
+        }
+    });
+    
+    // WhatsApp sharing
+    document.getElementById('shareWhatsapp').addEventListener('click', () => {
+        const message = generateWhatsAppMessage(doc);
+        const whatsappUrl = `https://wa.me/${doc.clientMobile}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    });
+    
+    // SMS sharing
+    document.getElementById('shareSMS').addEventListener('click', () => {
+        const message = generateSMSMessage(doc);
+        const smsUrl = `sms:${doc.clientMobile}?body=${encodeURIComponent(message)}`;
+        window.location.href = smsUrl;
+    });
+}
+
+function generateWhatsAppMessage(doc) {
+    return `Hi ${doc.clientName},
+
+Your ${doc.type.toLowerCase()} #${doc.number} for $${doc.total.toFixed(2)} is ready.
+
+Payment Details:
+Bank: ${bankInfo.name}
+BSB: ${bankInfo.bsb}
+Account: ${bankInfo.account}
+Account Name: ${bankInfo.accountName}
+
+Thank you for your business!
+${companyInfo.name}`;
+}
+
+function generateSMSMessage(doc) {
+    return `Your ${doc.type.toLowerCase()} #${doc.number} for $${doc.total.toFixed(2)} is ready. Please check your email for details. Thank you! - ${companyInfo.name}`;
+}
+
+async function generateEmailContent(doc) {
+    const template = await fetch('/emailTemplate.html').then(res => res.text());
+    
+    // Replace placeholders with actual content
+    return template.replace('<!-- Content will be dynamically inserted here -->', `
+        <div class="header">
+            <div class="logo">
+                <img src="${companyInfo.logoUrl}" alt="${companyInfo.name} Logo">
+            </div>
+            <div class="document-type">
+                <h1>${doc.type.toUpperCase()} #${doc.number}</h1>
+                <p>Date: ${formatDate(doc.date)}</p>
+            </div>
+        </div>
+        
+        <div class="company-info">
+            <h2>${companyInfo.name}</h2>
+            <p>${companyInfo.address}</p>
+            <p>ABN: ${companyInfo.abn}</p>
+            <p>Phone: ${companyInfo.phone}</p>
+            <p>Email: ${companyInfo.email}</p>
+        </div>
+        
+        <div class="client-info">
+            <h3>Bill To:</h3>
+            <p>${doc.clientName}</p>
+            <p>${doc.clientEmail}</p>
+            <p>${doc.clientMobile}</p>
+            <p>${doc.jobAddress}</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Hours</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${doc.items.map(item => `
+                    <tr>
+                        <td>${item.description}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.hours}</td>
+                        <td>$${item.rate.toFixed(2)}</td>
+                        <td>$${item.amount.toFixed(2)}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        
+        <div class="totals">
+            <div class="totals-row">
+                <span>Subtotal:</span>
+                <span>$${doc.subtotal.toFixed(2)}</span>
+            </div>
+            <div class="totals-row">
+                <span>GST (10%):</span>
+                <span>$${doc.gst.toFixed(2)}</span>
+            </div>
+            <div class="totals-row">
+                <strong>Total:</strong>
+                <strong>$${doc.total.toFixed(2)}</strong>
+            </div>
+        </div>
+        
+        <div class="payment-details">
+            <h3>Payment Details</h3>
+            <p>Bank: ${bankInfo.name}</p>
+            <p>BSB: ${bankInfo.bsb}</p>
+            <p>Account: ${bankInfo.account}</p>
+            <p>Account Name: ${bankInfo.accountName}</p>
+        </div>
+    `);
+}
+
+// Function to send email
+async function sendEmail(formData) {
+    // Replace with your email sending API endpoint
+    const response = await fetch('/api/send-email', {
+        method: 'POST',
+        body: formData
+    });
+    
+    if (!response.ok) {
+        throw new Error('Failed to send email');
+    }
+    
+    return response.json();
+}

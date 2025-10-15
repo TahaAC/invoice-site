@@ -6972,7 +6972,7 @@ ${companyInfo.email}`;
                     console.log("Loading documents from Firebase...");
                     
                     const querySnapshot = await db.collection('quotes')
-                        .where('userId', 'in', ALLOWED_UIDS)
+                        .where('userId', '==', currentUser.uid)
                         .orderBy('date', 'desc')
                         .get({ source: 'server' });
                         

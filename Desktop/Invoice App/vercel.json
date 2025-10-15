@@ -9,8 +9,9 @@
   "routes": [
     { "src": "/public/(.*)", "dest": "/public/$1" },
     { "src": "/js/(.*)", "dest": "/public/js/$1" },
-    { "src": "/site.webmanifest", "dest": "/site.webmanifest" },
-    { "src": "/sw.js", "dest": "/sw.js" },
+    { "src": "^/site.webmanifest$", "dest": "/site.webmanifest" },
+    { "src": "^/sw.js$", "dest": "/sw.js" },
+    { "src": "^/(.*)\\.js$", "dest": "/public/js/$1.js" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
