@@ -6,6 +6,7 @@
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#1a3a5f">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SMART SQUAD Invoice">
@@ -1996,6 +1997,51 @@
             text-decoration: underline;
         }
 
+        .auth-links {
+            margin-top: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .forgot-password-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all var(--transition-normal);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .forgot-password-link:hover {
+            color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .message-box {
+            padding: 10px;
+            border-radius: var(--border-radius-md);
+            margin: 10px 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-box.success {
+            background: var(--success-bg);
+            color: var(--success-color);
+            border: 1px solid var(--success-border);
+        }
+
+        .message-box.error {
+            background: var(--error-bg);
+            color: var(--danger-color);
+            border: 1px solid var(--error-border);
+        }
+
         .mb-4 {
             margin-bottom: var(--spacing-md);
         }
@@ -3573,6 +3619,30 @@
         </div>
     </div>
 
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-key"></i> Reset Password
+                </h3>
+                <button class="modal-close" onclick="closeResetPasswordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resetPasswordForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="resetEmail" class="form-label">Email Address</label>
+                        <input type="email" id="resetEmail" class="glass-input" required>
+                    </div>
+                    <div id="resetPasswordMessage" class="message-box" style="display: none;"></div>
+                    <button type="submit" class="action-button glass-button">
+                        <i class="fas fa-paper-plane"></i> Send Reset Link
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -3590,8 +3660,50 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
 
+        // Reset Password Functions
+        function showResetPasswordModal(event) {
+            event.preventDefault();
+            const modal = document.getElementById('resetPasswordModal');
+            modal.classList.add('active');
+            document.getElementById('resetEmail').value = document.getElementById('email').value;
+        }
+
+        function closeResetPasswordModal() {
+            const modal = document.getElementById('resetPasswordModal');
+            modal.classList.remove('active');
+            document.getElementById('resetPasswordMessage').style.display = 'none';
+            document.getElementById('resetPasswordMessage').className = 'message-box';
+        }
+
+        // Handle reset password form submission
+        document.getElementById('resetPasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const messageBox = document.getElementById('resetPasswordMessage');
+            
+            try {
+                await auth.sendPasswordResetEmail(email);
+                messageBox.textContent = 'Password reset link sent! Check your email.';
+                messageBox.className = 'message-box success';
+                messageBox.style.display = 'flex';
+                
+                // Close the modal after 3 seconds
+                setTimeout(() => {
+                    closeResetPasswordModal();
+                }, 3000);
+            } catch (error) {
+                messageBox.textContent = error.message;
+                messageBox.className = 'message-box error';
+                messageBox.style.display = 'flex';
+            }
+        });
+
         // Global variables
-        const ALLOWED_UID = "ulGAFDpJlIYBSvqDkydbIZIij5K2";
+        // Array of allowed admin UIDs
+        const ALLOWED_UIDS = [
+            "ulGAFDpJlIYBSvqDkydbIZIij5K2",
+            "pRwKXPCJvvNNlqN9z5uDhUQEgRf1"
+        ];
         let currentUser = null;
         let companyInfo = {
             name: "SMART SQUAD M BUILD PTY LTD",
@@ -3700,6 +3812,31 @@ async function shareViaSMS(id, type) {
         showNotification(`Error sharing ${type} via SMS: ${error.message}`, 'error');
     }
 }
+
+// Toggle share menu dropdown
+function toggleShareMenu(docId) {
+    // Close all other share menus first
+    document.querySelectorAll('.share-menu').forEach(menu => {
+        if (menu.id !== `shareMenu_${docId}`) {
+            menu.classList.remove('show');
+        }
+    });
+    
+    // Toggle the clicked share menu
+    const menu = document.getElementById(`shareMenu_${docId}`);
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// Close share menus when clicking outside
+document.addEventListener('click', (event) => {
+    if (!event.target.closest('.share-dropdown')) {
+        document.querySelectorAll('.share-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
 
 function buildShareMessage(data, type) {
     const companyName = 'SMART SQUAD M BUILD PTY LTD';
@@ -4515,7 +4652,7 @@ function buildShareMessage(data, type) {
             }
 
             auth.onAuthStateChanged(async (user) => {
-                if (user && user.uid === ALLOWED_UID) {
+                if (user && ALLOWED_UIDS.includes(user.uid)) {
                     currentUser = user;
                     document.getElementById('userEmail').textContent = user.email;
                     authRetryCount = 0;
@@ -5915,7 +6052,7 @@ function shareViaSMS(data) {
 
         // Save document
         async function saveDocument() {
-            if (!currentUser || currentUser.uid !== ALLOWED_UID) {
+            if (!currentUser || !ALLOWED_UIDS.includes(currentUser.uid)) {
                 showNotification('You are not authorized to save documents.', 'error');
                 return;
             }
@@ -6052,7 +6189,7 @@ function shareViaSMS(data) {
                         accountName: bankInfo.accountName
                     },
                     companyInfo: companyInfo,
-                    userId: ALLOWED_UID,
+                    userId: currentUser.uid,
                     userEmail: currentUser.email,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
@@ -6904,7 +7041,19 @@ ${companyInfo.email}`;
                     <td class="actions">
                         <button class="table-action-btn view" data-id="${doc.id}"><i class="fas fa-eye"></i> View</button>
                         <button class="table-action-btn edit" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
-                        <button class="table-action-btn share" data-id="${doc.id}"><i class="fas fa-share-alt"></i></button>
+                        <div class="share-dropdown">
+                            <button class="table-action-btn share" onclick="toggleShareMenu('${doc.id}')" data-id="${doc.id}">
+                                <i class="fas fa-share-alt"></i>
+                            </button>
+                            <div class="share-menu" id="shareMenu_${doc.id}">
+                                <button class="dropdown-item" onclick="shareViaWhatsApp('${doc.id}', '${type}')">
+                                    <i class="fab fa-whatsapp whatsapp-share"></i> WhatsApp
+                                </button>
+                                <button class="dropdown-item" onclick="shareViaSMS('${doc.id}', '${type}')">
+                                    <i class="fas fa-sms sms-share"></i> SMS
+                                </button>
+                            </div>
+                        </div>
                         <button class="table-action-btn print" data-id="${doc.id}"><i class="fas fa-print"></i></button>
                         <button class="table-action-btn delete" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
                     </td>
@@ -7782,4 +7931,3 @@ document.getElementById('shareSMS').addEventListener('click', function() {
     </script>
 </body>
 </html>
-
